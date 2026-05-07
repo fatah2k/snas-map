@@ -210,6 +210,21 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
 /* ── Directions panel ────────────────────────────────────────────────── */
 #dir-panel{position:fixed;top:0;left:0;right:0;z-index:960;background:rgba(255,255,255,.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 16px 18px;box-shadow:0 4px 20px rgba(0,0,0,.18);transform:translateY(-110%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
 #dir-panel.open{transform:translateY(0)}
+.route-modes{display:flex;gap:6px;margin:10px 0 2px}
+.rm-btn{flex:1;padding:7px 4px;border:1.5px solid #e8eaed;border-radius:10px;background:#f8f9fa;font-size:13px;cursor:pointer;transition:all .15s;font-family:"Roboto",sans-serif;color:#3c4043}
+.rm-btn.active{background:#e8f0fe;border-color:#1a73e8;color:#1a73e8;font-weight:600}
+#btn-emergency{background:rgba(234,67,53,.1)!important;color:#EA4335!important}
+#btn-emergency.active{background:rgba(234,67,53,.92)!important;color:#fff!important;box-shadow:0 0 0 3px rgba(234,67,53,.3),0 2px 10px rgba(0,0,0,.18)!important}
+#snas-poi-card{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(12px);width:min(320px,calc(100vw - 32px));z-index:920;background:rgba(255,255,255,.98);backdrop-filter:blur(20px);border-radius:18px;box-shadow:0 6px 32px rgba(0,0,0,.22);opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;overflow:hidden}
+#snas-poi-card.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+.spc-hd{display:flex;align-items:center;gap:10px;padding:14px 16px 10px;border-bottom:1px solid rgba(0,0,0,.06)}
+.spc-icon{font-size:24px;flex-shrink:0}
+.spc-name{font-size:15px;font-weight:600;color:#202124;font-family:"Google Sans",sans-serif;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spc-cat{font-size:10px;color:#9aa0a6;text-transform:uppercase;letter-spacing:.8px;margin-top:2px}
+.spc-xx{background:rgba(0,0,0,.06);border:none;cursor:pointer;font-size:16px;color:#5f6368;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.spc-row{display:flex;align-items:center;gap:10px;padding:9px 16px;border-top:1px solid rgba(0,0,0,.04);font-size:12px;color:#3c4043}
+.spc-row a{color:#1a73e8;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.spc-ico{font-size:14px;flex-shrink:0;width:18px;text-align:center}
 .dir-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .dir-back{background:none;border:none;font-size:22px;color:#5f6368;cursor:pointer;line-height:1;padding:2px}
 .dir-title{font-size:15px;font-weight:500;color:#202124;font-family:"Google Sans",sans-serif}
@@ -494,6 +509,7 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
   <button class="fab" id="btn-compass" title="Reset North" onclick="resetNorth()" style="font-size:20px;color:#EA4335!important">&#8593;</button>
   <button class="fab" id="btn-addrbook" title="Address Book" onclick="toggleAddrBook()" style="font-size:15px">&#9733;</button>
   <button class="fab" id="btn-dark" title="Toggle Dark Mode" onclick="toggleDark()" style="font-size:15px">&#9790;</button>
+  <button class="fab" id="btn-emergency" title="Emergency Layer" onclick="toggleEmergency()">🚨</button>
   <button class="fab" id="btn-demo" title="Government Demo">&#9654; Demo</button>
   <button class="fab" id="btn-stopdemo" title="Stop Demo" style="display:none">&#9632; Stop</button>
 </div>
@@ -614,6 +630,7 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
   </div>
 </div>
 <div id="toast"></div>
+<div id="snas-poi-card"><div class="spc-hd"><div class="spc-icon" id="spc-icon">📍</div><div style="flex:1;min-width:0"><div class="spc-name" id="spc-name"></div><div class="spc-cat" id="spc-cat"></div></div><button class="spc-xx" onclick="closeSNASPoiCard()">✕</button></div><div id="spc-rows"></div></div>
 <div id="road-banner"><span id="road-banner-icon">🛣</span><div id="road-banner-body"><div id="road-banner-so"></div><div id="road-banner-en"></div></div><button id="road-banner-x" onclick="closeRoadBanner()">✕</button></div>
 <div id="demo-counter"><span id="demo-counter-txt"></span><button id="demo-counter-x" onclick="stopDemo()" title="Stop Demo">&#x2715;</button></div>
 <div id="demo-popup">
@@ -664,6 +681,11 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
   <div class="dir-hd">
     <button class="dir-back" onclick="closeDirections()">&#8592;</button>
     <span class="dir-title">Get Directions</span>
+  </div>
+  <div class="route-modes">
+    <button class="rm-btn active" id="rm-car" onclick="setRouteMode('driving',this)">🚗 Car</button>
+    <button class="rm-btn" id="rm-bike" onclick="setRouteMode('bicycle',this)">🚲 Cycle</button>
+    <button class="rm-btn" id="rm-walk" onclick="setRouteMode('foot',this)">🚶 Walk</button>
   </div>
   <div class="dir-row">
     <div class="dir-dot" style="background:#34A853;border:2px solid #2e9647"></div>
@@ -833,6 +855,7 @@ let isFetching=false,moveTimer=null,lastBboxKey='',workerPending=false;
 let currentMode='map',styleReady=false,usingFallback=false,openDistrictId=null;
 let demoActive=false,demoTimers=[],pulseMarker=null,longPressTimer=null,whatsHereData=null;
 let routeFrom=null,routeTo=null,_qrAddr='',_certData=null;
+let _routeMode='driving',_emergencyMode=false;
 const LAYER_GROUPS={
   markers:['district-circles','district-labels-sm','district-postcodes'],
   roads:['road-casing','road-fill'],labels:['road-labels'],places:['region-labels'],
@@ -971,7 +994,7 @@ function addAllLayers(){
   if(!map.getSource('poi-src'))map.addSource('poi-src',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
   if(!map.getLayer('snas-poi-icons'))map.addLayer({id:'snas-poi-icons',type:'symbol',source:'poi-src',minzoom:11,layout:{'text-field':['get','icon'],'text-font':['Noto Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],11,14,14,18,18,22],'text-allow-overlap':true,'icon-allow-overlap':true,'visibility':'visible'},paint:{'text-color':'rgba(0,0,0,0.9)','text-halo-color':'rgba(255,255,255,0.95)','text-halo-width':1.5}});
   if(!map.getLayer('snas-poi-labels'))map.addLayer({id:'snas-poi-labels',type:'symbol',source:'poi-src',minzoom:13,layout:{'text-field':['coalesce',['get','name_so'],['get','name_en']],'text-font':['Noto Sans Bold','Noto Sans Regular'],'text-size':10,'text-offset':[0,1.6],'text-anchor':'top','text-allow-overlap':false,'text-ignore-placement':false,'visibility':'visible'},paint:{'text-color':'#202124','text-halo-color':'rgba(255,255,255,0.97)','text-halo-width':2}});
-  map.on('click','snas-poi-icons',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;map.flyTo({center:[p.lon,p.lat],zoom:17,duration:800,essential:true});showToast((p.icon||'📍')+' '+(p.name_so||p.name_en||p.category),3500);});
+  map.on('click','snas-poi-icons',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;map.flyTo({center:[p.lon,p.lat],zoom:17,duration:800,essential:true});const full=_snasPoiCache.find(x=>x.poi_id===p.poi_id)||p;showSNASPoiCard(full);});
   map.on('mouseenter','snas-poi-icons',()=>{map.getCanvas().style.cursor='pointer';});
   map.on('mouseleave','snas-poi-icons',()=>{map.getCanvas().style.cursor='';});
   // Click handlers
@@ -1003,7 +1026,7 @@ const POI_ICONS={hospital:'🏥',mosque:'🕌',school:'🏫',market:'🛒',bank:
 let _snasPoiCache=[];
 async function loadSNASPOIs(){
   try{
-    const rows=await dbGet('snas_pois',{select:'poi_id,name_so,name_en,category,lat,lon',limit:2000}).catch(()=>[]);
+    const rows=await dbGet('snas_pois',{select:'poi_id,name_so,name_en,category,lat,lon,phone,website,opening_hours',limit:2000}).catch(()=>[]);
     if(!rows||!rows.length)return;
     _snasPoiCache=rows.map(p=>Object.assign({},p,{icon:POI_ICONS[p.category]||'📍'}));
     const fc={type:'FeatureCollection',features:_snasPoiCache.map(p=>({type:'Feature',geometry:{type:'Point',coordinates:[parseFloat(p.lon),parseFloat(p.lat)]},properties:{poi_id:p.poi_id,name_so:p.name_so||'',name_en:p.name_en||'',category:p.category||'other',icon:POI_ICONS[p.category]||'📍',lon:parseFloat(p.lon),lat:parseFloat(p.lat)}}))};
@@ -1779,7 +1802,7 @@ function clearRoutePoint(type){
 async function drawRoute(){
   if(!routeFrom||!routeTo)return;
   const fr=routeFrom.lngLat,to=routeTo.lngLat;
-  const url='https://router.project-osrm.org/route/v1/driving/'+fr[0]+','+fr[1]+';'+to[0]+','+to[1]+'?overview=full&geometries=geojson&steps=true';
+  const url='https://router.project-osrm.org/route/v1/'+_routeMode+'/'+fr[0]+','+fr[1]+';'+to[0]+','+to[1]+'?overview=full&geometries=geojson&steps=true';
   try{
     showToast('Calculating route...',2500);
     const res=await fetch(url);const data=await res.json();
@@ -1790,7 +1813,8 @@ async function drawRoute(){
     const mins=Math.round(route.duration/60);
     const timeStr=mins>=60?Math.floor(mins/60)+'h '+(mins%60)+'min':mins+' min';
     document.getElementById('rc-dist').textContent=distStr;
-    document.getElementById('rc-time').textContent=timeStr+' · Driving';
+    const MODE_LABELS={driving:'🚗 Driving',bicycle:'🚲 Cycling',foot:'🚶 Walking'};
+    document.getElementById('rc-time').textContent=timeStr+' · '+(MODE_LABELS[_routeMode]||'Driving');
     document.getElementById('rc-via').textContent=(routeFrom.label||'Start')+' → '+(routeTo.label||'Destination');
     // Render turn-by-turn steps
     const TURN_ICONS={turn:'↪','new name':'→',depart:'📍',arrive:'🏁',roundabout:'🔄',rotary:'🔄',fork:'⑂',merge:'⇒','on ramp':'↗','off ramp':'↘','use lane':'⇒',continue:'→','end of road':'↩'};
@@ -1825,6 +1849,67 @@ function clearRoute(){
   if(map.getSource('route-src'))map.removeSource('route-src');
   document.getElementById('route-card').classList.remove('show');
   document.getElementById('route-steps').innerHTML='';
+}
+function setRouteMode(profile,btn){
+  _routeMode=profile;
+  document.querySelectorAll('.rm-btn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  if(routeFrom&&routeTo)drawRoute();
+}
+// ── Emergency Layer ────────────────────────────────────────────────────
+let _emergencyPulseRaf=null;
+function toggleEmergency(){
+  _emergencyMode=!_emergencyMode;
+  const btn=document.getElementById('btn-emergency');
+  if(btn)btn.classList.toggle('active',_emergencyMode);
+  if(_emergencyMode){
+    // Filter POI icon/label layers to show only emergency categories
+    const ef=['in',['get','category'],['literal',['hospital','pharmacy','police']]];
+    if(map.getLayer('snas-poi-icons'))map.setFilter('snas-poi-icons',ef);
+    if(map.getLayer('snas-poi-labels'))map.setFilter('snas-poi-labels',ef);
+    // Add pulsing red circle layer under the icons
+    if(!map.getLayer('snas-emergency-pulse')){
+      map.addLayer({id:'snas-emergency-pulse',type:'circle',source:'poi-src',filter:ef,paint:{'circle-radius':16,'circle-color':['case',['==',['get','category'],'police'],'#1a73e8','#EA4335'],'circle-opacity':0.18,'circle-stroke-color':['case',['==',['get','category'],'police'],'#1a73e8','#EA4335'],'circle-stroke-width':2,'circle-stroke-opacity':0.6}},'snas-poi-icons');
+    } else {
+      map.setLayoutProperty('snas-emergency-pulse','visibility','visible');
+    }
+    // Animate pulse radius
+    let tick=0;
+    function pulse(){
+      if(!_emergencyMode||!map.getLayer('snas-emergency-pulse'))return;
+      tick++;
+      const r=14+4*Math.abs(Math.sin(tick*0.04));
+      const o=0.1+0.1*Math.abs(Math.sin(tick*0.04));
+      map.setPaintProperty('snas-emergency-pulse','circle-radius',r);
+      map.setPaintProperty('snas-emergency-pulse','circle-opacity',o);
+      _emergencyPulseRaf=requestAnimationFrame(pulse);
+    }
+    _emergencyPulseRaf=requestAnimationFrame(pulse);
+    showToast('🚨 Emergency mode — hospitals & police highlighted',3000);
+  } else {
+    // Restore all POIs
+    if(map.getLayer('snas-poi-icons'))map.setFilter('snas-poi-icons',null);
+    if(map.getLayer('snas-poi-labels'))map.setFilter('snas-poi-labels',null);
+    if(map.getLayer('snas-emergency-pulse'))map.setLayoutProperty('snas-emergency-pulse','visibility','none');
+    if(_emergencyPulseRaf){cancelAnimationFrame(_emergencyPulseRaf);_emergencyPulseRaf=null;}
+    showToast('Emergency mode off',2000);
+  }
+}
+// ── POI Detail Card ────────────────────────────────────────────────────
+function showSNASPoiCard(p){
+  document.getElementById('spc-icon').textContent=p.icon||POI_ICONS[p.category]||'📍';
+  document.getElementById('spc-name').textContent=p.name_so||p.name_en||p.category||'Place';
+  document.getElementById('spc-cat').textContent=(p.category||'').replace(/_/g,' ');
+  let rows='';
+  if(p.phone)rows+='<div class="spc-row"><span class="spc-ico">📞</span><a href="tel:'+encodeURIComponent(p.phone)+'">'+p.phone+'</a></div>';
+  if(p.website)rows+='<div class="spc-row"><span class="spc-ico">🌐</span><a href="'+p.website+'" target="_blank" rel="noopener">'+p.website.replace(/^https?:\/\//,'').replace(/\/$/,'')+'</a></div>';
+  if(p.opening_hours)rows+='<div class="spc-row"><span class="spc-ico">🕐</span><span>'+p.opening_hours+'</span></div>';
+  if(!rows)rows='<div class="spc-row" style="color:#9aa0a6;font-size:11px">No contact details available</div>';
+  document.getElementById('spc-rows').innerHTML=rows;
+  document.getElementById('snas-poi-card').classList.add('show');
+}
+function closeSNASPoiCard(){
+  document.getElementById('snas-poi-card').classList.remove('show');
 }
 function setFromHere(){
   if(!whatsHereData)return;

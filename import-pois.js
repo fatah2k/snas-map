@@ -97,6 +97,9 @@ async function run() {
         subcategory,
         lat: n.lat,
         lon: n.lon,
+        phone: tags.phone || tags['contact:phone'] || tags['phone:mobile'] || null,
+        website: tags.website || tags['contact:website'] || tags.url || null,
+        opening_hours: tags.opening_hours || null,
       };
     })
     .filter(r => r.name_so || r.name_en); // skip completely unnamed nodes
