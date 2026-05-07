@@ -207,6 +207,19 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
 .rc-btn.primary{background:#1a73e8;color:#fff;border-color:#1a73e8}
 .rc-btn.primary:hover{background:#1557b0}
 .rc-btn:hover{background:#e8f0fe;border-color:#1a73e8;color:#1a73e8}
+.rc-btn.nav{background:linear-gradient(135deg,#34A853,#1a73e8);color:#fff;border-color:transparent;font-weight:600}
+.rc-btn.nav:hover{opacity:.9}
+.rc-btn.nav.active{background:linear-gradient(135deg,#c5221f,#e37400);animation:nav-pulse-btn 2s ease-in-out infinite}
+@keyframes nav-pulse-btn{0%,100%{opacity:1}50%{opacity:.8}}
+#nav-hud{position:fixed;top:0;left:0;right:0;z-index:970;background:linear-gradient(180deg,rgba(26,115,232,.97) 0%,rgba(26,115,232,.92) 100%);padding:18px 20px 14px;color:#fff;transform:translateY(-110%);transition:transform .35s cubic-bezier(.4,0,.2,1);pointer-events:none}
+#nav-hud.show{transform:translateY(0);pointer-events:auto}
+.nh-maneuver{font-size:36px;font-weight:700;font-family:"Google Sans",sans-serif;line-height:1}
+.nh-street{font-size:14px;opacity:.85;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nh-dist{font-size:12px;opacity:.7;margin-top:2px}
+.nh-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.2)}
+.nh-eta{font-size:13px;font-weight:600}.nh-end{background:rgba(255,255,255,.15);border:none;color:#fff;padding:7px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Roboto",sans-serif}
+#nav-loc-dot{width:20px;height:20px;border-radius:50%;background:#1a73e8;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.4);position:absolute;transform:translate(-50%,-50%);pointer-events:none;z-index:950;display:none}
+#nav-loc-dot::after{content:"";position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(26,115,232,.5);animation:pulse-ring 2s ease-out infinite}
 /* ── Directions panel ────────────────────────────────────────────────── */
 #dir-panel{position:fixed;top:0;left:0;right:0;z-index:960;background:rgba(255,255,255,.98);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:14px 16px 18px;box-shadow:0 4px 20px rgba(0,0,0,.18);transform:translateY(-110%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
 #dir-panel.open{transform:translateY(0)}
@@ -492,6 +505,18 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
 /* ── Dark Mode: rdd-xx ───────────────────────────────────────────────── */
 [data-dark] .rdd-xx{background:rgba(255,255,255,.08);color:#9ca3af}
 [data-dark] .rdd-xx:hover{background:rgba(255,255,255,.15);color:#e8eaed}
+[data-dark] #snas-poi-card{background:rgba(15,17,23,.99)}
+[data-dark] .spc-name{color:#e8eaed}[data-dark] .spc-cat{color:#6b7280}
+[data-dark] .spc-row{color:#c8d6ea;border-top-color:rgba(255,255,255,.05)}
+[data-dark] .spc-btn{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1);color:#c8d6ea}
+[data-dark] #nearest-panel{background:rgba(15,17,23,.99)}
+[data-dark] .np-title{color:#e8eaed}[data-dark] .np-nm{color:#e8eaed}[data-dark] .np-dist{color:#6b7280}
+[data-dark] .np-item{border-bottom-color:rgba(255,255,255,.05)}
+[data-dark] .np-item:hover{background:rgba(255,255,255,.04)}
+[data-dark] .chip{background:rgba(22,24,36,.92);color:#c8d6ea;box-shadow:0 1px 8px rgba(0,0,0,.4)}
+[data-dark] .chip.active{background:#1a3a6b;color:#7baeff}
+[data-dark] .rm-btn{background:rgba(22,24,36,.85);border-color:rgba(255,255,255,.1);color:#c8d6ea}
+[data-dark] .rm-btn.active{background:#1a3a6b;border-color:#4a8fe8;color:#7baeff}
 </style>
 </head>
 <body>
@@ -614,7 +639,10 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
     <button class="wh-btn" onclick="copyWhatsHere()">&#128279; Copy</button>
     <button class="wh-btn" onclick="shareWhatsHere()">&#8679; Share</button>
   </div>
-  <button class="wh-btn" style="width:100%;margin-top:8px;border-radius:8px" onclick="whatsHereRoads()">&#9783; Show nearby roads</button>
+  <div style="display:flex;gap:6px;margin-top:8px">
+    <button class="wh-btn" style="flex:1" onclick="whatsHereRoads()">&#9783; Roads</button>
+    <button class="wh-btn" style="flex:1" onclick="whatsHereNearPOI()">&#128204; Nearby</button>
+  </div>
 </div>
 <!-- Live Stats Widget -->
 <div id="stats-widget">
@@ -696,8 +724,19 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
   <div class="rc-actions">
     <button class="rc-btn" onclick="clearRoute()">&#215; Clear</button>
     <button class="rc-btn primary" onclick="openDirections()">&#9654; Directions</button>
+    <button class="rc-btn nav" id="btn-nav-start" onclick="startNavigation()">&#129517; Navigate</button>
   </div>
 </div>
+<div id="nav-hud">
+  <div class="nh-maneuver" id="nh-maneuver">↑</div>
+  <div class="nh-street" id="nh-street">Follow the route</div>
+  <div class="nh-dist" id="nh-dist"></div>
+  <div class="nh-bottom">
+    <span class="nh-eta" id="nh-eta"></span>
+    <button class="nh-end" onclick="stopNavigation()">&#9632; End</button>
+  </div>
+</div>
+<div id="nav-loc-dot"></div>
 <!-- Directions input panel -->
 <div id="dir-panel">
   <div class="dir-hd">
@@ -906,7 +945,18 @@ async function rpc(fn,body){body=body||{};const r=await fetch(SB+'/rest/v1/rpc/'
 async function dbGet(table,params){params=params||{};const url=new URL(SB+'/rest/v1/'+table);const limit=params.limit||200;url.searchParams.set('limit',String(limit));Object.entries(params).forEach(([k,v])=>{if(k!=='limit')url.searchParams.set(k,v);});const r=await fetch(url,{headers:HDR});if(!r.ok)throw new Error('GET '+table+': '+r.status);return r.json();}
 function buildDistrictsGJ(){return{type:'FeatureCollection',features:allDistricts.filter(d=>d.lat&&d.lon&&!isNaN(d.lat)).map(d=>({type:'Feature',id:d.district_id,geometry:{type:'Point',coordinates:[d.lon,d.lat]},properties:{district_id:d.district_id,name_en:d.name_en,postcode_prefix:d.postcode_prefix,road_count:d.road_count,region_name:d.region_name,region_id:d.region_id}}))}}
 function buildRegionsGJ(){const byR={};allDistricts.forEach(d=>{if(!d.lat||!d.lon||isNaN(d.lat))return;if(!byR[d.region_id])byR[d.region_id]={lats:[],lons:[],name:d.region_name};byR[d.region_id].lats.push(d.lat);byR[d.region_id].lons.push(d.lon);});return{type:'FeatureCollection',features:Object.entries(byR).map(([,v])=>({type:'Feature',geometry:{type:'Point',coordinates:[v.lons.reduce((a,b)=>a+b)/v.lons.length,v.lats.reduce((a,b)=>a+b)/v.lats.length]},properties:{name:v.name}}))};}
-function buildRoadsGJ(){return{type:'FeatureCollection',features:Object.values(roadCache).map(r=>{const f=JSON.parse(JSON.stringify(r.geom));const p=r.props;const oc=_osmNames[p.street_id];const raw_so=oc?oc.name:(p.name_so&&p.name_so.trim()&&p.name_so!=='Unnamed'?p.name_so.trim():'');const raw_en=oc?oc.en:(p.name_en&&p.name_en.trim()&&p.name_en!=='Unnamed'?p.name_en.trim():'');const raw_osm=p.osm_name&&p.osm_name.trim()&&p.osm_name!=='Unnamed'?p.osm_name.trim():'';const tr=raw_so?translateSomaliName(raw_so):{en:'',ar:''};const name_en=tr.en||raw_en||raw_osm;const hasName=!!(raw_so||raw_osm);f.properties.display_name=name_en||raw_so||'';f.properties.name_so=raw_so;f.properties.name_en=name_en;f.properties.name_ar=tr.ar;f.properties.has_name=hasName;return f;})}}
+function buildRoadsGJ(){return{type:'FeatureCollection',features:Object.values(roadCache).map(r=>{const f=JSON.parse(JSON.stringify(r.geom));const p=r.props;const oc=_osmNames[p.street_id];
+  // Priority: SNAS Somali > SNAS English > OSM name (overpass enrichment can fill gaps)
+  const raw_so=p.name_so&&p.name_so.trim()&&p.name_so!=='Unnamed'?p.name_so.trim():'';
+  const raw_en=p.name_en&&p.name_en.trim()&&p.name_en!=='Unnamed'?p.name_en.trim():'';
+  const raw_osm=(oc&&oc.name)||(!raw_so&&!raw_en&&p.osm_name&&p.osm_name!=='Unnamed'?p.osm_name.trim():'');
+  const tr=raw_so?translateSomaliName(raw_so):{en:'',ar:''};
+  // Display name: Somali first (this IS a Somali map), fallback to English/OSM
+  const display_name=raw_so||tr.en||raw_en||raw_osm||'';
+  const hasName=!!(raw_so||raw_en||raw_osm);
+  // sort_weight: 0=named SNAS, 1=named OSM, 2=unnamed — used by symbol-sort-key
+  const sort_weight=raw_so||raw_en?0:raw_osm?1:2;
+  f.properties.display_name=display_name;f.properties.name_so=raw_so;f.properties.name_en=raw_en||tr.en;f.properties.name_ar=tr.ar;f.properties.has_name=hasName;f.properties.sort_weight=sort_weight;return f;})}}
 function buildRoadLabelsGJ(){return{type:'FeatureCollection',features:Object.values(roadCache).filter(r=>r.center&&r.center.lng!=null&&r.props).map(r=>{const p=r.props;const ns=p.name_so&&p.name_so!=='Unnamed'?p.name_so.trim():'';const tr=ns?translateSomaliName(ns):{en:'',ar:''};const ne=p.name_en&&p.name_en!=='Unnamed'?p.name_en.trim():'';const no=p.osm_name&&p.osm_name!=='Unnamed'?p.osm_name.trim():'';const dn=tr.en||ne||no||'';const has_name=!!(ns||no);return{type:'Feature',geometry:{type:'Point',coordinates:[r.center.lng,r.center.lat]},properties:{display_name:dn,has_name,highway_class:p.highway_class||''}};})}}
 function setSD(id,data){const s=map.getSource(id);if(s)s.setData(data);}
 function addSrc(id,spec){if(!map.getSource(id))map.addSource(id,spec);}
@@ -976,7 +1026,8 @@ function addAllLayers(){
       'text-max-angle':40,
       'text-padding':0,
       'text-keep-upright':true,
-      'text-allow-overlap':true,'text-ignore-placement':true,'visibility':V('labels')
+      'symbol-sort-key':['get','sort_weight'],
+      'text-allow-overlap':false,'text-ignore-placement':false,'visibility':V('labels')
     },
     paint:{
       'text-opacity':['interpolate',['linear'],['zoom'],11,0.6,13,0.9,15,1],
@@ -1089,7 +1140,35 @@ function addSettlementLabels(){
 }
 function addSatelliteLayer(){if(map.getSource('esri-sat'))return;map.addSource('esri-sat',{type:'raster',tiles:ESRI_SAT_TILES,tileSize:256,maxzoom:19,attribution:'Esri'});const firstId=map.getStyle().layers[0]&&map.getStyle().layers[0].id;map.addLayer({id:'esri-sat-layer',type:'raster',source:'esri-sat',maxzoom:24,paint:{'raster-opacity':1}},firstId);_satSaved=[];map.getStyle().layers.forEach(l=>{if(l.id==='esri-sat-layer'||SNAS_SOURCES.has(l.source))return;if(/building/i.test(l.id))return;let prop=null;if(l.type==='background')prop='background-opacity';else if(l.type==='fill')prop='fill-opacity';else if(l.type==='raster')prop='raster-opacity';if(!prop)return;const orig=map.getPaintProperty(l.id,prop)!=null?map.getPaintProperty(l.id,prop):1;_satSaved.push({id:l.id,prop,orig});try{map.setPaintProperty(l.id,prop,0);}catch(e){}});}
 function removeSatelliteLayer(){_satSaved.forEach(({id,prop,orig})=>{if(!map.getLayer(id))return;try{map.setPaintProperty(id,prop,orig);}catch(e){}});_satSaved=[];if(map.getLayer('esri-sat-layer'))map.removeLayer('esri-sat-layer');if(map.getSource('esri-sat'))map.removeSource('esri-sat');}
-function updateLabelContrast(mode){if(!map.getLayer('road-labels'))return;const sat=mode==='satellite';try{map.setPaintProperty('road-labels','text-halo-width',sat?2.5:2);map.setPaintProperty('road-labels','text-halo-color',sat?'rgba(255,255,255,1.0)':'rgba(255,255,255,0.97)');map.setPaintProperty('road-labels','text-halo-blur',sat?0:0.5);map.setPaintProperty('district-labels-sm','text-halo-width',sat?2.5:2);map.setPaintProperty('district-postcodes','text-halo-width',sat?2.5:2);}catch(e){}}
+function updateLabelContrast(mode){
+  if(!map.getLayer('road-labels'))return;
+  const sat=mode==='satellite';
+  try{
+    // Road labels: wider halo on satellite for legibility against imagery
+    map.setPaintProperty('road-labels','text-halo-width',sat?3:2.5);
+    map.setPaintProperty('road-labels','text-halo-color',sat?'rgba(0,0,0,0.85)':'rgba(255,255,255,0.97)');
+    map.setPaintProperty('road-labels','text-color',sat?'#ffffff':'#202124');
+    map.setPaintProperty('road-labels','text-halo-blur',0);
+    // District/postcode labels
+    ['district-labels-sm','district-postcodes'].forEach(id=>{
+      if(!map.getLayer(id))return;
+      map.setPaintProperty(id,'text-halo-width',sat?3:2);
+      map.setPaintProperty(id,'text-halo-color',sat?'rgba(0,0,0,0.8)':'rgba(255,255,255,0.95)');
+      map.setPaintProperty(id,'text-color',sat?'#ffffff':'#202124');
+    });
+    // Settlement labels
+    ['settlement-labels'].forEach(id=>{
+      if(!map.getLayer(id))return;
+      map.setPaintProperty(id,'text-halo-color',sat?'rgba(0,0,0,0.8)':'rgba(255,255,255,0.95)');
+      map.setPaintProperty(id,'text-color',sat?'#ffffff':'#202124');
+    });
+    // Re-float SNAS labels to top so imagery doesn't bury them
+    if(sat){
+      const toFloat=['road-labels','settlement-labels','district-labels-sm','district-postcodes','road-selected-glow','road-selected','snas-poi-labels'];
+      toFloat.forEach(id=>{try{if(map.getLayer(id))map.moveLayer(id);}catch(e){}});
+    }
+  }catch(e){console.warn('labelContrast:',e);}
+}
 function setMapMode(mode){if(mode===currentMode)return;currentMode=mode;document.getElementById('sat-map').classList.toggle('active',mode==='map');document.getElementById('sat-sat').classList.toggle('active',mode==='satellite');if(!styleReady)return;if(mode==='satellite')addSatelliteLayer();else removeSatelliteLayer();updateLabelContrast(mode);}
 // ── Web Worker — road feature processing off main thread ──────────────────
 const ROAD_WORKER_SRC=`'use strict';
@@ -1300,8 +1379,12 @@ function showWhatsHere(lngLat,point){
   }
   const fullAddr=(nearest?nearest.name_en+' District, '+nearest.region_name+' Region':'Somalia');
   const streetLine=(nearRoad&&minR<0.005)?roadName(nearRoad.props).name+'\n':'';
-  whatsHereData={snasAddr,fullAddr,lngLat,nearRoad,dist:nearest};
-  document.getElementById('wh-addr').textContent=streetLine+fullAddr;
+  // Find nearest POI for reverse-geocode enrichment
+  let nearPOI=null,minP=Infinity;
+  _snasPoiCache.forEach(p=>{const dk=_degDist(lat,lng,parseFloat(p.lat),parseFloat(p.lon));if(dk<minP){minP=dk;nearPOI=p;}});
+  const poiLine=(nearPOI&&minP<0.003)?(nearPOI.icon||'📍')+' '+_kmStr(minP)+' to '+(nearPOI.name_so||nearPOI.name_en||nearPOI.category)+'\n':'';
+  whatsHereData={snasAddr,fullAddr,lngLat,nearRoad,dist:nearest,nearPOI};
+  document.getElementById('wh-addr').textContent=streetLine+fullAddr+(poiLine?'\n'+poiLine:'');
   document.getElementById('wh-pc').textContent=snasAddr;
   const el=document.getElementById('whats-here');
   if(point){
@@ -1320,6 +1403,7 @@ function showWhatsHere(lngLat,point){
   el.classList.add('show');
 }
 function closeWhatsHere(){document.getElementById('whats-here').classList.remove('show');whatsHereData=null;}
+function whatsHereNearPOI(){if(!whatsHereData)return;const{lngLat}=whatsHereData;const ctr={lat:lngLat.lat,lng:lngLat.lng};const _d=p=>_degDist(ctr.lat,ctr.lng,parseFloat(p.lat),parseFloat(p.lon));const near=_snasPoiCache.slice().sort((a,b)=>_d(a)-_d(b)).slice(0,12);if(!near.length){showToast('No POIs found nearby',2500);return;}showNearestPanel(near,'place',_d);document.getElementById('np-title').textContent='📍 Nearby Places';closeWhatsHere();}
 function copyWhatsHere(){if(!whatsHereData)return;navigator.clipboard&&navigator.clipboard.writeText(whatsHereData.snasAddr+'\n'+whatsHereData.fullAddr).catch(()=>{});showToast('Copied: '+whatsHereData.snasAddr);closeWhatsHere();}
 function whatsHereRoads(){if(!whatsHereData||!whatsHereData.dist)return;openRight();renderDistrictInfo(whatsHereData.dist);closeWhatsHere();}
 // Pulse marker
@@ -1667,6 +1751,22 @@ function chipSearch(category){
   clearChipPOIs();closeNearestPanel();
   const ctr=map.getCenter();
   const _d=p=>_degDist(ctr.lat,ctr.lng,parseFloat(p.lat),parseFloat(p.lon));
+  // Fast path: PostGIS RPC if available, else fall back to in-memory cache
+  try{
+    const rpcRows=await rpc('get_nearest_pois',{clat:ctr.lat,clng:ctr.lng,cat:category,lim:12}).catch(()=>null);
+    if(rpcRows&&rpcRows.length){
+      const top=rpcRows.map(p=>Object.assign({},p,{icon:POI_ICONS[p.category]||'📍'}));
+      const _d=p=>p.dist_m?p.dist_m/111320:_degDist(ctr.lat,ctr.lng,parseFloat(p.lat),parseFloat(p.lon));
+      const nearest=top[0];const lng=parseFloat(nearest.lon),lat=parseFloat(nearest.lat);
+      showNearestPanel(top,category,_d);
+      const res=top.slice(0,6).map(p=>({type:'poi',ico:p.icon,nm:p.name_so||p.name_en||category,ds:_kmStr(_d(p))+' away',data:p}));
+      searchResults=res;renderAC(res,category);
+      map.flyTo({center:[lng,lat],zoom:17,duration:1200,essential:true});
+      map.once('moveend',()=>{spawnPulse({lng,lat});showSNASPoiCard(nearest);});
+      showToast((nearest.icon||'📍')+' '+(nearest.name_so||nearest.name_en||category)+' · '+_kmStr(_d(nearest)),3500);
+      return;
+    }
+  }catch(e){/* RPC not available, use cache */}
   // Use live snas_pois cache first
   const poisOfCat=_snasPoiCache.filter(p=>p.category===category);
   if(poisOfCat.length){
@@ -1910,8 +2010,14 @@ async function drawRoute(){
     if(map.getSource('route-src')){map.getSource('route-src').setData(gj);}
     else{
       map.addSource('route-src',{type:'geojson',data:gj});
-      map.addLayer({id:'route-shadow',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'rgba(0,0,0,0.45)','line-width':11,'line-opacity':0.55,'line-blur':4}},'road-fill');
+      // Layer 1: wide outer atmospheric glow
+      map.addLayer({id:'route-glow-outer',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#FFE500','line-width':22,'line-opacity':0.12,'line-blur':18}},'road-fill');
+      // Layer 2: dark shadow for depth
+      map.addLayer({id:'route-shadow',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'rgba(0,0,0,0.55)','line-width':10,'line-opacity':0.65,'line-blur':3}},'road-fill');
+      // Layer 3: neon yellow core
       map.addLayer({id:'route-line',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#FFE500','line-width':5,'line-opacity':1}},'road-fill');
+      // Layer 4: white inner spine for contrast
+      map.addLayer({id:'route-core',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'rgba(255,255,255,0.55)','line-width':1.5,'line-opacity':0.8}},'road-fill');
     }
     document.getElementById('route-card').classList.add('show');
     closeDetail(); // road detail and route card should not be visible simultaneously
@@ -1920,8 +2026,9 @@ async function drawRoute(){
   }catch(e){console.warn('drawRoute:',e);showToast('Could not reach routing service',2500);}
 }
 function clearRoute(){
+  stopNavigation();
   routeFrom=null;routeTo=null;updateDirInputs();
-  ['route-line','route-shadow'].forEach(id=>{if(map.getLayer(id))map.removeLayer(id);});
+  ['route-core','route-line','route-shadow','route-glow-outer'].forEach(id=>{if(map.getLayer(id))map.removeLayer(id);});
   if(map.getSource('route-src'))map.removeSource('route-src');
   document.getElementById('route-card').classList.remove('show');
   document.getElementById('route-steps').innerHTML='';
@@ -1931,6 +2038,59 @@ function setRouteMode(profile,btn){
   document.querySelectorAll('.rm-btn').forEach(b=>b.classList.remove('active'));
   if(btn)btn.classList.add('active');
   if(routeFrom&&routeTo)drawRoute();
+}
+// ── Navigation Mode ────────────────────────────────────────────────────
+let _navWatchId=null,_navSteps=[],_navStepIdx=0,_navActive=false;
+function startNavigation(){
+  if(!routeFrom||!routeTo){showToast('Plan a route first',2500);return;}
+  _navActive=true;
+  document.getElementById('btn-nav-start').classList.add('active');
+  document.getElementById('nav-hud').classList.add('show');
+  document.getElementById('nav-loc-dot').style.display='block';
+  map.easeTo({pitch:62,bearing:0,duration:800});
+  // Populate step data from rendered route steps DOM
+  const stepEls=document.querySelectorAll('.rs-step');
+  _navSteps=Array.from(stepEls).map(el=>{
+    const ico=el.querySelector('.rs-ico')?.textContent||'→';
+    const txt=el.querySelector('div>div:first-child')?.textContent||'Continue';
+    const dist=el.querySelector('.rs-dist')?.textContent||'';
+    return{ico,txt,dist};
+  });
+  _navStepIdx=0;
+  updateNavHUD();
+  // Start GPS tracking
+  if(!navigator.geolocation){showToast('GPS not available',2500);return;}
+  _navWatchId=navigator.geolocation.watchPosition(pos=>{
+    const{longitude:lng,latitude:lat,heading}=pos.coords;
+    // Move the nav dot
+    const pt=map.project([lng,lat]);
+    const dot=document.getElementById('nav-loc-dot');
+    dot.style.left=pt.x+'px';dot.style.top=pt.y+'px';
+    // Follow camera
+    map.easeTo({center:[lng,lat],bearing:heading||0,pitch:62,duration:500,essential:true});
+    // Advance step if close to next maneuver (simplified)
+    if(_navStepIdx<_navSteps.length-1){
+      _navStepIdx++;updateNavHUD();
+    }
+  },{enableHighAccuracy:true,maximumAge:2000,timeout:10000});
+  showToast('🧭 Navigation started — follow the route',3000);
+}
+function updateNavHUD(){
+  const step=_navSteps[_navStepIdx]||{ico:'🏁',txt:'Arrive at destination',dist:''};
+  document.getElementById('nh-maneuver').textContent=step.ico;
+  document.getElementById('nh-street').textContent=step.txt;
+  document.getElementById('nh-dist').textContent=step.dist;
+  const remaining=_navSteps.slice(_navStepIdx).map(s=>parseFloat(s.dist)||0).reduce((a,b)=>a+b,0);
+  document.getElementById('nh-eta').textContent=remaining>0?'~'+Math.round(remaining/1000*({driving:1,bicycle:3,foot:12}[_routeMode]||1))+' min remaining':'Approaching destination';
+}
+function stopNavigation(){
+  if(!_navActive)return;
+  _navActive=false;
+  if(_navWatchId!=null){navigator.geolocation.clearWatch(_navWatchId);_navWatchId=null;}
+  document.getElementById('nav-hud').classList.remove('show');
+  document.getElementById('nav-loc-dot').style.display='none';
+  document.getElementById('btn-nav-start').classList.remove('active');
+  map.easeTo({pitch:0,bearing:0,duration:800});
 }
 // ── Emergency Layer ────────────────────────────────────────────────────
 let _emergencyPulseRaf=null;
