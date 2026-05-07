@@ -21,11 +21,13 @@ const QUERY = `
 [out:json][timeout:180];
 area["ISO3166-1"="SO"]->.somalia;
 (
-  node["amenity"~"^(hospital|clinic|pharmacy|school|university|college|bank|mosque|place_of_worship|marketplace|restaurant|cafe|fast_food|hotel|police|library|townhall|post_office|fuel)$"](area.somalia);
-  node["healthcare"~"^(hospital|clinic|pharmacy)$"](area.somalia);
-  node["tourism"~"^(hotel|hostel|motel|attraction)$"](area.somalia);
-  node["shop"~"^(supermarket|mall|market|general|convenience)$"](area.somalia);
-  node["office"~"^(government|ngo|diplomatic)$"](area.somalia);
+  node["amenity"](area.somalia);
+  node["healthcare"](area.somalia);
+  node["tourism"](area.somalia);
+  node["shop"](area.somalia);
+  node["office"](area.somalia);
+  node["craft"](area.somalia);
+  node["leisure"~"^(stadium|sports_centre|park|swimming_pool)$"](area.somalia);
 );
 out body;
 `;
@@ -36,17 +38,23 @@ function categorize(tags) {
   const t = tags.tourism || '';
   const s = tags.shop || '';
   const o = tags.office || '';
+  const l = tags.leisure || '';
   const rel = tags.religion || '';
-  if (a === 'hospital' || a === 'clinic' || h === 'hospital' || h === 'clinic') return ['hospital', a || h];
+  if (['hospital','clinic'].includes(a) || ['hospital','clinic'].includes(h)) return ['hospital', a || h];
   if (a === 'pharmacy' || h === 'pharmacy') return ['pharmacy', 'pharmacy'];
-  if (a === 'mosque' || a === 'place_of_worship' && rel === 'muslim') return ['mosque', 'mosque'];
-  if (a === 'school' || a === 'university' || a === 'college') return ['school', a];
-  if (a === 'bank') return ['bank', 'bank'];
-  if (a === 'marketplace' || s) return ['market', s || 'marketplace'];
-  if (a === 'restaurant' || a === 'cafe' || a === 'fast_food') return ['restaurant', a];
-  if (t) return ['hotel', t];
-  if (a === 'townhall' || o === 'government' || o === 'diplomatic') return ['government', a || o];
-  if (a === 'police') return ['police', 'police'];
+  if (a === 'mosque' || (a === 'place_of_worship' && rel === 'muslim') || (a === 'place_of_worship')) return ['mosque', 'mosque'];
+  if (['school','university','college','kindergarten'].includes(a)) return ['school', a];
+  if (['bank','atm'].includes(a)) return ['bank', a];
+  if (a === 'marketplace' || ['supermarket','mall','convenience','general','wholesale','kiosk','hardware','electronics','clothes','shoes','mobile_phone'].includes(s)) return ['market', s || a];
+  if (['restaurant','cafe','fast_food','food_court','ice_cream','juice_bar'].includes(a)) return ['restaurant', a];
+  if (['hotel','hostel','motel','guest_house'].includes(t) || a === 'hotel') return ['hotel', t || a];
+  if (['townhall','embassy','courthouse','prison'].includes(a) || ['government','diplomatic','ngo'].includes(o)) return ['government', a || o];
+  if (a === 'police' || a === 'fire_station') return ['police', a];
+  if (a === 'fuel' || a === 'car_wash' || a === 'car_repair' || s === 'car' || s === 'car_parts') return ['fuel', a || s];
+  if (['stadium','sports_centre','swimming_pool'].includes(l)) return ['leisure', l];
+  if (t === 'attraction' || t === 'museum' || t === 'viewpoint') return ['tourism', t];
+  if (s) return ['market', s];
+  if (o) return ['government', o];
   return ['other', a || h || s || o || t || 'poi'];
 }
 
@@ -100,7 +108,7 @@ async function run() {
   let inserted = 0;
   for (let i = 0; i < rows.length; i += BATCH) {
     const batch = rows.slice(i, i + BATCH);
-    const r = await fetch(SB + '/rest/v1/snas_pois', {
+    const r = await fetch(SB + '/rest/v1/snas_pois?on_conflict=osm_id', {
       method: 'POST',
       headers: HDR,
       body: JSON.stringify(batch),

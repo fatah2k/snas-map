@@ -129,6 +129,13 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
 .sat-btn.active{background:#1a73e8;color:#fff}
 #toast{position:fixed;bottom:120px;left:50%;transform:translateX(-50%) translateY(10px);background:rgba(32,33,36,.92);backdrop-filter:blur(12px);color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;z-index:1000;white-space:nowrap;font-family:"Roboto Mono",monospace}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#road-banner{position:fixed;top:76px;left:50%;transform:translateX(-50%) translateY(-8px);z-index:950;background:rgba(255,255,255,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:16px;box-shadow:0 4px 28px rgba(0,0,0,.22),0 0 0 3px #FFE500;padding:12px 22px 12px 16px;display:flex;align-items:center;gap:10px;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;max-width:min(420px,calc(100vw - 32px))}
+#road-banner.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto}
+#road-banner-icon{font-size:18px;flex-shrink:0}
+#road-banner-body{flex:1;min-width:0}
+#road-banner-so{font-size:16px;font-weight:600;color:#202124;font-family:"Google Sans",sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#road-banner-en{font-size:11px;color:#5f6368;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#road-banner-x{background:none;border:none;font-size:18px;color:#9aa0a6;cursor:pointer;flex-shrink:0;line-height:1;padding:2px}
 #zc{position:fixed;bottom:50px;right:12px;z-index:900;display:flex;flex-direction:column;gap:4px}
 .z-btn{width:40px;height:40px;background:rgba(255,255,255,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:none;border-radius:10px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.16);transition:all .15s;color:#5f6368}
 .z-btn:hover{box-shadow:0 4px 18px rgba(0,0,0,.22);color:#202124;transform:translateY(-1px)}
@@ -607,6 +614,7 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
   </div>
 </div>
 <div id="toast"></div>
+<div id="road-banner"><span id="road-banner-icon">🛣</span><div id="road-banner-body"><div id="road-banner-so"></div><div id="road-banner-en"></div></div><button id="road-banner-x" onclick="closeRoadBanner()">✕</button></div>
 <div id="demo-counter"><span id="demo-counter-txt"></span><button id="demo-counter-x" onclick="stopDemo()" title="Stop Demo">&#x2715;</button></div>
 <div id="demo-popup">
   <div class="dp-gov">Federal Government of Somalia &#183; SNAS Demo</div>
@@ -909,8 +917,8 @@ function addAllLayers(){
   const V=id=>layerVis[id]?'visible':'none';
   if(!map.getLayer('road-casing'))map.addLayer({id:'road-casing',type:'line',source:'roads',minzoom:8,layout:{'line-cap':'round','line-join':'round','visibility':V('roads')},paint:{'line-color':['match',['get','highway_class'],['motorway','trunk'],'#d4a020','primary','#c88040','secondary','#aabbc8','tertiary','#c8ccd0','residential','#d8dadc','#dcdee0'],'line-width':['interpolate',['exponential',1.5],['zoom'],8,['match',['get','highway_class'],['motorway','trunk'],3,'primary',2.5,'secondary',1.5,'tertiary',1,0.8],12,['match',['get','highway_class'],['motorway','trunk'],7,'primary',6,'secondary',4,'tertiary',2.5,'residential',2,1.5],16,['match',['get','highway_class'],['motorway','trunk'],18,'primary',15,'secondary',12,'tertiary',8,'residential',6,3]],'line-opacity':['interpolate',['linear'],['zoom'],8,0.4,10,0.9]}});
   if(!map.getLayer('road-fill'))map.addLayer({id:'road-fill',type:'line',source:'roads',minzoom:8,layout:{'line-cap':'round','line-join':'round','visibility':V('roads')},paint:{'line-color':['match',['get','highway_class'],['motorway','trunk'],'#f8d06b','primary','#ffd9a0','secondary','#ffffff','tertiary','#ffffff','residential','#fafafa','service','#f5f5f0','track','#ede8e0','#f0f0ec'],'line-width':['interpolate',['exponential',1.5],['zoom'],8,['match',['get','highway_class'],['motorway','trunk'],2,'primary',1.8,'secondary',1,'tertiary',0.7,0.5],12,['match',['get','highway_class'],['motorway','trunk'],5,'primary',4,'secondary',2.5,'tertiary',1.5,'residential',1.2,0.8],16,['match',['get','highway_class'],['motorway','trunk'],14,'primary',11,'secondary',9,'tertiary',6,'residential',4.5,2]],'line-opacity':['interpolate',['linear'],['zoom'],8,0.3,10,1]}});
-  if(!map.getLayer('road-selected-glow'))map.addLayer({id:'road-selected-glow',type:'line',source:'roads',minzoom:6,filter:['==','street_id',-1],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#ffffff','line-width':['interpolate',['linear'],['zoom'],8,12,14,22,18,32],'line-opacity':0.55,'line-blur':4}});
-  if(!map.getLayer('road-selected'))map.addLayer({id:'road-selected',type:'line',source:'roads',minzoom:6,filter:['==','street_id',-1],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#1a73e8','line-width':['interpolate',['linear'],['zoom'],8,5,14,9,18,14],'line-opacity':1}});
+  if(!map.getLayer('road-selected-glow'))map.addLayer({id:'road-selected-glow',type:'line',source:'roads',minzoom:6,filter:['==','street_id',-1],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#FFE500','line-width':['interpolate',['linear'],['zoom'],8,16,14,26,18,36],'line-opacity':0.45,'line-blur':6}});
+  if(!map.getLayer('road-selected'))map.addLayer({id:'road-selected',type:'line',source:'roads',minzoom:6,filter:['==','street_id',-1],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#FFE500','line-width':['interpolate',['linear'],['zoom'],8,6,14,10,18,14],'line-opacity':1}});
   // Road labels: show from zoom 11 so residential roads are always labelled
   if(!map.getLayer('road-labels'))map.addLayer({id:'road-labels',type:'symbol',source:'roads',minzoom:10,
     filter:['!=',['coalesce',['get','display_name'],''],''],
@@ -971,9 +979,13 @@ function addAllLayers(){
   map.on('mouseleave','road-fill',()=>{map.getCanvas().style.cursor='';});
   map.on('mouseenter','district-circles',()=>{map.getCanvas().style.cursor='pointer';});
   map.on('mouseleave','district-circles',()=>{map.getCanvas().style.cursor='';});
-  map.on('click','road-fill',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;selectRoadOnMap(p.street_id);showDetail(p,districtMap[p.district_id],true);});
+  map.on('click','road-fill',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;selectRoadOnMap(p.street_id);const _so=p.name_so&&p.name_so!=='Unnamed'?p.name_so:'';const _en=p.display_name||p.name_en||'';if(_so||_en)showRoadBanner(_so,_en);showDetail(p,districtMap[p.district_id],true);});
   map.on('click','district-circles',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;const d=districtMap[p.district_id];if(!d)return;map.flyTo({center:[d.lon,d.lat],zoom:d.region_id==='BN'?15:14,duration:1000,essential:true});afterFly();openRight();renderDistrictInfo(d);});
-  map.on('click',e=>{if(e.defaultPrevented)return;closeDetail();closeWhatsHere();});
+  map.on('click',e=>{if(e.defaultPrevented)return;closeDetail();closeWhatsHere();closeRoadBanner();});
+  // Force road-labels to top of render stack so nothing covers it
+  try{map.moveLayer('road-labels');}catch(e){}
+  try{map.moveLayer('road-selected-glow');}catch(e){}
+  try{map.moveLayer('road-selected');}catch(e){}
   // Right-click / long press = What's Here
   map.on('contextmenu',e=>{e.preventDefault();showWhatsHere(e.lngLat,e.point);});
   map.on('touchstart',e=>{if(e.points&&e.points.length>1)return;const ll=e.lngLat,pt=e.point;longPressTimer=setTimeout(()=>showWhatsHere(ll,pt),600);});
@@ -987,7 +999,7 @@ setTimeout(()=>{if(!styleReady&&!usingFallback){usingFallback=true;map.setStyle(
 const SNAS_SOURCES=new Set(['roads','road-labels-src','districts','regions-src','rivers-src','mtn-src','oil-src','min-src','mgq-districts','somalia-src','cities-src','poi-src']);
 let _satSaved=[];
 // ── POI layer ──
-const POI_ICONS={hospital:'🏥',mosque:'🕌',school:'🏫',market:'🛒',bank:'🏦',restaurant:'🍴',hotel:'🏨',government:'🏛',pharmacy:'💊',police:'🚔',other:'📍'};
+const POI_ICONS={hospital:'🏥',mosque:'🕌',school:'🏫',market:'🛒',bank:'🏦',restaurant:'🍴',hotel:'🏨',government:'🏛',pharmacy:'💊',police:'🚔',fuel:'⛽',leisure:'🏟',tourism:'🏛',other:'📍'};
 let _snasPoiCache=[];
 async function loadSNASPOIs(){
   try{
@@ -1527,6 +1539,16 @@ async function fetchDistrictRoadList(dist){
     listEl.innerHTML=html;
   }catch(e){console.error('fetchDistrictRoadList:',e);if(listEl&&openDistrictId===dist.district_id)listEl.innerHTML='<div class="err-box">Could not load roads: '+e.message+'</div>';}
 }
+let _bannerTimer=null;
+function showRoadBanner(nameSo,nameEn){
+  const el=document.getElementById('road-banner');
+  document.getElementById('road-banner-so').textContent=nameSo||nameEn||'';
+  document.getElementById('road-banner-en').textContent=(nameSo&&nameEn&&nameSo!==nameEn)?nameEn:'';
+  el.classList.add('show');
+  clearTimeout(_bannerTimer);
+  _bannerTimer=setTimeout(closeRoadBanner,8000);
+}
+function closeRoadBanner(){document.getElementById('road-banner').classList.remove('show');clearTimeout(_bannerTimer);}
 function selectRoadOnMap(streetId){const cached=roadCache[streetId];const ns=cached&&cached.props&&cached.props.name_so&&cached.props.name_so!=='Unnamed'?cached.props.name_so.trim():'';const f=ns?['==','name_so',ns]:['==','street_id',streetId];if(map.getLayer('road-selected-glow'))map.setFilter('road-selected-glow',f);if(map.getLayer('road-selected'))map.setFilter('road-selected',f);}
 let _lastClickedRoad=null,_lastClickTs=0;
 async function clickRoad(streetId,districtId){
@@ -1644,7 +1666,7 @@ function pickResult(idx){
   if(r.type==='d'||r.type==='p'){const d=r.data;if(!d.lat||!d.lon)return;openRight();renderDistrictInfo(d);document.querySelectorAll('.dl-it').forEach(el=>el.classList.remove('active'));const row=document.getElementById('dlr-'+d.district_id);if(row)row.classList.add('active');map.flyTo({center:[d.lon,d.lat],zoom:d.region_id==='BN'?15:14,duration:1000,essential:true});afterFly(()=>spawnPulse({lng:d.lon,lat:d.lat}));}
   else if(r.type==='r'){const rd=allDistricts.filter(d=>d.region_id===r.data.region_id);openRight();renderDistrictList(rd);document.getElementById('rp-tt').textContent=r.data.region_name;const lats=rd.filter(d=>d.lat).map(d=>d.lat),lons=rd.filter(d=>d.lon).map(d=>d.lon);if(lats.length){map.flyTo({center:[lons.reduce((a,b)=>a+b)/lons.length,lats.reduce((a,b)=>a+b)/lats.length],zoom:8,duration:1200,essential:true});afterFly();}}
   else if(r.type==='poi'){const[lng,lat]=r.data.coords;map.flyTo({center:[lng,lat],zoom:18,duration:1000,essential:true});map.once('moveend',()=>spawnPulse({lng,lat}));showToast('📍 '+r.nm,3000);}
-  else if(r.type==='s'){const dist=districtMap[r.data.district_id];const cached=roadCache[r.data.street_id];if(cached){openRight();if(dist)renderDistrictInfo(dist);map.flyTo({center:[cached.center.lng,cached.center.lat],zoom:19,duration:800,essential:true});afterFly(()=>spawnPulse({lng:cached.center.lng,lat:cached.center.lat}));showDetail(r.data,dist,false);}else if(dist&&dist.lat&&dist.lon){showToast('Locating '+r.nm+'...',3000);openRight();renderDistrictInfo(dist);map.flyTo({center:[dist.lon,dist.lat],zoom:12,duration:1000,essential:true});map.once('moveend',async()=>{resetStream();await streamRoads();const c2=roadCache[r.data.street_id];if(c2){map.flyTo({center:[c2.center.lng,c2.center.lat],zoom:19,duration:600,essential:true});afterFly(()=>spawnPulse({lng:c2.center.lng,lat:c2.center.lat}));showDetail(r.data,dist,false);}else{showDetail(r.data,dist,false);showToast('Zoom in to this district to see the road',2800);}});}else showDetail(r.data,dist,false);}
+  else if(r.type==='s'){const dist=districtMap[r.data.district_id];const cached=roadCache[r.data.street_id];const _so=r.data.name_so&&r.data.name_so!=='Unnamed'?r.data.name_so:'';const _en=r.data.name_en&&r.data.name_en!=='Unnamed'?r.data.name_en:'';if(_so||_en)showRoadBanner(_so,_en);if(cached){selectRoadOnMap(r.data.street_id);openRight();if(dist)renderDistrictInfo(dist);map.flyTo({center:[cached.center.lng,cached.center.lat],zoom:19,duration:800,essential:true});afterFly(()=>spawnPulse({lng:cached.center.lng,lat:cached.center.lat}));showDetail(r.data,dist,false);}else if(dist&&dist.lat&&dist.lon){showToast('Locating '+r.nm+'...',3000);openRight();renderDistrictInfo(dist);map.flyTo({center:[dist.lon,dist.lat],zoom:12,duration:1000,essential:true});map.once('moveend',async()=>{resetStream();await streamRoads();const c2=roadCache[r.data.street_id];if(c2){selectRoadOnMap(r.data.street_id);map.flyTo({center:[c2.center.lng,c2.center.lat],zoom:19,duration:600,essential:true});afterFly(()=>spawnPulse({lng:c2.center.lng,lat:c2.center.lat}));showDetail(r.data,dist,false);}else{showDetail(r.data,dist,false);showToast('Zoom in to this district to see the road',2800);}});}else showDetail(r.data,dist,false);}
 }
 function closeAC(){document.getElementById('ac').classList.remove('open');document.getElementById('sc').classList.remove('ac-open');acFocusIdx=-1;}
 const _RECENT_KEY='snas_recent_v1';let _recentCache=[];
