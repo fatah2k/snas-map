@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="SNAS Map">
-<meta name="theme-color" content="#060A1C">
+<meta name="theme-color" content="#112040">
 <meta name="description" content="Somali National Address System — live mapping, navigation & postcodes">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23060A1C'/><text y='.9em' font-size='75' x='12'>🗺️</text></svg>">
@@ -19,7 +19,8 @@
 html,body{height:100%;overflow:hidden;font-family:"Roboto",sans-serif;background:#1a1a2e}
 #map{position:fixed;inset:0;z-index:0}
 .maplibregl-ctrl-attrib,.maplibregl-ctrl-logo{display:none!important}
-.maplibregl-ctrl-bottom-left,.maplibregl-ctrl-bottom-right{display:none!important}
+.maplibregl-ctrl-bottom-left{display:none!important}
+.maplibregl-ctrl-bottom-right{bottom:calc(84px + env(safe-area-inset-bottom,0px))!important;right:10px!important}
 #sw{position:fixed;top:14px;left:70px;z-index:900;width:min(500px,calc(100vw - 144px))}
 #sc{background:rgba(255,255,255,.97);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:28px;box-shadow:0 2px 16px rgba(0,0,0,.22),0 1px 4px rgba(0,0,0,.12);display:flex;align-items:center;overflow:hidden;transition:box-shadow .2s,border-radius .15s}
 #sc:focus-within{box-shadow:0 4px 28px rgba(0,0,0,.22)}
@@ -549,7 +550,7 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
   --font-body:"Inter",sans-serif;
   --font-mono:"Space Mono",monospace;
 }
-html,body{font-family:var(--font-body)!important;background:#060A1C!important}
+html,body{font-family:var(--font-body)!important;background:#112040!important}
 
 /* ── Search bar ─────────────────────────────────────────── */
 #sc{
@@ -779,7 +780,7 @@ mark{background:rgba(0,229,255,0.25)!important;color:var(--ne-cyan)!important}
 #road-banner-x{color:var(--ne-sub)!important}
 
 /* ── Loading screen ────────────────────────────────────── */
-#ld{background:linear-gradient(160deg,#060A1C,#0D1630)!important}
+#ld{background:linear-gradient(160deg,#112040,#1A3468)!important}
 .ld-logo{
   font-family:var(--font-brand)!important;
   font-size:42px!important;
@@ -1086,18 +1087,18 @@ mark{background:rgba(0,229,255,0.25)!important;color:var(--ne-cyan)!important}
    PREMIUM SNAS v2 — Clean, fixed, Google Maps-level dark UI
    ══════════════════════════════════════════════════════════ */
 :root{
-  --pm-bg:#080C18;
-  --pm-surf:rgba(12,18,38,0.93);
-  --pm-surf2:rgba(16,24,50,0.97);
-  --pm-border:rgba(80,110,200,0.16);
-  --pm-border-hi:rgba(100,160,255,0.35);
-  --pm-accent:#00D4FF;
-  --pm-accent2:#7B6FFF;
+  --pm-bg:#112040;
+  --pm-surf:rgba(17,32,64,0.94);
+  --pm-surf2:rgba(20,38,76,0.97);
+  --pm-border:rgba(80,140,240,0.18);
+  --pm-border-hi:rgba(100,180,255,0.40);
+  --pm-accent:#33DDFF;
+  --pm-accent2:#8B7FFF;
   --pm-green:#39FF14;
-  --pm-text:#DCE4FF;
-  --pm-sub:#6A7AAA;
-  --pm-glass:blur(28px) saturate(1.4);
-  --pm-sh:0 8px 48px rgba(0,0,0,0.7),0 2px 12px rgba(0,0,0,0.4);
+  --pm-text:#E0EAFF;
+  --pm-sub:#7A90C0;
+  --pm-glass:blur(28px) saturate(1.5);
+  --pm-sh:0 8px 40px rgba(0,0,0,0.55),0 2px 10px rgba(0,0,0,0.3);
   --pm-radius:20px;
   --pm-radius-sm:14px;
   --pm-safe-top:env(safe-area-inset-top,0px);
@@ -1118,7 +1119,9 @@ html,body{background:var(--pm-bg)!important;font-family:'Inter',system-ui,sans-s
   left:50%!important;transform:translateX(-50%)!important;
   width:min(560px,calc(100vw - 28px))!important;
   z-index:920!important;padding:0!important;
+  pointer-events:none!important;
 }
+#sc,#ac{pointer-events:auto!important}
 #sc{
   background:var(--pm-surf2)!important;
   border:1px solid var(--pm-border-hi)!important;
@@ -1547,21 +1550,35 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
 .ld-sub{color:var(--pm-sub)!important;font-family:'Inter',sans-serif!important}
 .ld-fill{background:linear-gradient(90deg,var(--pm-accent),var(--pm-accent2))!important}
 
-/* ── Chips: single scrollable row, no wrapping ───────────── */
+/* ── Chips: grid inside left panel ───────────────────────── */
 #chips{
-  display:flex!important;
-  flex-wrap:nowrap!important;
-  overflow-x:auto!important;
-  -webkit-overflow-scrolling:touch!important;
-  scrollbar-width:none!important;
-  padding:0 4px 4px!important;
-  margin-top:8px!important;
-  gap:7px!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:8px!important;
+  padding:4px 0 8px!important;
+  margin-top:4px!important;
 }
-#chips::-webkit-scrollbar{display:none!important}
 
 /* ── Hide SNAS text label inside search bar — cleaner ────── */
 #slogo{display:none!important}
+
+/* ── Zoom controls ────────────────────────────────────────── */
+.maplibregl-ctrl-zoom-in,.maplibregl-ctrl-zoom-out{
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  color:var(--pm-text)!important;
+  width:40px!important;height:40px!important;font-size:20px!important;
+}
+.maplibregl-ctrl-zoom-in:hover,.maplibregl-ctrl-zoom-out:hover{
+  background:rgba(51,221,255,0.15)!important;
+  border-color:var(--pm-accent)!important;
+}
+.maplibregl-ctrl-group{
+  background:transparent!important;border:none!important;
+  box-shadow:0 4px 20px rgba(0,0,0,0.5)!important;
+  border-radius:14px!important;overflow:hidden!important;
+}
+.maplibregl-ctrl-group button+button{border-top:1px solid var(--pm-border)!important}
 
 /* ── Search bar: simpler, wider pill ────────────────────── */
 #sc{border-radius:26px!important}
@@ -1659,16 +1676,6 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
     <div id="sico">&#9906;</div>
   </div>
   <div id="ac" role="listbox"></div>
-  <div id="chips">
-    <button class="chip" id="chip-hospital" onclick="chipSearch('hospital')">&#127973; Hospitals</button>
-    <button class="chip" id="chip-mosque" onclick="chipSearch('mosque')">&#128332; Mosques</button>
-    <button class="chip" id="chip-market" onclick="chipSearch('market')">&#127978; Markets</button>
-    <button class="chip" id="chip-restaurant" onclick="chipSearch('restaurant')">🍴 Food</button>
-    <button class="chip" id="chip-bank" onclick="chipSearch('bank')">&#127970; Banks</button>
-    <button class="chip" id="chip-school" onclick="chipSearch('school')">&#127979; Schools</button>
-    <button class="chip" id="chip-fuel" onclick="chipSearch('fuel')">&#9981; Fuel</button>
-    <button class="chip" id="chip-government" onclick="chipSearch('government')">&#127963; Gov</button>
-  </div>
 </div>
 <div id="fabs">
   <button class="fab" id="btn-menu" title="Layers">&#9776;</button>
@@ -1686,8 +1693,22 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
   <button class="sat-btn" id="sat-sat" onclick="setMapMode('satellite')">&#128752; Satellite</button>
 </div>
 <div id="lp">
-  <div class="lp-hd"><span class="lp-ht">Map Layers</span><button class="lp-x" onclick="closeLayers()">&#215;</button></div>
+  <div class="lp-hd"><span class="lp-ht">&#9776; Explore</span><button class="lp-x" onclick="closeLayers()">&#215;</button></div>
   <div class="lp-body">
+    <!-- ── Find Nearby chips ─────────────────── -->
+    <div class="lp-grp">
+      <div class="lp-gl">Find Nearby</div>
+      <div id="chips">
+        <button class="chip" id="chip-hospital" onclick="chipSearch('hospital');closeLayers()">&#127973; Hospitals</button>
+        <button class="chip" id="chip-mosque" onclick="chipSearch('mosque');closeLayers()">&#128332; Mosques</button>
+        <button class="chip" id="chip-market" onclick="chipSearch('market');closeLayers()">&#127978; Markets</button>
+        <button class="chip" id="chip-restaurant" onclick="chipSearch('restaurant');closeLayers()">🍴 Food</button>
+        <button class="chip" id="chip-bank" onclick="chipSearch('bank');closeLayers()">&#127970; Banks</button>
+        <button class="chip" id="chip-school" onclick="chipSearch('school');closeLayers()">&#127979; Schools</button>
+        <button class="chip" id="chip-fuel" onclick="chipSearch('fuel');closeLayers()">&#9981; Fuel</button>
+        <button class="chip" id="chip-government" onclick="chipSearch('government');closeLayers()">&#127963; Gov</button>
+      </div>
+    </div>
     <div class="lp-grp">
       <div class="lp-gl">Administrative</div>
       <div class="lp-row" onclick="togLyr('markers')"><div class="lp-sw" style="background:#c8601a;border-radius:50%"></div><div class="lp-t"><div class="lp-tm">District Markers</div><div class="lp-ts">92 districts</div></div><div class="tog on" id="tog-markers"></div></div>
@@ -1713,8 +1734,9 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
     </div>
     <div class="lp-grp">
       <div class="lp-gl">Resources</div>
-      <div class="lp-row" onclick="togLyr('oil')"><div class="lp-sw" style="background:#2d2d2d"></div><div class="lp-t"><div class="lp-tm">Oil &amp; Gas Basins</div><div class="lp-ts">Exploration areas</div></div><div class="tog" id="tog-oil"></div></div>
-      <div class="lp-row" onclick="togLyr('minerals')"><div class="lp-sw" style="background:#f5c518"></div><div class="lp-t"><div class="lp-tm">Minerals</div><div class="lp-ts">Gold, gems</div></div><div class="tog" id="tog-minerals"></div></div>
+      <div class="lp-row" onclick="togLyr('oil')"><div class="lp-sw" style="background:#2d2d2d"></div><div class="lp-t"><div class="lp-tm">Oil &amp; Gas Basins</div><div class="lp-ts">5 exploration areas</div></div><div class="tog" id="tog-oil"></div></div>
+      <div class="lp-row" onclick="togLyr('minerals')"><div class="lp-sw" style="background:#f5c518"></div><div class="lp-t"><div class="lp-tm">Minerals</div><div class="lp-ts">Iron, uranium, gypsum, salt</div></div><div class="tog" id="tog-minerals"></div></div>
+      <div class="lp-row" onclick="togLyr('artgold')"><div class="lp-sw" style="background:#FFD700;border-radius:50%"></div><div class="lp-t"><div class="lp-tm">&#9919; Artisanal Gold Mining</div><div class="lp-ts">Known ASM sites across Somalia</div></div><div class="tog on" id="tog-artgold"></div></div>
     </div>
     <div class="lp-grp">
       <div class="lp-gl">Road Legend</div>
@@ -1776,8 +1798,6 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
 </div>
 <!-- Scale bar -->
 <div id="scale-bar">—</div>
-<!-- Global View / Great Trek Button -->
-<button id="global-view-btn" onclick="toggleGlobalView()" title="Zoom out to see global route">🌍 Global View</button>
 <!-- Address Book Panel -->
 <div id="addr-book">
   <div class="ab-hd">
@@ -1996,7 +2016,45 @@ const RIVER_DATA=[
 ];
 const MTN_DATA=[{n:'Shimbiris 2,460m',c:[47.23,10.75]},{n:'Surud Cad 2,408m',c:[47.35,10.63]},{n:'Wagar ~2,000m',c:[46.90,10.55]},{n:'Golis Range',c:[45.80,10.40]},{n:'Karkaar 2,100m',c:[49.50,10.80]},{n:'Ogo Highlands',c:[47.50,10.20]}];
 const OIL_DATA=[{n:'Mudug Basin',c:[47.5,6.5]},{n:'Nugaal Basin',c:[48.5,8.5]},{n:'Dharoor Basin',c:[49.0,10.5]},{n:'Ogaden Basin',c:[44.0,5.0]},{n:'Lamu Basin',c:[42.5,0.5]}];
-const MIN_DATA=[{n:'Beled Weyne - Gold',c:[45.2,4.7],col:'#f5c518'},{n:'Galgaduud - Gems',c:[46.5,5.5],col:'#f5c518'},{n:'Bari - Uranium',c:[49.5,11.0],col:'#00e676'},{n:'Sanaag - Iron',c:[47.5,10.8],col:'#ff8a65'},{n:'Somaliland - Gems',c:[44.5,9.8],col:'#ec407a'},{n:'Lower Juba - Titanium',c:[42.0,-0.5],col:'#90a4ae'}];
+const MIN_DATA=[
+  // Gold
+  {n:'Beled Weyne - Gold',c:[45.2,4.7],col:'#FFD700'},{n:'Galgaduud - Gold',c:[46.5,5.5],col:'#FFD700'},
+  {n:'Sanaag Gold Belt',c:[47.4,10.73],col:'#FFD700'},{n:'Nugaal Valley - Gold',c:[48.1,8.7],col:'#FFD700'},
+  // Uranium
+  {n:'Bari - Uranium',c:[49.5,11.0],col:'#00e676'},
+  // Iron Ore
+  {n:'Sanaag - Iron Ore',c:[47.5,10.8],col:'#FF8A65'},{n:'Mudug - Iron Ore',c:[47.2,6.7],col:'#FF8A65'},
+  // Gypsum (world-class deposits)
+  {n:'Berbera - Gypsum',c:[45.2,10.4],col:'#E0E0E0'},{n:'Zeila - Gypsum',c:[43.47,11.35],col:'#E0E0E0'},
+  {n:'Erigavo - Gypsum',c:[47.36,10.60],col:'#E0E0E0'},{n:'Burtinle - Gypsum',c:[49.4,8.4],col:'#E0E0E0'},
+  {n:'Garowe - Gypsum',c:[48.47,8.41],col:'#E0E0E0'},
+  // Salt
+  {n:'Zeila Salt Flats',c:[43.50,11.30],col:'#B0BEC5'},{n:'Bosaso Coastal Salt',c:[49.15,11.28],col:'#B0BEC5'},
+  // Other
+  {n:'Lower Juba - Titanium',c:[42.0,-0.5],col:'#90a4ae'},
+  {n:'Somaliland - Marble/Limestone',c:[44.5,9.8],col:'#ec407a'},
+  {n:'Bay - Limestone',c:[43.6,3.1],col:'#D7CCC8'},
+];
+// Artisanal Gold Mining Sites — documented ASM areas
+const ARTISANAL_GOLD=[
+  {n:'Cal Madow — Dhahar Gold Fields',c:[47.40,10.73]},
+  {n:'Badhan Gold Area',c:[47.57,10.84]},
+  {n:'Ceel Afweyn Gold',c:[47.09,10.43]},
+  {n:'Las Qoray Gold Zone',c:[47.35,11.16]},
+  {n:'Nugaal Valley Gold',c:[48.10,8.70]},
+  {n:'Garowe Gold Fields',c:[48.37,8.35]},
+  {n:'Bosaso Hinterland Gold',c:[49.18,11.28]},
+  {n:'Bari Qandala Gold',c:[49.87,11.47]},
+  {n:'Galdogob — Mudug Gold',c:[47.93,6.96]},
+  {n:'Beled Weyne Gold',c:[45.20,4.73]},
+  {n:'Galgaduud Gold',c:[46.80,5.80]},
+  {n:'Hiraan Border Gold',c:[44.83,4.05]},
+  {n:'Sool Plateau Gold',c:[47.20,8.80]},
+  {n:'Ainabo Gold',c:[46.99,9.00]},
+  {n:'Togdheer Gold Area',c:[45.30,9.80]},
+  {n:'Borama Hinterland Gold',c:[43.18,9.93]},
+  {n:'Erigavo Gold — Sanaag',c:[47.36,10.61]},
+];
 const SEQ_PATTERN=/^(Wadada\s+\d{4,}|Jidka\s+\d{4,}|Dhabbada\s+\d{4,}|Luuqa\s+\d{4,}|Avenyu\s+\d{4,}|\w{2,3}-RD-\d)/i;
 // ── Mogadishu curated POI fallback for chip search ──
 const CHIP_POIS={
@@ -2094,7 +2152,7 @@ function roadName(r){
 function hwBadge(hw){const h=(hw||'other').toLowerCase();const k=['motorway','trunk','primary','secondary','tertiary','residential','service','track'];return'<span class="hw-b hw-'+(k.includes(h)?h:'other')+'">'+(hw||'road')+'</span>';}
 let allDistricts=[],districtMap={},roadCache={};
 const _osmNames={};let _osmFetchTimer=null;
-let layerVis={markers:true,roads:true,labels:true,places:true,rivers:true,mountains:true,oil:false,minerals:false,buildings:false,distpolygons:true,coverage:true,somaliabound:true,cities:true};
+let layerVis={markers:true,roads:true,labels:true,places:true,rivers:true,mountains:true,oil:false,minerals:false,artgold:true,buildings:false,distpolygons:true,coverage:true,somaliabound:true,cities:true};
 let searchResults=[],searchTimer=null,acFocusIdx=-1;
 let isFetching=false,moveTimer=null,lastBboxKey='',workerPending=false;
 let currentMode='map',styleReady=false,usingFallback=false,openDistrictId=null;
@@ -2105,7 +2163,7 @@ const LAYER_GROUPS={
   markers:['district-circles','district-labels-sm','district-postcodes'],
   roads:['road-casing','road-fill'],labels:['road-labels'],places:['region-labels'],
   rivers:['rivers-layer','rivers-labels'],mountains:['mountains-layer','mountains-text'],
-  oil:['oil-layer'],minerals:['minerals-layer'],buildings:['buildings-3d'],
+  oil:['oil-layer'],minerals:['minerals-layer'],artgold:['artgold-layer','artgold-text'],buildings:['buildings-3d'],
   distpolygons:['dist-fill','dist-outline','dist-labels'],
   coverage:['road-coverage'],
   somaliabound:['somalia-fill','somalia-line'],
@@ -2115,6 +2173,7 @@ const map=new maplibregl.Map({
   container:'map',style:STYLE_MAP,center:HOME,zoom:HOME_Z,
   minZoom:2,maxZoom:22,antialias:true,attributionControl:false
 });
+map.addControl(new maplibregl.NavigationControl({showCompass:false}),'bottom-right');
 // Helpers
 function fbOn(){document.getElementById('fetch-bar').classList.add('on');}
 function fbOff(){document.getElementById('fetch-bar').classList.remove('on');}
@@ -2213,6 +2272,7 @@ function addAllLayers(){
   addSrc('mtn-src',{type:'geojson',data:{type:'FeatureCollection',features:MTN_DATA.map(m=>({type:'Feature',geometry:{type:'Point',coordinates:m.c},properties:{name:m.n}}))}});
   addSrc('oil-src',{type:'geojson',data:{type:'FeatureCollection',features:OIL_DATA.map(m=>({type:'Feature',geometry:{type:'Point',coordinates:m.c},properties:{name:m.n}}))}});
   addSrc('min-src',{type:'geojson',data:{type:'FeatureCollection',features:MIN_DATA.map(m=>({type:'Feature',geometry:{type:'Point',coordinates:m.c},properties:{name:m.n,col:m.col}}))}});
+  addSrc('artgold-src',{type:'geojson',data:{type:'FeatureCollection',features:ARTISANAL_GOLD.map(m=>({type:'Feature',geometry:{type:'Point',coordinates:m.c},properties:{name:m.n}}))}});
   const V=id=>layerVis[id]?'visible':'none';
   if(!map.getLayer('road-casing'))map.addLayer({id:'road-casing',type:'line',source:'roads',minzoom:8,layout:{'line-cap':'round','line-join':'round','visibility':V('roads')},paint:{'line-color':['match',['get','highway_class'],['motorway','trunk'],'#d4a020','primary','#c88040','secondary','#aabbc8','tertiary','#c8ccd0','residential','#d8dadc','#dcdee0'],'line-width':['interpolate',['exponential',1.5],['zoom'],8,['match',['get','highway_class'],['motorway','trunk'],3,'primary',2.5,'secondary',1.5,'tertiary',1,0.8],12,['match',['get','highway_class'],['motorway','trunk'],7,'primary',6,'secondary',4,'tertiary',2.5,'residential',2,1.5],16,['match',['get','highway_class'],['motorway','trunk'],18,'primary',15,'secondary',12,'tertiary',8,'residential',6,3]],'line-opacity':['interpolate',['linear'],['zoom'],8,0.4,10,0.9]}});
   if(!map.getLayer('road-fill'))map.addLayer({id:'road-fill',type:'line',source:'roads',minzoom:8,layout:{'line-cap':'round','line-join':'round','visibility':V('roads')},paint:{'line-color':['match',['get','highway_class'],['motorway','trunk'],'#f8d06b','primary','#ffd9a0','secondary','#ffffff','tertiary','#ffffff','residential','#fafafa','service','#f5f5f0','track','#ede8e0','#f0f0ec'],'line-width':['interpolate',['exponential',1.5],['zoom'],8,['match',['get','highway_class'],['motorway','trunk'],2,'primary',1.8,'secondary',1,'tertiary',0.7,0.5],12,['match',['get','highway_class'],['motorway','trunk'],5,'primary',4,'secondary',2.5,'tertiary',1.5,'residential',1.2,0.8],16,['match',['get','highway_class'],['motorway','trunk'],14,'primary',11,'secondary',9,'tertiary',6,'residential',4.5,2]],'line-opacity':['interpolate',['linear'],['zoom'],8,0.3,10,1]}});
@@ -2243,12 +2303,14 @@ function addAllLayers(){
   if(!map.getLayer('district-labels-sm'))map.addLayer({id:'district-labels-sm',type:'symbol',source:'districts',minzoom:9,maxzoom:13,layout:{'text-field':['get','name_en'],'text-font':['Noto Sans Bold'],'text-size':11,'text-offset':[0,1.5],'text-anchor':'top','text-allow-overlap':false,'visibility':V('markers')},paint:{'text-color':'#5f6368','text-halo-color':'rgba(255,255,255,0.92)','text-halo-width':2}});
   if(!map.getLayer('district-postcodes'))map.addLayer({id:'district-postcodes',type:'symbol',source:'districts',minzoom:12,layout:{'text-field':['concat',['get','postcode_prefix'],' \u00b7 ',['get','name_en']],'text-font':['Noto Sans Bold'],'text-size':10,'text-offset':[0,1.5],'text-anchor':'top','visibility':V('markers')},paint:{'text-color':'#e37400','text-halo-color':'rgba(255,255,255,0.95)','text-halo-width':2}});
   if(!map.getLayer('region-labels'))map.addLayer({id:'region-labels',type:'symbol',source:'regions-src',minzoom:5,maxzoom:9,layout:{'text-field':['get','name'],'text-font':['Noto Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],5,10,8,14],'text-transform':'uppercase','text-letter-spacing':0.15,'text-allow-overlap':false,'visibility':V('places')},paint:{'text-color':'#3c4043','text-halo-color':'rgba(255,255,255,0.85)','text-halo-width':2}});
-  if(!map.getLayer('rivers-layer'))map.addLayer({id:'rivers-layer',type:'line',source:'rivers-src',layout:{'line-cap':'round','line-join':'round','visibility':V('rivers')},paint:{'line-color':'#5bb8f5','line-width':['interpolate',['linear'],['zoom'],4,['get','weight'],8,['*',['get','weight'],2],12,['*',['get','weight'],3]],'line-opacity':0.85}});
+  if(!map.getLayer('rivers-layer'))map.addLayer({id:'rivers-layer',type:'line',source:'rivers-src',layout:{'line-cap':'round','line-join':'round','visibility':V('rivers')},paint:{'line-color':'#2196F3','line-width':['interpolate',['linear'],['zoom'],4,['get','weight'],8,['*',['get','weight'],2.5],12,['*',['get','weight'],4]],'line-opacity':0.95}});
   if(!map.getLayer('rivers-labels'))map.addLayer({id:'rivers-labels',type:'symbol',source:'rivers-src',minzoom:5,layout:{'symbol-placement':'line','text-field':['get','name'],'text-font':['Noto Sans Italic'],'text-size':10,'text-offset':[0,-1.0],'symbol-spacing':300,'visibility':V('rivers')},paint:{'text-color':'#1a73e8','text-halo-color':'rgba(255,255,255,0.9)','text-halo-width':1.5}});
   if(!map.getLayer('mountains-layer'))map.addLayer({id:'mountains-layer',type:'circle',source:'mtn-src',paint:{'circle-radius':5,'circle-color':'#8b7355','circle-stroke-color':'#fff','circle-stroke-width':1},layout:{'visibility':V('mountains')}});
   if(!map.getLayer('mountains-text'))map.addLayer({id:'mountains-text',type:'symbol',source:'mtn-src',layout:{'text-field':['get','name'],'text-font':['Noto Sans Regular'],'text-size':10,'text-offset':[0,-1.4],'text-anchor':'bottom','visibility':V('mountains')},paint:{'text-color':'#5d4037','text-halo-color':'rgba(255,255,255,0.85)','text-halo-width':1.5}});
   if(!map.getLayer('oil-layer'))map.addLayer({id:'oil-layer',type:'circle',source:'oil-src',paint:{'circle-radius':11,'circle-color':'#2d2d2d','circle-stroke-color':'#555','circle-stroke-width':2,'circle-opacity':0.85},layout:{'visibility':V('oil')}});
   if(!map.getLayer('minerals-layer'))map.addLayer({id:'minerals-layer',type:'circle',source:'min-src',paint:{'circle-radius':9,'circle-color':['get','col'],'circle-stroke-color':'#8b7355','circle-stroke-width':1.5,'circle-opacity':0.9},layout:{'visibility':V('minerals')}});
+  if(!map.getLayer('artgold-layer'))map.addLayer({id:'artgold-layer',type:'circle',source:'artgold-src',paint:{'circle-radius':8,'circle-color':'#FFD700','circle-stroke-color':'#B8860B','circle-stroke-width':2,'circle-opacity':0.92,'circle-blur':0.1},layout:{'visibility':V('artgold')}});
+  if(!map.getLayer('artgold-text'))map.addLayer({id:'artgold-text',type:'symbol',source:'artgold-src',minzoom:5,layout:{'text-field':['concat','⛏ ',['get','name']],'text-font':['Noto Sans Regular'],'text-size':10,'text-offset':[0,-1.5],'text-anchor':'bottom','text-allow-overlap':false,'visibility':V('artgold')},paint:{'text-color':'#FFD700','text-halo-color':'rgba(0,0,0,0.85)','text-halo-width':1.5}});
   // ── Somalia national boundary ──
   addSrc('somalia-src',{type:'geojson',data:{type:'FeatureCollection',features:[SOMALIA_BOUNDARY]}});
   if(!map.getLayer('somalia-fill'))map.addLayer({id:'somalia-fill',type:'fill',source:'somalia-src',maxzoom:8,layout:{'visibility':V('somaliabound')},paint:{'fill-color':'#4189DD','fill-opacity':['interpolate',['linear'],['zoom'],4,0.07,7,0.04,8,0]}});
@@ -2294,11 +2356,27 @@ function addAllLayers(){
   map.on('touchend',()=>clearTimeout(longPressTimer));
   map.on('touchmove',()=>clearTimeout(longPressTimer));
 }
-map.on('style.load',()=>{styleReady=true;addAllLayers();if(currentMode==='satellite')setTimeout(addSatelliteLayer,50);if(Object.keys(roadCache).length){if(roadWorker)roadWorker.postMessage({type:'BUILD_GJ'});else setSD('roads',buildRoadsGJ());}if(allDistricts.length){setSD('districts',buildDistrictsGJ());setSD('regions-src',buildRegionsGJ());}});
+map.on('style.load',()=>{
+  styleReady=true;
+  // Paint base-style waterways bright blue
+  try{
+    map.getStyle().layers.forEach(l=>{
+      const id=l.id.toLowerCase();
+      if((id.includes('water')||id.includes('river')||id.includes('stream'))&&l.type==='fill')
+        map.setPaintProperty(l.id,'fill-color','#1565C0');
+      if((id.includes('water')||id.includes('river')||id.includes('stream'))&&l.type==='line')
+        map.setPaintProperty(l.id,'line-color','#2196F3');
+    });
+  }catch(e){}
+  addAllLayers();
+  if(currentMode==='satellite')setTimeout(addSatelliteLayer,50);
+  if(Object.keys(roadCache).length){if(roadWorker)roadWorker.postMessage({type:'BUILD_GJ'});else setSD('roads',buildRoadsGJ());}
+  if(allDistricts.length){setSD('districts',buildDistrictsGJ());setSD('regions-src',buildRegionsGJ());}
+});
 map.on('error',e=>{console.warn('MapLibre:',e.error&&e.error.message||e);if(!usingFallback&&!styleReady&&currentMode==='map'){usingFallback=true;map.setStyle(STYLE_OSM_FALLBACK);}});
 setTimeout(()=>{if(!styleReady&&!usingFallback){usingFallback=true;map.setStyle(STYLE_OSM_FALLBACK);}},8000);
 // Satellite
-const SNAS_SOURCES=new Set(['roads','road-labels-src','districts','regions-src','rivers-src','mtn-src','oil-src','min-src','mgq-districts','somalia-src','cities-src','poi-src','settlements-src']);
+const SNAS_SOURCES=new Set(['roads','road-labels-src','districts','regions-src','rivers-src','mtn-src','oil-src','min-src','artgold-src','mgq-districts','somalia-src','cities-src','poi-src','settlements-src']);
 let _satSaved=[];
 // ── POI layer ──
 const POI_ICONS={hospital:'🏥',mosque:'🕌',school:'🏫',market:'🛒',bank:'🏦',restaurant:'🍴',hotel:'🏨',government:'🏛',pharmacy:'💊',police:'🚔',fuel:'⛽',leisure:'🏟',tourism:'🏛',other:'📍'};
