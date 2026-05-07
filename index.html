@@ -959,6 +959,13 @@ function addAllLayers(){
   if(!map.getLayer('road-coverage'))map.addLayer({id:'road-coverage',type:'line',source:'roads',minzoom:8,layout:{'line-cap':'round','line-join':'round','visibility':V('coverage')},paint:{'line-color':['case',['get','has_name'],'#22c55e','#9ca3af'],'line-width':['interpolate',['exponential',1.4],['zoom'],8,1.5,12,3.5,16,6],'line-opacity':['case',['get','has_name'],0.85,0.45]}});
   // 3D Buildings using OFM vector tile source
   if(!map.getLayer('buildings-3d')){try{if(map.getSource('openmaptiles')){map.addLayer({id:'buildings-3d',type:'fill-extrusion',source:'openmaptiles','source-layer':'building',minzoom:15,filter:['!=',['get','hide_3d'],true],layout:{visibility:V('buildings')},paint:{'fill-extrusion-color':['case',['boolean',['feature-state','selected'],false],'#d0e8ff',['match',['get','class'],'commercial','#e8e0d8','residential','#ede8e2','#e4ddd6']],'fill-extrusion-height':['coalesce',['get','render_height'],['get','height'],8],'fill-extrusion-base':['coalesce',['get','render_min_height'],['get','min_height'],0],'fill-extrusion-opacity':['interpolate',['linear'],['zoom'],15,0,16,0.75]}},'road-casing');}}catch(e){console.warn('3D buildings:',e.message);}}
+  // ── Supabase POI layer ──
+  if(!map.getSource('poi-src'))map.addSource('poi-src',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
+  if(!map.getLayer('snas-poi-icons'))map.addLayer({id:'snas-poi-icons',type:'symbol',source:'poi-src',minzoom:11,layout:{'text-field':['get','icon'],'text-font':['Noto Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],11,14,14,18,18,22],'text-allow-overlap':true,'icon-allow-overlap':true,'visibility':'visible'},paint:{'text-color':'rgba(0,0,0,0.9)','text-halo-color':'rgba(255,255,255,0.95)','text-halo-width':1.5}});
+  if(!map.getLayer('snas-poi-labels'))map.addLayer({id:'snas-poi-labels',type:'symbol',source:'poi-src',minzoom:13,layout:{'text-field':['coalesce',['get','name_so'],['get','name_en']],'text-font':['Noto Sans Bold','Noto Sans Regular'],'text-size':10,'text-offset':[0,1.6],'text-anchor':'top','text-allow-overlap':false,'text-ignore-placement':false,'visibility':'visible'},paint:{'text-color':'#202124','text-halo-color':'rgba(255,255,255,0.97)','text-halo-width':2}});
+  map.on('click','snas-poi-icons',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;map.flyTo({center:[p.lon,p.lat],zoom:17,duration:800,essential:true});showToast((p.icon||'📍')+' '+(p.name_so||p.name_en||p.category),3500);});
+  map.on('mouseenter','snas-poi-icons',()=>{map.getCanvas().style.cursor='pointer';});
+  map.on('mouseleave','snas-poi-icons',()=>{map.getCanvas().style.cursor='';});
   // Click handlers
   map.on('mouseenter','road-fill',()=>{map.getCanvas().style.cursor='pointer';});
   map.on('mouseleave','road-fill',()=>{map.getCanvas().style.cursor='';});
@@ -977,8 +984,20 @@ map.on('style.load',()=>{styleReady=true;addAllLayers();if(currentMode==='satell
 map.on('error',e=>{console.warn('MapLibre:',e.error&&e.error.message||e);if(!usingFallback&&!styleReady&&currentMode==='map'){usingFallback=true;map.setStyle(STYLE_OSM_FALLBACK);}});
 setTimeout(()=>{if(!styleReady&&!usingFallback){usingFallback=true;map.setStyle(STYLE_OSM_FALLBACK);}},8000);
 // Satellite
-const SNAS_SOURCES=new Set(['roads','road-labels-src','districts','regions-src','rivers-src','mtn-src','oil-src','min-src','mgq-districts','somalia-src','cities-src']);
+const SNAS_SOURCES=new Set(['roads','road-labels-src','districts','regions-src','rivers-src','mtn-src','oil-src','min-src','mgq-districts','somalia-src','cities-src','poi-src']);
 let _satSaved=[];
+// ── POI layer ──
+const POI_ICONS={hospital:'🏥',mosque:'🕌',school:'🏫',market:'🛒',bank:'🏦',restaurant:'🍴',hotel:'🏨',government:'🏛',pharmacy:'💊',police:'🚔',other:'📍'};
+let _snasPoiCache=[];
+async function loadSNASPOIs(){
+  try{
+    const rows=await dbGet('snas_pois',{select:'poi_id,name_so,name_en,category,lat,lon',limit:2000}).catch(()=>[]);
+    if(!rows||!rows.length)return;
+    _snasPoiCache=rows.map(p=>Object.assign({},p,{icon:POI_ICONS[p.category]||'📍'}));
+    const fc={type:'FeatureCollection',features:_snasPoiCache.map(p=>({type:'Feature',geometry:{type:'Point',coordinates:[parseFloat(p.lon),parseFloat(p.lat)]},properties:{poi_id:p.poi_id,name_so:p.name_so||'',name_en:p.name_en||'',category:p.category||'other',icon:POI_ICONS[p.category]||'📍',lon:parseFloat(p.lon),lat:parseFloat(p.lat)}}))};
+    if(styleReady&&map.getSource('poi-src'))map.getSource('poi-src').setData(fc);
+  }catch(e){console.warn('loadSNASPOIs:',e);}
+}
 function addSatelliteLayer(){if(map.getSource('esri-sat'))return;map.addSource('esri-sat',{type:'raster',tiles:ESRI_SAT_TILES,tileSize:256,maxzoom:19,attribution:'Esri'});const firstId=map.getStyle().layers[0]&&map.getStyle().layers[0].id;map.addLayer({id:'esri-sat-layer',type:'raster',source:'esri-sat',maxzoom:24,paint:{'raster-opacity':1}},firstId);_satSaved=[];map.getStyle().layers.forEach(l=>{if(l.id==='esri-sat-layer'||SNAS_SOURCES.has(l.source))return;if(/building/i.test(l.id))return;let prop=null;if(l.type==='background')prop='background-opacity';else if(l.type==='fill')prop='fill-opacity';else if(l.type==='raster')prop='raster-opacity';if(!prop)return;const orig=map.getPaintProperty(l.id,prop)!=null?map.getPaintProperty(l.id,prop):1;_satSaved.push({id:l.id,prop,orig});try{map.setPaintProperty(l.id,prop,0);}catch(e){}});}
 function removeSatelliteLayer(){_satSaved.forEach(({id,prop,orig})=>{if(!map.getLayer(id))return;try{map.setPaintProperty(id,prop,orig);}catch(e){}});_satSaved=[];if(map.getLayer('esri-sat-layer'))map.removeLayer('esri-sat-layer');if(map.getSource('esri-sat'))map.removeSource('esri-sat');}
 function updateLabelContrast(mode){if(!map.getLayer('road-labels'))return;const sat=mode==='satellite';try{map.setPaintProperty('road-labels','text-halo-width',sat?2.5:2);map.setPaintProperty('road-labels','text-halo-color',sat?'rgba(255,255,255,1.0)':'rgba(255,255,255,0.97)');map.setPaintProperty('road-labels','text-halo-blur',sat?0:0.5);map.setPaintProperty('district-labels-sm','text-halo-width',sat?2.5:2);map.setPaintProperty('district-postcodes','text-halo-width',sat?2.5:2);}catch(e){}}
@@ -1609,6 +1628,7 @@ async function doSearch(q){
   if(fuseDistricts){fuseDistricts.search(q,{limit:5}).forEach(({item:d})=>{if(pcSet.has(d.district_id))return;res.push({type:'d',ico:'\ud83c\udfd7',nm:d.name_en,ds:d.region_name+' \u00b7 '+(d.road_count>0?d.road_count.toLocaleString()+' roads':''),data:d});pcSet.add(d.district_id);});}
   Object.entries(RN).filter(([,v])=>v.toLowerCase().includes(ql)).slice(0,2).forEach(([k,v])=>res.push({type:'r',ico:'\ud83d\uddfa',nm:v,ds:'Region of Somalia',data:{region_id:k,region_name:v}}));
   try{const esc=q.replace(/[%_]/g,'\\$&');const soEq=soEquivOf(q);const soE=soEq.length?soEq[0].replace(/[%_]/g,'\\$&'):'';const[bySo,byEn,byOsm,bySoTr]=await Promise.all([dbGet('snas_streets',{select:'street_id,district_id,name_so,name_en,osm_name,highway_class',name_so:'ilike.*'+esc+'*',limit:6}).catch(()=>[]),dbGet('snas_streets',{select:'street_id,district_id,name_so,name_en,osm_name,highway_class',name_en:'ilike.*'+esc+'*',limit:4}).catch(()=>[]),dbGet('snas_streets',{select:'street_id,district_id,name_so,name_en,osm_name,highway_class',osm_name:'ilike.*'+esc+'*',limit:3}).catch(()=>[]),soE?dbGet('snas_streets',{select:'street_id,district_id,name_so,name_en,osm_name,highway_class',name_so:'ilike.*'+soE+'*',limit:4}).catch(()=>[]):Promise.resolve([])]);const seen=new Set();[...bySo,...byEn,...byOsm,...bySoTr].forEach(s=>{if(seen.has(s.street_id))return;seen.add(s.street_id);const nm=s.name_so||s.name_en||s.osm_name||'';if(!nm||nm==='Unnamed')return;const dist=districtMap[s.district_id];res.push({type:'s',ico:'\ud83d\udee3',nm,ds:dist?dist.name_en+' District':'Somalia',data:s});});}catch(e){console.warn('Street search:',e);}
+  _snasPoiCache.filter(p=>{const nm=((p.name_so||'')+(p.name_en||'')).toLowerCase();return nm.includes(ql);}).slice(0,4).forEach(p=>{res.push({type:'poi',ico:p.icon,nm:p.name_so||p.name_en,ds:(p.category||'place')+' · Somalia',data:{name_en:p.name_en,name_so:p.name_so,coords:[parseFloat(p.lon),parseFloat(p.lat)]}});});
   searchResults=res;renderAC(res,q);
 }
 function renderAC(res,q){
@@ -2052,6 +2072,7 @@ window.addEventListener('DOMContentLoaded',async()=>{
   await new Promise(resolve=>{if(styleReady){resolve();return;}map.once('style.load',resolve);setTimeout(resolve,12000);});
   try{
     prog(40,'Fetching districts...');await loadDistricts();updateStats();
+    loadSNASPOIs(); // fire-and-forget, non-blocking
     cleanupOffensiveNames(); // fire-and-forget, non-blocking
     if(!roadWorker)roadWorker=createRoadWorker();
     prog(75,'Rendering...');renderDistrictList(allDistricts);
