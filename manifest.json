@@ -1,0 +1,18 @@
+{
+  "name": "SNAS · Somali National Address System",
+  "short_name": "SNAS Map",
+  "description": "Live mapping, navigation and postcodes for Somalia",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#060A1C",
+  "theme_color": "#060A1C",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='115' fill='%23060A1C'/><text y='.85em' font-size='360' x='75'>🗺️</text></svg>",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

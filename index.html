@@ -2,10 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SNAS v25 · Somali National Address System</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SNAS Map">
+<meta name="theme-color" content="#060A1C">
+<meta name="description" content="Somali National Address System — live mapping, navigation & postcodes">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23060A1C'/><text y='.9em' font-size='75' x='12'>🗺️</text></svg>">
+<title>SNAS · Somali National Address System</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@4.7.1/dist/maplibre-gl.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;overflow:hidden;font-family:"Roboto",sans-serif;background:#1a1a2e}
@@ -264,6 +272,8 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
 .dir-inp{flex:1;border:1.5px solid #e8eaed;border-radius:10px;padding:9px 12px;font-size:13px;font-family:"Roboto",sans-serif;outline:none;color:#3c4043;background:#f8f9fa;transition:border-color .2s;cursor:pointer}
 .dir-inp:focus{border-color:#1a73e8;background:#fff}
 .dir-clr{background:none;border:none;color:#bbb;cursor:pointer;font-size:18px;padding:4px;line-height:1;flex-shrink:0}
+.dir-go-btn{background:none;border:none;cursor:pointer;font-size:14px;padding:4px 2px;flex-shrink:0;opacity:0.7}
+.dir-go-btn:hover{opacity:1}
 /* ── Road detail action row ──────────────────────────────────────────── */
 .rdd-actions{display:flex;gap:5px;margin:6px 14px 12px;flex-wrap:wrap}
 .rdd-ab{flex:1;min-width:50px;padding:6px 3px;border:1px solid #e8eaed;border-radius:9px;background:#f8f9fa;font-size:10px;font-weight:500;color:#1a73e8;cursor:pointer;text-align:center;transition:all .15s;font-family:"Roboto",sans-serif;white-space:nowrap}
@@ -517,6 +527,1013 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
 [data-dark] .chip.active{background:#1a3a6b;color:#7baeff}
 [data-dark] .rm-btn{background:rgba(22,24,36,.85);border-color:rgba(255,255,255,.1);color:#c8d6ea}
 [data-dark] .rm-btn.active{background:#1a3a6b;border-color:#4a8fe8;color:#7baeff}
+
+/* ══════════════════════════════════════════════════════════
+   NEON-ELITE THEME — SNAS UNBOUND
+   Deep-space glass + electric cyan accent system
+   ══════════════════════════════════════════════════════════ */
+:root{
+  --ne-bg:rgba(6,10,28,0.94);
+  --ne-glass:rgba(12,20,50,0.88);
+  --ne-border:rgba(0,229,255,0.14);
+  --ne-border-hot:rgba(0,229,255,0.55);
+  --ne-cyan:#00E5FF;
+  --ne-green:#39FF14;
+  --ne-amber:#FFE500;
+  --ne-red:#FF3252;
+  --ne-text:#E2E8F0;
+  --ne-sub:rgba(255,255,255,0.48);
+  --ne-glow:0 0 20px rgba(0,229,255,0.25);
+  --ne-glow-hot:0 0 32px rgba(0,229,255,0.5),0 0 64px rgba(0,229,255,0.2);
+  --font-brand:"Outfit",sans-serif;
+  --font-body:"Inter",sans-serif;
+  --font-mono:"Space Mono",monospace;
+}
+html,body{font-family:var(--font-body)!important;background:#060A1C!important}
+
+/* ── Search bar ─────────────────────────────────────────── */
+#sc{
+  background:var(--ne-glass)!important;
+  border:1px solid var(--ne-border)!important;
+  border-radius:16px!important;
+  box-shadow:var(--ne-glow),0 2px 24px rgba(0,0,0,0.6)!important;
+  backdrop-filter:blur(28px)!important;
+  -webkit-backdrop-filter:blur(28px)!important;
+}
+#sc:focus-within{
+  border-color:var(--ne-border-hot)!important;
+  box-shadow:var(--ne-glow-hot),0 4px 32px rgba(0,0,0,0.7)!important;
+}
+#sc.ac-open{border-radius:16px 16px 0 0!important}
+#slogo{
+  font-family:var(--font-brand)!important;
+  font-size:14px!important;
+  font-weight:800!important;
+  letter-spacing:3px!important;
+  background:linear-gradient(135deg,var(--ne-cyan),var(--ne-green))!important;
+  -webkit-background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+  background-clip:text!important;
+  border-right:1px solid var(--ne-border)!important;
+}
+#si{
+  color:var(--ne-text)!important;
+  background:transparent!important;
+  font-family:var(--font-body)!important;
+}
+#si::placeholder{color:var(--ne-sub)!important}
+#sico{color:var(--ne-cyan)!important}
+#sclr{color:var(--ne-sub)!important}
+
+/* ── Chips ─────────────────────────────────────────────── */
+.chip{
+  background:rgba(0,229,255,0.07)!important;
+  border:1px solid rgba(0,229,255,0.18)!important;
+  color:rgba(255,255,255,0.75)!important;
+  font-family:var(--font-body)!important;
+  font-size:11px!important;
+  font-weight:500!important;
+  border-radius:12px!important;
+  box-shadow:none!important;
+  transition:all .2s!important;
+}
+.chip:hover{
+  background:rgba(0,229,255,0.14)!important;
+  border-color:var(--ne-cyan)!important;
+  color:#fff!important;
+  box-shadow:0 0 14px rgba(0,229,255,0.3)!important;
+  transform:translateY(-1px)!important;
+}
+.chip.active{
+  background:rgba(0,229,255,0.22)!important;
+  border-color:var(--ne-cyan)!important;
+  color:var(--ne-cyan)!important;
+  box-shadow:0 0 18px rgba(0,229,255,0.4)!important;
+}
+.chip-badge{background:var(--ne-cyan)!important;color:#060A1C!important;font-weight:800!important}
+
+/* ── Autocomplete ──────────────────────────────────────── */
+#ac{
+  background:rgba(8,14,32,0.97)!important;
+  border:1px solid var(--ne-border)!important;
+  border-top:none!important;
+  border-radius:0 0 16px 16px!important;
+  box-shadow:0 16px 48px rgba(0,0,0,0.7)!important;
+}
+.ac-hd{background:rgba(0,229,255,0.04)!important;color:var(--ne-sub)!important}
+.ac-row{border-top:1px solid rgba(255,255,255,0.04)!important}
+.ac-row:hover,.ac-row.focused{background:rgba(0,229,255,0.07)!important}
+.ac-nm{color:var(--ne-text)!important;font-family:var(--font-body)!important}
+.ac-ds{color:var(--ne-sub)!important}
+mark{background:rgba(0,229,255,0.25)!important;color:var(--ne-cyan)!important}
+.ac-empty{color:var(--ne-sub)!important}
+.tag-d{background:rgba(255,180,0,0.12)!important;color:#FFB800!important}
+.tag-p{background:rgba(57,255,20,0.12)!important;color:var(--ne-green)!important}
+.tag-r{background:rgba(0,229,255,0.12)!important;color:var(--ne-cyan)!important}
+.tag-s{background:rgba(255,50,82,0.12)!important;color:var(--ne-red)!important}
+.tag-poi{background:rgba(255,229,0,0.12)!important;color:var(--ne-amber)!important}
+
+/* ── FABs ──────────────────────────────────────────────── */
+.fab{
+  background:var(--ne-glass)!important;
+  border:1px solid var(--ne-border)!important;
+  color:rgba(255,255,255,0.7)!important;
+  border-radius:14px!important;
+  box-shadow:0 2px 16px rgba(0,0,0,0.5)!important;
+}
+.fab:hover{
+  color:var(--ne-cyan)!important;
+  border-color:var(--ne-border-hot)!important;
+  box-shadow:var(--ne-glow),0 4px 24px rgba(0,0,0,0.6)!important;
+}
+#btn-demo{color:var(--ne-cyan)!important;font-family:var(--font-body)!important}
+#btn-emergency{background:rgba(255,50,82,0.1)!important;border-color:rgba(255,50,82,0.3)!important;color:var(--ne-red)!important}
+#btn-emergency.active{background:rgba(255,50,82,0.85)!important;color:#fff!important;box-shadow:0 0 20px rgba(255,50,82,0.6)!important}
+
+/* ── Fetch bar ─────────────────────────────────────────── */
+#fetch-bar-fill{background:linear-gradient(90deg,var(--ne-cyan),var(--ne-green),var(--ne-cyan))!important;background-size:200% 100%!important}
+
+/* ── Left Panel ────────────────────────────────────────── */
+#lp{
+  background:rgba(6,10,28,0.96)!important;
+  border-right:1px solid var(--ne-border)!important;
+  box-shadow:4px 0 48px rgba(0,0,0,0.7)!important;
+}
+.lp-hd{border-bottom:1px solid var(--ne-border)!important}
+.lp-ht{font-family:var(--font-brand)!important;font-size:15px!important;font-weight:700!important;color:var(--ne-text)!important}
+.lp-gl{color:var(--ne-sub)!important}
+.lp-tm{color:rgba(255,255,255,0.8)!important}
+.lp-ts{color:var(--ne-sub)!important}
+.lp-row:hover{background:rgba(0,229,255,0.06)!important}
+.tog{background:rgba(255,255,255,0.12)!important}
+.tog.on{background:var(--ne-cyan)!important}
+.tog::after{box-shadow:0 0 8px rgba(0,229,255,0.4)!important}
+.lp-li{color:rgba(255,255,255,0.5)!important}
+
+/* ── Right Panel ───────────────────────────────────────── */
+#rp{
+  background:rgba(6,10,28,0.96)!important;
+  border-left:1px solid var(--ne-border)!important;
+  box-shadow:-4px 0 48px rgba(0,0,0,0.7)!important;
+}
+.rp-hd{border-bottom:1px solid var(--ne-border)!important}
+.rp-tt{font-family:var(--font-brand)!important;color:var(--ne-text)!important}
+.rp-ct{background:rgba(0,229,255,0.1)!important;color:var(--ne-cyan)!important}
+.rp-xx{background:rgba(255,255,255,0.07)!important;color:rgba(255,255,255,0.6)!important}
+.rp-xx:hover{background:rgba(0,229,255,0.12)!important;color:var(--ne-cyan)!important}
+.rp-fw{border-bottom:1px solid var(--ne-border)!important}
+.rp-fi{background:rgba(0,229,255,0.06)!important;border-color:var(--ne-border)!important;color:var(--ne-text)!important;font-family:var(--font-body)!important}
+.rp-fi:focus{border-color:var(--ne-cyan)!important;background:rgba(0,229,255,0.1)!important}
+#rpbk{background:rgba(0,229,255,0.1)!important;color:var(--ne-cyan)!important;border:none!important}
+#rpbk:hover{background:rgba(0,229,255,0.18)!important}
+.dl-rh{background:rgba(0,229,255,0.05)!important;color:var(--ne-sub)!important;border-bottom:1px solid var(--ne-border)!important}
+.dl-it{border-bottom:1px solid rgba(255,255,255,0.04)!important}
+.dl-it:hover{background:rgba(0,229,255,0.05)!important}
+.dl-it.active{background:rgba(0,229,255,0.1)!important;border-left:3px solid var(--ne-cyan)!important}
+.dl-px{background:rgba(0,229,255,0.1)!important;color:var(--ne-cyan)!important;font-family:var(--font-mono)!important}
+.dl-nm{color:var(--ne-text)!important}.dl-sb{color:var(--ne-sub)!important}
+.dl-cn{color:var(--ne-sub)!important;font-family:var(--font-mono)!important}
+.no-data{color:var(--ne-sub)!important}
+
+/* ── Road detail card ──────────────────────────────────── */
+#rdd{
+  background:var(--ne-glass)!important;
+  border:1px solid var(--ne-border)!important;
+  box-shadow:var(--ne-glow),0 8px 48px rgba(0,0,0,0.7)!important;
+  border-radius:18px!important;
+}
+.rdd-hd{border-bottom:1px solid var(--ne-border)!important}
+.rdd-nm{font-family:var(--font-brand)!important;color:var(--ne-text)!important;font-size:16px!important;font-weight:700!important}
+.rdd-xx{background:rgba(255,255,255,0.07)!important;color:rgba(255,255,255,0.6)!important}
+.rdd-lb{color:var(--ne-sub)!important}.rdd-vl{color:var(--ne-text)!important;font-family:var(--font-body)!important}
+.rdd-ad{background:rgba(0,229,255,0.06)!important;border-radius:10px!important;color:var(--ne-text)!important}
+.rdd-ad strong{color:var(--ne-cyan)!important}
+.dd-hero{background:linear-gradient(160deg,rgba(0,229,255,0.08),transparent)!important;border-bottom:1px solid var(--ne-border)!important}
+.dd-nm{font-family:var(--font-brand)!important;color:var(--ne-text)!important}
+.dd-mt{color:var(--ne-sub)!important}
+.dd-cd{background:rgba(0,229,255,0.1)!important;color:var(--ne-cyan)!important;font-family:var(--font-mono)!important}
+.dd-sv{background:rgba(0,229,255,0.06)!important;border:1px solid var(--ne-border)!important}
+.dd-vv{color:var(--ne-cyan)!important;font-family:var(--font-brand)!important}
+.dd-vl{color:var(--ne-sub)!important}
+.rdd-sh{background:rgba(0,229,255,0.07)!important;border:1px solid var(--ne-border)!important;color:var(--ne-cyan)!important}
+.rdd-sh:hover{background:rgba(0,229,255,0.14)!important;border-color:var(--ne-cyan)!important}
+.rdd-ab{background:rgba(0,229,255,0.06)!important;border:1px solid var(--ne-border)!important;color:var(--ne-cyan)!important}
+.rdd-ab:hover{background:rgba(0,229,255,0.14)!important}
+.rdd-actions{border-top:1px solid var(--ne-border)!important}
+
+/* ── Hardware class badges ─────────────────────────────── */
+.hw-motorway,.hw-trunk{background:rgba(255,180,0,0.15)!important;color:#FFB800!important}
+.hw-primary{background:rgba(57,255,20,0.12)!important;color:var(--ne-green)!important}
+.hw-secondary{background:rgba(0,229,255,0.12)!important;color:var(--ne-cyan)!important}
+.hw-tertiary{background:rgba(255,229,0,0.1)!important;color:var(--ne-amber)!important}
+.hw-residential{background:rgba(168,85,247,0.12)!important;color:#A855F7!important}
+.hw-service,.hw-track,.hw-other{background:rgba(255,255,255,0.06)!important;color:rgba(255,255,255,0.5)!important}
+
+/* ── Map/Satellite toggle ──────────────────────────────── */
+#sat-toggle{
+  background:var(--ne-glass)!important;
+  border:1px solid var(--ne-border)!important;
+  border-radius:16px!important;
+  box-shadow:var(--ne-glow),0 4px 24px rgba(0,0,0,0.5)!important;
+}
+.sat-btn{color:var(--ne-sub)!important;font-family:var(--font-body)!important}
+.sat-btn.active{background:var(--ne-cyan)!important;color:#060A1C!important;font-weight:700!important}
+
+/* ── Zoom controls ─────────────────────────────────────── */
+.z-btn{
+  background:var(--ne-glass)!important;
+  border:1px solid var(--ne-border)!important;
+  color:rgba(255,255,255,0.6)!important;
+  border-radius:12px!important;
+}
+.z-btn:hover{color:var(--ne-cyan)!important;border-color:var(--ne-cyan)!important;box-shadow:var(--ne-glow)!important}
+
+/* ── Status bar ────────────────────────────────────────── */
+#sb{
+  background:rgba(6,10,28,0.92)!important;
+  border-top:1px solid var(--ne-border)!important;
+}
+#sb-ll{color:var(--ne-sub)!important;font-family:var(--font-mono)!important}
+#sb-msg{color:var(--ne-cyan)!important}
+#sb a{color:var(--ne-sub)!important}
+
+/* ── Toast ─────────────────────────────────────────────── */
+#toast{
+  background:rgba(6,10,28,0.95)!important;
+  border:1px solid var(--ne-border)!important;
+  box-shadow:var(--ne-glow),0 8px 32px rgba(0,0,0,0.7)!important;
+  font-family:var(--font-mono)!important;
+  color:var(--ne-text)!important;
+  border-radius:14px!important;
+}
+
+/* ── Road banner ───────────────────────────────────────── */
+#road-banner{
+  background:var(--ne-glass)!important;
+  border:1px solid var(--ne-border)!important;
+  box-shadow:0 0 0 2px var(--ne-amber),var(--ne-glow),0 8px 32px rgba(0,0,0,0.6)!important;
+  border-radius:18px!important;
+}
+#road-banner-so{font-family:var(--font-brand)!important;color:var(--ne-text)!important;font-size:17px!important;font-weight:700!important}
+#road-banner-en{color:var(--ne-sub)!important}
+#road-banner-x{color:var(--ne-sub)!important}
+
+/* ── Loading screen ────────────────────────────────────── */
+#ld{background:linear-gradient(160deg,#060A1C,#0D1630)!important}
+.ld-logo{
+  font-family:var(--font-brand)!important;
+  font-size:42px!important;
+  font-weight:800!important;
+  letter-spacing:8px!important;
+  background:linear-gradient(135deg,var(--ne-cyan) 0%,var(--ne-green) 50%,var(--ne-cyan) 100%)!important;
+  background-size:200% 100%!important;
+  -webkit-background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+  background-clip:text!important;
+  animation:ne-brand-shift 3s ease-in-out infinite!important;
+  text-shadow:none!important;
+}
+@keyframes ne-brand-shift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.ld-sub{color:rgba(0,229,255,0.45)!important;letter-spacing:3px!important}
+.ld-bar{background:rgba(0,229,255,0.1)!important;border-radius:3px!important}
+.ld-fill{background:linear-gradient(90deg,var(--ne-cyan),var(--ne-green))!important}
+.ld-msg{color:rgba(0,229,255,0.4)!important}
+
+/* ── Route card ────────────────────────────────────────── */
+#route-card{
+  background:var(--ne-glass)!important;
+  border:1px solid var(--ne-border)!important;
+  border-top:3px solid var(--ne-amber)!important;
+  box-shadow:0 0 0 0 transparent,0 12px 56px rgba(0,0,0,0.7)!important;
+}
+.rc-hd{border-bottom:1px solid var(--ne-border)!important}
+.rc-dist{font-family:var(--font-brand)!important;color:var(--ne-amber)!important;font-size:26px!important;font-weight:800!important}
+.rc-time{color:var(--ne-sub)!important}
+.rc-via{color:var(--ne-sub)!important;border-bottom:1px solid var(--ne-border)!important}
+.rc-btn{background:rgba(255,255,255,0.06)!important;border:1px solid var(--ne-border)!important;color:var(--ne-text)!important;font-family:var(--font-body)!important}
+.rc-btn:hover{background:rgba(0,229,255,0.1)!important;border-color:var(--ne-cyan)!important;color:var(--ne-cyan)!important}
+.rc-btn.primary{background:var(--ne-cyan)!important;color:#060A1C!important;border-color:transparent!important;font-weight:700!important}
+.rc-btn.nav{background:linear-gradient(135deg,var(--ne-green),var(--ne-cyan))!important;color:#060A1C!important;font-weight:800!important}
+
+/* ── Route steps ───────────────────────────────────────── */
+#route-steps{max-height:220px;overflow-y:auto}
+.rs-step{display:flex;align-items:flex-start;gap:10px;padding:8px 16px;border-bottom:1px solid rgba(0,229,255,0.07)}
+.rs-ico{font-size:18px;flex-shrink:0;width:26px;text-align:center;margin-top:1px}
+.rs-step div:not(.rs-ico){font-size:12px;color:rgba(255,255,255,0.75);font-family:var(--font-body)}
+.rs-dist{font-size:10px;color:var(--ne-sub);margin-top:2px;font-family:var(--font-mono)}
+
+/* ── Nav HUD ───────────────────────────────────────────── */
+#nav-hud{
+  background:linear-gradient(180deg,rgba(0,229,255,0.15) 0%,rgba(6,10,28,0.98) 100%)!important;
+  border-bottom:2px solid var(--ne-cyan)!important;
+  backdrop-filter:blur(24px)!important;
+}
+.nh-maneuver{font-family:var(--font-brand)!important;color:var(--ne-cyan)!important}
+.nh-street{color:var(--ne-text)!important}
+.nh-dist{color:var(--ne-sub)!important}
+.nh-bottom{border-top:1px solid var(--ne-border)!important}
+.nh-end{background:rgba(255,50,82,0.2)!important;border:1px solid rgba(255,50,82,0.4)!important;color:var(--ne-red)!important}
+
+/* ── Directions panel ──────────────────────────────────── */
+#dir-panel{
+  background:rgba(6,10,28,0.98)!important;
+  border-bottom:1px solid var(--ne-border)!important;
+  box-shadow:0 8px 48px rgba(0,0,0,0.7)!important;
+}
+.dir-title{font-family:var(--font-brand)!important;color:var(--ne-text)!important;font-weight:700!important}
+.dir-back{color:var(--ne-sub)!important}
+.dir-inp{
+  background:rgba(0,229,255,0.06)!important;
+  border:1px solid var(--ne-border)!important;
+  color:var(--ne-text)!important;
+  font-family:var(--font-body)!important;
+  border-radius:12px!important;
+}
+.dir-inp:focus{border-color:var(--ne-cyan)!important;background:rgba(0,229,255,0.1)!important;box-shadow:0 0 12px rgba(0,229,255,0.2)!important}
+.dir-inp::placeholder{color:var(--ne-sub)!important}
+.dir-clr{color:var(--ne-sub)!important}
+.dir-go-btn{color:var(--ne-cyan)!important;opacity:1!important}
+.rm-btn{
+  background:rgba(0,229,255,0.06)!important;
+  border:1px solid var(--ne-border)!important;
+  color:rgba(255,255,255,0.65)!important;
+  font-family:var(--font-body)!important;
+  border-radius:12px!important;
+}
+.rm-btn.active{
+  background:rgba(0,229,255,0.18)!important;
+  border-color:var(--ne-cyan)!important;
+  color:var(--ne-cyan)!important;
+  font-weight:700!important;
+  box-shadow:0 0 12px rgba(0,229,255,0.25)!important;
+}
+#dir-results{background:rgba(6,10,28,0.98)!important}
+.dr-row{display:flex;align-items:center;gap:12px;padding:10px 16px;cursor:pointer;border-bottom:1px solid rgba(0,229,255,0.06);color:var(--ne-text);font-size:13px;transition:background .1s}
+.dr-row:hover{background:rgba(0,229,255,0.07)}
+
+/* ── POI card ──────────────────────────────────────────── */
+#snas-poi-card{
+  background:var(--ne-glass)!important;
+  border:1px solid var(--ne-border)!important;
+  border-top:3px solid var(--ne-cyan)!important;
+  box-shadow:var(--ne-glow),0 12px 48px rgba(0,0,0,0.7)!important;
+  border-radius:20px!important;
+}
+.spc-hd{border-bottom:1px solid var(--ne-border)!important}
+.spc-name{font-family:var(--font-brand)!important;color:var(--ne-text)!important;font-weight:700!important}
+.spc-cat{color:var(--ne-sub)!important;font-family:var(--font-mono)!important}
+.spc-xx{background:rgba(255,255,255,0.07)!important;color:rgba(255,255,255,0.5)!important}
+.spc-row{border-top:1px solid rgba(0,229,255,0.07)!important;color:var(--ne-text)!important}
+.spc-row a{color:var(--ne-cyan)!important}
+.spc-actions{border-top:1px solid var(--ne-border)!important}
+.spc-btn{background:rgba(255,255,255,0.06)!important;border:1px solid var(--ne-border)!important;color:var(--ne-text)!important;font-family:var(--font-body)!important;border-radius:12px!important}
+.spc-btn:hover{background:rgba(0,229,255,0.1)!important;border-color:var(--ne-cyan)!important;color:var(--ne-cyan)!important}
+.spc-btn.primary{background:var(--ne-cyan)!important;color:#060A1C!important;font-weight:700!important;border-color:transparent!important}
+
+/* ── Nearest panel ─────────────────────────────────────── */
+#nearest-panel{
+  background:var(--ne-glass)!important;
+  border:1px solid var(--ne-border)!important;
+  box-shadow:var(--ne-glow),0 8px 48px rgba(0,0,0,0.7)!important;
+  border-radius:20px!important;
+}
+.np-hd{border-bottom:1px solid var(--ne-border)!important}
+.np-title{font-family:var(--font-brand)!important;color:var(--ne-text)!important;font-weight:700!important}
+.np-x{color:var(--ne-sub)!important}
+.np-item{border-bottom:1px solid rgba(0,229,255,0.06)!important}
+.np-item:hover{background:rgba(0,229,255,0.06)!important}
+.np-nm{color:var(--ne-text)!important;font-family:var(--font-body)!important}
+.np-dist{color:var(--ne-sub)!important;font-family:var(--font-mono)!important}
+
+/* ── What's here popup ─────────────────────────────────── */
+#whats-here{
+  background:var(--ne-glass)!important;
+  border:1px solid var(--ne-border)!important;
+  box-shadow:var(--ne-glow),0 8px 32px rgba(0,0,0,0.7)!important;
+  border-radius:16px!important;
+}
+.wh-title{color:var(--ne-sub)!important}
+.wh-addr{color:var(--ne-text)!important;font-family:var(--font-body)!important}
+.wh-pc{color:var(--ne-cyan)!important;font-family:var(--font-mono)!important}
+.wh-btn{background:rgba(0,229,255,0.07)!important;border:1px solid var(--ne-border)!important;color:var(--ne-cyan)!important;border-radius:10px!important}
+.wh-btn:hover{background:rgba(0,229,255,0.15)!important}
+
+/* ── QR Modal ──────────────────────────────────────────── */
+.qr-card{background:rgba(8,14,32,0.99)!important;border:1px solid var(--ne-border)!important}
+.qr-title{color:var(--ne-text)!important;font-family:var(--font-brand)!important}
+.qr-addr{color:var(--ne-cyan)!important;font-family:var(--font-mono)!important}
+.qr-full{color:var(--ne-sub)!important}
+
+/* ── Demo popup ────────────────────────────────────────── */
+#demo-popup{background:var(--ne-glass)!important;border:1px solid var(--ne-border)!important;box-shadow:var(--ne-glow),0 12px 56px rgba(0,0,0,0.8)!important}
+.dp-gov{background:linear-gradient(90deg,rgba(0,229,255,0.2),rgba(57,255,20,0.15))!important;color:var(--ne-cyan)!important}
+.dp-lb{color:var(--ne-sub)!important}.dp-vl{color:var(--ne-text)!important}
+.dp-row{border-bottom:1px solid rgba(0,229,255,0.07)!important}
+.dp-pc{background:linear-gradient(90deg,var(--ne-cyan),var(--ne-green))!important;color:#060A1C!important;font-family:var(--font-mono)!important;font-weight:800!important;border-radius:10px!important}
+
+/* ── Demo counter ──────────────────────────────────────── */
+#demo-counter{background:rgba(0,229,255,0.15)!important;border:1px solid var(--ne-border)!important;color:var(--ne-cyan)!important;box-shadow:var(--ne-glow)!important;font-family:var(--font-brand)!important;border-radius:24px!important}
+#demo-counter-x{background:rgba(255,50,82,0.2)!important;color:var(--ne-red)!important}
+#demo-counter-x:hover{background:rgba(255,50,82,0.5)!important}
+
+/* ── Skeleton loaders ──────────────────────────────────── */
+.skel-line,.skel-block{background:linear-gradient(90deg,rgba(0,229,255,0.06) 25%,rgba(0,229,255,0.12) 50%,rgba(0,229,255,0.06) 75%)!important;background-size:200% 100%!important}
+
+/* ── Share sheet ───────────────────────────────────────── */
+#share-sheet{background:rgba(0,0,0,0.7)!important}
+.ss-card{background:rgba(8,14,32,0.98)!important;border-top:1px solid var(--ne-border)!important}
+.ss-title{color:var(--ne-sub)!important}.ss-pc{color:var(--ne-cyan)!important;font-family:var(--font-mono)!important}
+.ss-addr{color:var(--ne-sub)!important}
+.ss-btn{background:rgba(0,229,255,0.07)!important;border:1px solid var(--ne-border)!important;color:var(--ne-text)!important;font-family:var(--font-body)!important;border-radius:14px!important}
+.ss-cancel{background:rgba(255,255,255,0.06)!important;color:var(--ne-sub)!important}
+
+/* ── Pulse dot ─────────────────────────────────────────── */
+.pulse-dot{background:var(--ne-cyan)!important;border:2px solid rgba(0,229,255,0.3)!important}
+.pulse-dot::after{border-color:var(--ne-cyan)!important}
+@keyframes pulse-ring{0%{opacity:.8;transform:scale(.7)}80%{opacity:0;transform:scale(2.8)}100%{opacity:0}}
+
+/* ── Weather Widget ────────────────────────────────────── */
+#weather-widget{
+  position:fixed;top:14px;right:14px;z-index:895;
+  background:var(--ne-glass);border:1px solid var(--ne-border);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-radius:16px;padding:10px 14px;
+  display:flex;align-items:center;gap:8px;
+  box-shadow:var(--ne-glow),0 4px 24px rgba(0,0,0,0.5);
+  cursor:pointer;transition:all .2s;min-width:110px;
+}
+#weather-widget:hover{border-color:var(--ne-border-hot);box-shadow:var(--ne-glow-hot)}
+#wx-icon{font-size:22px;flex-shrink:0}
+#wx-body{flex:1;min-width:0}
+#wx-temp{font-family:var(--font-brand);font-size:18px;font-weight:700;color:var(--ne-cyan);line-height:1}
+#wx-desc{font-size:10px;color:var(--ne-sub);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#wx-city{font-size:9px;color:rgba(0,229,255,0.5);margin-top:1px;font-family:var(--font-mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── Social Report Button ──────────────────────────────── */
+#report-fab{
+  position:fixed;bottom:50px;left:14px;z-index:905;
+  width:50px;height:50px;border-radius:16px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,rgba(255,50,82,0.25),rgba(255,229,0,0.15));
+  border:1px solid rgba(255,50,82,0.35);
+  display:flex;align-items:center;justify-content:center;font-size:22px;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:0 0 20px rgba(255,50,82,0.3),0 4px 16px rgba(0,0,0,0.4);
+  transition:all .2s;
+}
+#report-fab:hover{box-shadow:0 0 32px rgba(255,50,82,0.5);transform:scale(1.05)}
+#report-panel{
+  position:fixed;bottom:112px;left:14px;z-index:905;
+  background:var(--ne-glass);border:1px solid var(--ne-border);
+  backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-radius:18px;width:200px;overflow:hidden;
+  box-shadow:var(--ne-glow),0 8px 48px rgba(0,0,0,0.7);
+  transform:translateY(12px) scale(0.96);opacity:0;pointer-events:none;
+  transition:all .2s cubic-bezier(.4,0,.2,1);
+}
+#report-panel.open{transform:translateY(0) scale(1);opacity:1;pointer-events:auto}
+.rp-top{padding:10px 14px 6px;font-family:var(--font-brand);font-size:12px;font-weight:700;color:var(--ne-sub);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--ne-border)}
+.report-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border:none;width:100%;background:transparent;border-bottom:1px solid rgba(255,255,255,0.05);transition:background .1s;font-family:var(--font-body);font-size:13px;color:var(--ne-text)}
+.report-btn:hover{background:rgba(255,50,82,0.1)}
+.report-btn:last-child{border-bottom:none}
+.report-btn .rb-icon{font-size:18px;width:24px;text-align:center}
+.report-count{font-size:10px;font-family:var(--font-mono);color:var(--ne-sub);margin-left:auto;background:rgba(255,50,82,0.15);padding:2px 7px;border-radius:8px}
+/* Report map markers */
+.report-marker{
+  width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:16px;cursor:pointer;border:2px solid rgba(255,255,255,0.2);
+  animation:report-pop .3s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes report-pop{from{transform:scale(0)}to{transform:scale(1)}}
+.report-marker.police{background:rgba(0,100,255,0.85);box-shadow:0 0 12px rgba(0,100,255,0.6)}
+.report-marker.accident{background:rgba(255,50,82,0.85);box-shadow:0 0 12px rgba(255,50,82,0.6)}
+.report-marker.hazard{background:rgba(255,180,0,0.85);box-shadow:0 0 12px rgba(255,180,0,0.6)}
+.report-marker.roadwork{background:rgba(255,140,0,0.85);box-shadow:0 0 12px rgba(255,140,0,0.6)}
+
+/* ── Voice Nav button ──────────────────────────────────── */
+#voice-btn{
+  position:fixed;bottom:50px;right:60px;z-index:905;
+  width:46px;height:46px;border-radius:14px;border:none;cursor:pointer;
+  background:var(--ne-glass);border:1px solid var(--ne-border);
+  display:flex;align-items:center;justify-content:center;font-size:20px;
+  backdrop-filter:blur(16px);
+  box-shadow:var(--ne-glow),0 4px 16px rgba(0,0,0,0.4);
+  transition:all .2s;color:var(--ne-cyan);
+}
+#voice-btn.speaking{
+  background:rgba(0,229,255,0.2)!important;
+  border-color:var(--ne-cyan)!important;
+  animation:voice-pulse 1s ease-in-out infinite;
+}
+@keyframes voice-pulse{0%,100%{box-shadow:var(--ne-glow)}50%{box-shadow:var(--ne-glow-hot)}}
+
+/* ── Traffic overlay ───────────────────────────────────── */
+#traffic-toggle{
+  font-size:11px;color:var(--ne-sub);
+  display:flex;align-items:center;gap:5px;
+  padding:4px 8px;border-radius:8px;cursor:pointer;
+  background:rgba(0,229,255,0.05);border:1px solid var(--ne-border);
+  margin-left:auto;font-family:var(--font-body);transition:all .2s;
+}
+#traffic-toggle:hover{border-color:var(--ne-cyan);color:var(--ne-cyan)}
+#traffic-toggle.active{background:rgba(255,50,82,0.15);border-color:rgba(255,50,82,0.4);color:var(--ne-red)}
+
+/* ── Global View Button ────────────────────────────────── */
+#global-view-btn{
+  position:fixed;bottom:14px;right:14px;z-index:905;
+  padding:12px 18px;border-radius:16px;border:none;cursor:pointer;
+  background:linear-gradient(135deg,rgba(0,120,255,0.35),rgba(0,229,255,0.2));
+  border:1px solid rgba(0,150,255,0.45);
+  font-family:var(--font-brand);font-size:13px;font-weight:700;
+  color:#60CFFF;letter-spacing:.5px;
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  box-shadow:0 0 20px rgba(0,150,255,0.3),0 4px 16px rgba(0,0,0,0.5);
+  transition:all .2s;display:flex;align-items:center;gap:7px;
+}
+#global-view-btn:hover{box-shadow:0 0 32px rgba(0,150,255,0.55);transform:translateY(-1px)}
+#global-view-btn.has-route{background:linear-gradient(135deg,rgba(0,120,255,0.5),rgba(57,255,20,0.3));border-color:rgba(57,255,20,0.45);color:#7FFF60}
+
+/* ── Mobile / PWA optimisations ────────────────────────── */
+@media(max-width:430px){
+  /* Larger touch targets — min 44px per Apple HIG */
+  .fab{width:52px!important;height:52px!important;font-size:20px!important;border-radius:16px!important}
+  #btn-demo,#btn-stopdemo{padding:0 16px!important;font-size:12px!important}
+  .chip{padding:9px 15px!important;font-size:12px!important}
+  #si{padding:16px 12px!important;font-size:15px!important}
+  #sw{top:16px;left:72px;width:min(380px,calc(100vw - 148px))}
+  #sc{border-radius:22px}
+  .sat-btn{padding:10px 14px!important;font-size:12px!important}
+  /* Route card more readable */
+  .rc-dist{font-size:26px!important}
+  /* Report FAB larger */
+  #report-fab{width:58px!important;height:58px!important;font-size:26px!important}
+  #voice-btn{width:52px!important;height:52px!important;font-size:22px!important}
+  /* Safe area for iPhone notch / home bar */
+  #sw{top:calc(env(safe-area-inset-top,0px) + 14px)}
+  #fabs{top:calc(env(safe-area-inset-top,0px) + 14px)}
+  #sb{padding-bottom:env(safe-area-inset-bottom,0px)}
+  #global-view-btn{bottom:calc(env(safe-area-inset-bottom,0px) + 14px)}
+  #report-fab{bottom:calc(env(safe-area-inset-bottom,0px) + 60px)}
+  #voice-btn{bottom:calc(env(safe-area-inset-bottom,0px) + 60px)}
+}
+/* ── Route dual-colour legend in route card ─────────────── */
+.route-legend{display:flex;gap:10px;padding:6px 16px 2px;font-size:10px;color:var(--ne-sub);align-items:center}
+.rl-seg{display:inline-flex;align-items:center;gap:4px}
+.rl-line{width:24px;height:3px;border-radius:2px}
+.rl-global{background:#3AB0FF}
+.rl-somalia{background:#39FF14}
+
+/* ══════════════════════════════════════════════════════════
+   PREMIUM SNAS — Minimalist Google Maps Dark Redesign
+   ══════════════════════════════════════════════════════════ */
+:root{
+  --pm-bg:#080C18;
+  --pm-surf:rgba(12,18,38,0.93);
+  --pm-surf2:rgba(16,24,50,0.97);
+  --pm-border:rgba(80,110,200,0.16);
+  --pm-border-hi:rgba(100,160,255,0.35);
+  --pm-accent:#00D4FF;
+  --pm-accent2:#7B6FFF;
+  --pm-green:#39FF14;
+  --pm-text:#DCE4FF;
+  --pm-sub:#6A7AAA;
+  --pm-glass:blur(28px) saturate(1.4);
+  --pm-sh:0 8px 48px rgba(0,0,0,0.7),0 2px 12px rgba(0,0,0,0.4);
+  --pm-radius:20px;
+  --pm-radius-sm:14px;
+  --pm-safe-top:env(safe-area-inset-top,0px);
+  --pm-safe-bot:env(safe-area-inset-bottom,0px);
+}
+
+/* ── Base resets ──────────────────────────────────────────── */
+html,body{background:var(--pm-bg)!important;font-family:'Inter',system-ui,sans-serif!important}
+
+/* ── Hide clutter ─────────────────────────────────────────── */
+#stats-widget,#scale-bar,#sb,#zc,
+#rp-backdrop{display:none!important}
+
+/* ── Search bar — floating centered pill, MD3 style ────────── */
+#sw{
+  position:fixed!important;
+  top:calc(var(--pm-safe-top) + 14px)!important;
+  left:50%!important;transform:translateX(-50%)!important;
+  width:min(560px,calc(100vw - 28px))!important;
+  z-index:920!important;padding:0!important;
+}
+#sc{
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  border-radius:28px!important;
+  box-shadow:var(--pm-sh),0 0 0 1px rgba(0,212,255,0.08)!important;
+  backdrop-filter:var(--pm-glass)!important;
+  -webkit-backdrop-filter:var(--pm-glass)!important;
+  transition:box-shadow .25s,border-color .25s!important;
+}
+#sc:focus-within{
+  border-color:rgba(0,212,255,0.45)!important;
+  box-shadow:var(--pm-sh),0 0 0 3px rgba(0,212,255,0.12)!important;
+}
+#sc.ac-open{border-radius:20px 20px 0 0!important}
+#slogo{
+  color:var(--pm-accent)!important;
+  font-family:'Space Mono',monospace!important;
+  font-size:11px!important;font-weight:700!important;
+  letter-spacing:2px!important;
+  border-right:1px solid var(--pm-border)!important;
+  padding:0 14px 0 18px!important;
+}
+#si{
+  color:var(--pm-text)!important;
+  background:transparent!important;
+  font-family:'Inter',sans-serif!important;
+  font-size:15px!important;font-weight:400!important;
+  padding:16px 10px!important;
+}
+#si::placeholder{color:var(--pm-sub)!important}
+#sico{color:var(--pm-accent)!important;font-size:20px!important}
+
+/* ── Autocomplete dropdown ───────────────────────────────── */
+#ac{
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  border-top:none!important;
+  border-radius:0 0 20px 20px!important;
+  box-shadow:0 16px 48px rgba(0,0,0,0.65)!important;
+}
+.ac-hd{background:transparent!important;color:var(--pm-sub)!important;font-size:10px!important;letter-spacing:1.2px!important}
+.ac-row{border-top:1px solid var(--pm-border)!important;transition:background .1s!important}
+.ac-row:hover,.ac-row.focused{background:rgba(0,212,255,0.07)!important}
+.ac-nm{color:var(--pm-text)!important;font-weight:500!important}
+.ac-ds{color:var(--pm-sub)!important}
+mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
+
+/* ── Chips ───────────────────────────────────────────────── */
+#chips{margin-top:10px!important;padding:0 6px!important;gap:8px!important}
+.chip{
+  background:rgba(16,24,50,0.92)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  color:var(--pm-text)!important;
+  border-radius:24px!important;
+  padding:9px 16px!important;
+  font-size:12px!important;font-weight:500!important;
+  font-family:'Inter',sans-serif!important;
+  backdrop-filter:blur(20px)!important;
+  -webkit-backdrop-filter:blur(20px)!important;
+  box-shadow:0 2px 12px rgba(0,0,0,0.4)!important;
+  transition:all .18s cubic-bezier(.4,0,.2,1)!important;
+  min-height:40px!important;
+}
+.chip:hover{
+  background:rgba(0,212,255,0.12)!important;
+  border-color:var(--pm-accent)!important;
+  color:var(--pm-accent)!important;
+  transform:translateY(-2px)!important;
+  box-shadow:0 4px 20px rgba(0,212,255,0.2)!important;
+}
+.chip.active{
+  background:rgba(0,212,255,0.18)!important;
+  border-color:var(--pm-accent)!important;
+  color:var(--pm-accent)!important;
+  box-shadow:0 0 16px rgba(0,212,255,0.3)!important;
+}
+
+/* ── FABs — top-left, minimal set ───────────────────────── */
+#fabs{
+  top:calc(var(--pm-safe-top) + 14px)!important;
+  left:14px!important;
+  gap:10px!important;
+}
+.fab{
+  width:48px!important;height:48px!important;
+  background:var(--pm-surf)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  color:var(--pm-text)!important;
+  border-radius:15px!important;
+  box-shadow:var(--pm-sh)!important;
+  backdrop-filter:var(--pm-glass)!important;
+  -webkit-backdrop-filter:var(--pm-glass)!important;
+  transition:all .2s!important;
+  font-size:18px!important;
+}
+.fab:hover{
+  background:rgba(0,212,255,0.12)!important;
+  border-color:var(--pm-accent)!important;
+  color:var(--pm-accent)!important;
+  box-shadow:0 0 20px rgba(0,212,255,0.25)!important;
+  transform:translateY(-2px)!important;
+}
+/* Hide non-essential fabs — keep only menu, locate, compass */
+#btn-dist,#btn-addrbook,#btn-dark,#btn-demo,#btn-stopdemo,#btn-emergency{
+  display:none!important;
+}
+
+/* ── Satellite toggle — pill style ──────────────────────── */
+#sat-toggle{
+  background:var(--pm-surf)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  backdrop-filter:var(--pm-glass)!important;
+  -webkit-backdrop-filter:var(--pm-glass)!important;
+  border-radius:24px!important;
+  box-shadow:var(--pm-sh)!important;
+  padding:3px!important;
+}
+.sat-btn{
+  background:transparent!important;
+  color:var(--pm-sub)!important;
+  border-radius:20px!important;
+  border:none!important;
+  padding:8px 16px!important;
+  font-size:12px!important;font-weight:600!important;
+  font-family:'Inter',sans-serif!important;
+}
+.sat-btn.active{
+  background:var(--pm-accent)!important;
+  color:#060A1C!important;
+  box-shadow:0 0 14px rgba(0,212,255,0.4)!important;
+}
+
+/* ── Bottom Sheet — replaces right panel ─────────────────── */
+#bs{
+  position:fixed;bottom:0;left:0;right:0;
+  z-index:850;
+  background:var(--pm-surf2);
+  border-top:1px solid var(--pm-border-hi);
+  border-radius:28px 28px 0 0;
+  box-shadow:0 -8px 40px rgba(0,0,0,0.6);
+  backdrop-filter:var(--pm-glass);
+  -webkit-backdrop-filter:var(--pm-glass);
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+  transform:translateY(calc(100% - 64px - var(--pm-safe-bot)));
+  max-height:70vh;
+  display:flex;flex-direction:column;
+  padding-bottom:var(--pm-safe-bot);
+}
+#bs.peek{transform:translateY(calc(100% - 64px - var(--pm-safe-bot)))}
+#bs.half{transform:translateY(40%)}
+#bs.full{transform:translateY(0)}
+#bs-handle-row{
+  display:flex;align-items:center;justify-content:center;
+  padding:10px 0 6px;flex-shrink:0;cursor:pointer;
+}
+#bs-handle{width:36px;height:4px;border-radius:2px;background:var(--pm-border-hi)}
+#bs-title{
+  padding:0 20px 12px;
+  font-family:'Outfit',sans-serif;font-size:17px;font-weight:700;
+  color:var(--pm-text);display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+#bs-title span{color:var(--pm-accent);font-size:12px;font-weight:500;font-family:'Space Mono',monospace;margin-left:auto}
+#bs-body{flex:1;overflow-y:auto;padding:0 16px 16px}
+#bs-body::-webkit-scrollbar{width:2px}
+#bs-body::-webkit-scrollbar-thumb{background:var(--pm-border-hi);border-radius:1px}
+/* BS district items */
+.bs-item{
+  display:flex;align-items:center;gap:12px;
+  padding:13px 14px;cursor:pointer;
+  border-radius:14px;margin-bottom:4px;
+  transition:background .15s;
+  border:1px solid transparent;
+}
+.bs-item:hover{background:rgba(0,212,255,0.07);border-color:var(--pm-border)}
+.bs-item.active{background:rgba(0,212,255,0.12);border-color:rgba(0,212,255,0.3)}
+.bs-px{
+  font-family:'Space Mono',monospace;font-size:10px;font-weight:700;
+  padding:3px 8px;border-radius:8px;
+  background:rgba(0,212,255,0.12);color:var(--pm-accent);
+  flex-shrink:0;min-width:38px;text-align:center;
+}
+.bs-nm{font-size:14px;color:var(--pm-text);font-weight:500}
+.bs-sb{font-size:11px;color:var(--pm-sub);margin-top:1px}
+.bs-cn{margin-left:auto;font-size:11px;color:var(--pm-sub);font-family:'Space Mono',monospace}
+
+/* ── Bottom Navigation Bar ───────────────────────────────── */
+#bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;z-index:860;
+  height:calc(64px + var(--pm-safe-bot));
+  padding-bottom:var(--pm-safe-bot);
+  background:var(--pm-surf2);
+  border-top:1px solid var(--pm-border-hi);
+  backdrop-filter:var(--pm-glass);
+  -webkit-backdrop-filter:var(--pm-glass);
+  display:flex;align-items:center;justify-content:space-around;
+}
+.bn-btn{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;cursor:pointer;
+  padding:8px 16px;border-radius:16px;
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:600;
+  color:var(--pm-sub);transition:all .18s;min-width:60px;
+  letter-spacing:.3px;text-transform:uppercase;
+}
+.bn-btn .bn-ico{font-size:20px;line-height:1;transition:transform .2s}
+.bn-btn:hover,.bn-btn.active{color:var(--pm-accent)}
+.bn-btn.active .bn-ico{transform:scale(1.15)}
+.bn-btn.active{background:rgba(0,212,255,0.08)}
+
+/* ── Push map content up above bottom nav ────────────────── */
+#map{bottom:64px!important}
+
+/* ── Right panel becomes bottom sheet content ───────────── */
+#rp{
+  display:none!important;
+}
+
+/* ── Route card — floating above bottom nav ─────────────── */
+#route-card{
+  bottom:calc(72px + var(--pm-safe-bot))!important;
+  left:14px!important;right:14px!important;
+  border-radius:var(--pm-radius)!important;
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  box-shadow:var(--pm-sh),0 0 0 1px rgba(0,212,255,0.08)!important;
+}
+.rc-dist{color:var(--pm-accent)!important;font-family:'Outfit',sans-serif!important;font-size:28px!important;font-weight:800!important}
+.rc-time{color:var(--pm-sub)!important;font-size:12px!important}
+.rc-via{color:var(--pm-text)!important;font-size:12px!important;padding:4px 16px 6px!important}
+.rs-step{border-bottom:1px solid var(--pm-border)!important}
+.rs-step:last-child{border-bottom:none!important}
+.rc-btn{
+  background:rgba(0,212,255,0.06)!important;
+  border:1px solid var(--pm-border)!important;
+  color:var(--pm-text)!important;
+  border-radius:12px!important;
+}
+.rc-btn:hover{background:rgba(0,212,255,0.12)!important;border-color:var(--pm-accent)!important;color:var(--pm-accent)!important}
+.rc-btn.primary{background:var(--pm-accent)!important;color:#060A1C!important;font-weight:700!important;border-color:transparent!important}
+.rc-btn.nav{background:linear-gradient(135deg,var(--pm-green),var(--pm-accent))!important;color:#060A1C!important;font-weight:800!important;border-color:transparent!important}
+
+/* ── Nav HUD ─────────────────────────────────────────────── */
+#nav-hud{
+  bottom:calc(80px + var(--pm-safe-bot))!important;
+  left:14px!important;right:14px!important;
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  border-radius:var(--pm-radius)!important;
+  box-shadow:var(--pm-sh)!important;
+}
+.nh-maneuver{color:var(--pm-accent)!important;font-size:40px!important}
+.nh-street{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important;font-size:16px!important;font-weight:600!important}
+.nh-dist{color:var(--pm-sub)!important}
+.nh-eta{color:var(--pm-accent)!important;font-family:'Space Mono',monospace!important}
+.nh-end{background:rgba(255,50,82,0.2)!important;border:1px solid rgba(255,50,82,0.4)!important;color:#FF3252!important;border-radius:12px!important}
+
+/* ── Direction panel ─────────────────────────────────────── */
+#dir-panel{
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  border-radius:var(--pm-radius) var(--pm-radius) 0 0!important;
+  box-shadow:var(--pm-sh)!important;
+  bottom:0!important;top:auto!important;height:auto!important;
+  padding-bottom:calc(8px + var(--pm-safe-bot))!important;
+}
+.dir-title{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important;font-weight:700!important}
+.dir-back{color:var(--pm-accent)!important}
+.dir-inp{
+  background:rgba(255,255,255,0.04)!important;
+  border:1px solid var(--pm-border)!important;
+  color:var(--pm-text)!important;
+  border-radius:14px!important;
+}
+.dir-inp:focus{border-color:var(--pm-accent)!important;background:rgba(0,212,255,0.06)!important;box-shadow:0 0 12px rgba(0,212,255,0.15)!important}
+.dir-inp::placeholder{color:var(--pm-sub)!important}
+.dir-go-btn{color:var(--pm-accent)!important}
+.rm-btn{background:rgba(255,255,255,0.04)!important;border:1px solid var(--pm-border)!important;color:var(--pm-sub)!important;border-radius:12px!important}
+.rm-btn.active{background:var(--pm-accent)!important;color:#060A1C!important;border-color:transparent!important}
+
+/* ── POI card ────────────────────────────────────────────── */
+#snas-poi-card{
+  bottom:calc(72px + var(--pm-safe-bot))!important;
+  left:14px!important;right:14px!important;
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  border-radius:var(--pm-radius)!important;
+  box-shadow:var(--pm-sh)!important;
+}
+.spc-name{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important}
+.spc-cat{color:var(--pm-accent)!important}
+.spc-row{border-bottom:1px solid var(--pm-border)!important}
+.spc-btn{background:rgba(0,212,255,0.06)!important;border:1px solid var(--pm-border)!important;color:var(--pm-text)!important;border-radius:12px!important}
+.spc-btn.primary{background:var(--pm-accent)!important;color:#060A1C!important;font-weight:700!important;border-color:transparent!important}
+
+/* ── Nearest panel ───────────────────────────────────────── */
+#nearest-panel{
+  bottom:calc(72px + var(--pm-safe-bot))!important;
+  left:14px!important;right:14px!important;
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  border-radius:var(--pm-radius)!important;
+  box-shadow:var(--pm-sh)!important;
+  max-height:50vh!important;
+}
+.np-hd{border-bottom:1px solid var(--pm-border)!important}
+.np-title{color:var(--pm-accent)!important;font-family:'Outfit',sans-serif!important;font-weight:700!important}
+
+/* ── Left panel (layers) ─────────────────────────────────── */
+#lp{
+  background:var(--pm-surf2)!important;
+  border-right:1px solid var(--pm-border-hi)!important;
+  box-shadow:8px 0 40px rgba(0,0,0,0.6)!important;
+  backdrop-filter:var(--pm-glass)!important;
+}
+.lp-ht{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important}
+.lp-tm{color:var(--pm-text)!important}.lp-ts{color:var(--pm-sub)!important}
+.tog.on{background:var(--pm-accent)!important}
+.lp-row:hover{background:rgba(0,212,255,0.06)!important}
+.lp-gl{color:var(--pm-sub)!important}
+
+/* ── Toast ───────────────────────────────────────────────── */
+#toast{
+  bottom:calc(76px + var(--pm-safe-bot))!important;
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  color:var(--pm-text)!important;
+  border-radius:24px!important;
+  box-shadow:var(--pm-sh)!important;
+  font-family:'Inter',sans-serif!important;font-size:13px!important;
+}
+
+/* ── Weather widget ──────────────────────────────────────── */
+#weather-widget{
+  top:auto!important;right:14px!important;
+  bottom:calc(72px + var(--pm-safe-bot) + 60px)!important;
+  background:var(--pm-surf)!important;
+  border-color:var(--pm-border-hi)!important;
+}
+#wx-temp{color:var(--pm-accent)!important}
+
+/* ── Report FAB & voice btn ──────────────────────────────── */
+#report-fab{
+  left:auto!important;right:14px!important;
+  bottom:calc(72px + var(--pm-safe-bot) + 8px)!important;
+  width:50px!important;height:50px!important;
+}
+#voice-btn{
+  right:72px!important;
+  bottom:calc(72px + var(--pm-safe-bot) + 8px)!important;
+}
+#global-view-btn{
+  right:14px!important;
+  bottom:calc(72px + var(--pm-safe-bot) + 140px)!important;
+}
+
+/* ── QR / Cert / Share modals ────────────────────────────── */
+.qr-card,.cert-card,.ss-card{
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  border-radius:var(--pm-radius)!important;
+}
+.qr-title,.cert-title{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important}
+.qr-btn{background:rgba(0,212,255,0.08)!important;border:1px solid var(--pm-border)!important;color:var(--pm-text)!important;border-radius:12px!important}
+.qr-btn.primary{background:var(--pm-accent)!important;color:#060A1C!important;font-weight:700!important;border-color:transparent!important}
+.ss-btn{background:rgba(0,212,255,0.08)!important;border:1px solid var(--pm-border)!important;color:var(--pm-text)!important;border-radius:12px!important}
+
+/* ── Neon Route Glow ─────────────────────────────────────── */
+/* These CSS vars are used by JS to paint the layers */
+:root{--route-global:#00C8FF;--route-somalia:#39FF14}
+
+/* ── What's here card ────────────────────────────────────── */
+#whats-here{
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  border-radius:var(--pm-radius)!important;
+  box-shadow:var(--pm-sh)!important;
+  bottom:calc(72px + var(--pm-safe-bot) + 10px)!important;
+}
+.wh-title{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important;font-weight:700!important}
+.wh-addr{color:var(--pm-accent)!important}
+.wh-pc{color:var(--pm-sub)!important;font-family:'Space Mono',monospace!important}
+.wh-btn{background:rgba(0,212,255,0.08)!important;border:1px solid var(--pm-border)!important;color:var(--pm-text)!important;border-radius:12px!important}
+
+/* ── Demo popup ──────────────────────────────────────────── */
+#demo-popup{background:var(--pm-surf2)!important;border:1px solid var(--pm-border-hi)!important}
+.dp-gov{background:linear-gradient(90deg,rgba(0,212,255,0.15),rgba(123,111,255,0.1))!important;color:var(--pm-accent)!important}
+
+/* ── Road banner ─────────────────────────────────────────── */
+#road-banner{
+  bottom:calc(72px + var(--pm-safe-bot) + 10px)!important;
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  border-radius:var(--pm-radius-sm)!important;
+}
+#road-banner-so,#road-banner-en{color:var(--pm-text)!important}
+
+/* ── Loading screen ──────────────────────────────────────── */
+#ld{background:var(--pm-bg)!important}
+.ld-logo{
+  font-family:'Outfit',sans-serif!important;
+  background:linear-gradient(135deg,var(--pm-accent),var(--pm-accent2))!important;
+  -webkit-background-clip:text!important;
+  -webkit-text-fill-color:transparent!important;
+  background-clip:text!important;
+  letter-spacing:6px!important;
+}
+.ld-sub{color:var(--pm-sub)!important;font-family:'Inter',sans-serif!important}
+.ld-fill{background:linear-gradient(90deg,var(--pm-accent),var(--pm-accent2))!important}
+
+/* ── Mobile final fixes ──────────────────────────────────── */
+@media(max-width:430px){
+  #sw{width:calc(100vw - 28px)!important;top:calc(var(--pm-safe-top) + 10px)!important;left:50%!important;transform:translateX(-50%)!important}
+  #fabs{top:calc(var(--pm-safe-top) + 10px)!important}
+  #chips .chip{min-height:44px!important;padding:10px 14px!important}
+}
 </style>
 </head>
 <body>
@@ -649,10 +1666,13 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
   <div class="swi"><span class="swi-v" id="sw-roads">0</span><span class="swi-l">Roads</span></div>
   <div class="swi"><span class="swi-v" id="sw-named">-</span><span class="swi-l">Named</span></div>
   <div class="swi"><span class="swi-v" id="sw-dists">-</span><span class="swi-l">Districts</span></div>
+  <div id="traffic-toggle" onclick="toggleTrafficOverlay()" title="Traffic reports overlay">🔴 Traffic</div>
   <div class="swi" style="padding:0 8px;cursor:pointer;color:#9aa0a6;font-size:12px;display:flex;align-items:center;pointer-events:auto" onclick="document.getElementById('stats-widget').style.display='none'" title="Close">&#215;</div>
 </div>
 <!-- Scale bar -->
 <div id="scale-bar">—</div>
+<!-- Global View / Great Trek Button -->
+<button id="global-view-btn" onclick="toggleGlobalView()" title="Zoom out to see global route">🌍 Global View</button>
 <!-- Address Book Panel -->
 <div id="addr-book">
   <div class="ab-hd">
@@ -679,6 +1699,39 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
   </div>
 </div>
 <div id="toast"></div>
+<!-- ═══════════════════════════════════════════════
+     BOTTOM SHEET — replaces right side panel
+     ═══════════════════════════════════════════════ -->
+<div id="bs">
+  <div id="bs-handle-row" onclick="toggleBS()">
+    <div id="bs-handle"></div>
+  </div>
+  <div id="bs-title">
+    <span id="bs-title-text">Districts</span>
+    <span id="bs-badge"></span>
+  </div>
+  <div id="bs-body"></div>
+</div>
+<!-- ═══════════════════════════════════════════════
+     BOTTOM NAVIGATION BAR
+     ═══════════════════════════════════════════════ -->
+<nav id="bottom-nav">
+  <button class="bn-btn active" id="bn-explore" onclick="bnTab('explore')">
+    <span class="bn-ico">🔍</span>Explore
+  </button>
+  <button class="bn-btn" id="bn-navigate" onclick="bnTab('navigate')">
+    <span class="bn-ico">🧭</span>Navigate
+  </button>
+  <button class="bn-btn" id="bn-districts" onclick="bnTab('districts')">
+    <span class="bn-ico">🗺</span>Districts
+  </button>
+  <button class="bn-btn" id="bn-report" onclick="bnTab('report')">
+    <span class="bn-ico">🚨</span>Report
+  </button>
+  <button class="bn-btn" id="bn-layers" onclick="bnTab('layers')">
+    <span class="bn-ico">⚙️</span>Layers
+  </button>
+</nav>
 <div id="snas-poi-card"><div class="spc-hd"><div class="spc-icon" id="spc-icon">📍</div><div style="flex:1;min-width:0"><div class="spc-name" id="spc-name"></div><div class="spc-cat" id="spc-cat"></div></div><button class="spc-xx" onclick="closeSNASPoiCard()">✕</button></div><div id="spc-rows"></div><div class="spc-actions"><button class="spc-btn primary" onclick="dirFromCard()">🧭 Directions</button><button class="spc-btn" onclick="sharePoiCard()">📤 Share</button></div></div>
 <div id="nearest-panel"><div class="np-hd"><span class="np-title" id="np-title">Nearby</span><button class="np-x" onclick="closeNearestPanel()">✕</button></div><div class="np-list" id="np-list"></div></div>
 <div id="road-banner"><span id="road-banner-icon">🛣</span><div id="road-banner-body"><div id="road-banner-so"></div><div id="road-banner-en"></div></div><button id="road-banner-x" onclick="closeRoadBanner()">✕</button></div>
@@ -720,6 +1773,10 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
     <button onclick="clearRoute()" style="background:none;border:none;font-size:22px;color:#bbb;cursor:pointer;line-height:1">&#215;</button>
   </div>
   <div class="rc-via" id="rc-via"></div>
+  <div class="route-legend" id="route-legend" style="display:none">
+    <span class="rl-seg"><span class="rl-line rl-global"></span>Global</span>
+    <span class="rl-seg"><span class="rl-line rl-somalia"></span>SNAS Somalia</span>
+  </div>
   <div id="route-steps"></div>
   <div class="rc-actions">
     <button class="rc-btn" onclick="clearRoute()">&#215; Clear</button>
@@ -750,16 +1807,38 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
   </div>
   <div class="dir-row">
     <div class="dir-dot" style="background:#34A853;border:2px solid #2e9647"></div>
-    <input class="dir-inp" id="dir-from" placeholder="Choose starting point..." oninput="dirSearch(this.value,'from')" onfocus="dirSearch(this.value,'from')" autocomplete="off">
+    <input class="dir-inp" id="dir-from" placeholder="Start: city, street, or tap map..." oninput="dirSearch(this.value,'from')" onfocus="dirSearch(this.value,'from')" onkeydown="if(event.key==='Enter')resolveAndSetPoint('from')" autocomplete="off">
+    <button class="dir-go-btn" onclick="resolveAndSetPoint('from')" title="Find location">🔍</button>
     <button class="dir-clr" onclick="clearRoutePoint('from')">&#215;</button>
   </div>
   <div class="dir-row" style="margin-bottom:0">
     <div class="dir-dot" style="background:#EA4335;border:2px solid #d03328"></div>
-    <input class="dir-inp" id="dir-to" placeholder="Choose destination..." oninput="dirSearch(this.value,'to')" onfocus="dirSearch(this.value,'to')" autocomplete="off">
+    <input class="dir-inp" id="dir-to" placeholder="Destination: Nairobi, Cape Town, any city..." oninput="dirSearch(this.value,'to')" onfocus="dirSearch(this.value,'to')" onkeydown="if(event.key==='Enter')resolveAndSetPoint('to')" autocomplete="off">
+    <button class="dir-go-btn" onclick="resolveAndSetPoint('to')" title="Find location">🔍</button>
     <button class="dir-clr" onclick="clearRoutePoint('to')">&#215;</button>
   </div>
   <div id="dir-results"></div>
 </div>
+<!-- Weather Widget -->
+<div id="weather-widget" onclick="refreshWeather()" title="Current weather · click to refresh">
+  <div id="wx-icon">🌤</div>
+  <div id="wx-body">
+    <div id="wx-temp">--°C</div>
+    <div id="wx-desc">Loading...</div>
+    <div id="wx-city">Somalia</div>
+  </div>
+</div>
+<!-- Social Report FAB -->
+<button id="report-fab" onclick="toggleReportPanel()" title="Report incident">🚨</button>
+<div id="report-panel">
+  <div class="rp-top">Report Incident</div>
+  <button class="report-btn" onclick="submitReport('police')"><span class="rb-icon">🚔</span>Police Checkpoint<span class="report-count" id="rc-police">0</span></button>
+  <button class="report-btn" onclick="submitReport('accident')"><span class="rb-icon">💥</span>Accident<span class="report-count" id="rc-accident">0</span></button>
+  <button class="report-btn" onclick="submitReport('hazard')"><span class="rb-icon">⚠️</span>Road Hazard<span class="report-count" id="rc-hazard">0</span></button>
+  <button class="report-btn" onclick="submitReport('roadwork')"><span class="rb-icon">🚧</span>Road Work<span class="report-count" id="rc-roadwork">0</span></button>
+</div>
+<!-- Voice Navigation Button -->
+<button id="voice-btn" onclick="toggleVoice()" title="Voice navigation">🔊</button>
 <!-- QR Code Modal -->
 <div id="qr-modal" onclick="if(event.target===this)closeQR()">
   <div class="qr-card">
@@ -802,7 +1881,7 @@ const RN={AW:'Awdal',BK:'Bakool',BN:'Banaadir',BR:'Bari',BY:'Bay',CY:'Caynabo',G
 // Postcode format: LLNN LL (e.g. AB04 KR) -- updated from old LLNN NN
 const PC_REGEX=/^([A-Z]{2})(\d{2})\s*([A-Z]{2})$/i;
 const PC_SHORT=/^([A-Z]{2})(\d{1,2})$/i;
-const STYLE_MAP='https://tiles.openfreemap.org/styles/liberty';
+const STYLE_MAP='https://tiles.openfreemap.org/styles/dark';
 const ESRI_SAT_TILES=['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'];
 const STYLE_OSM_FALLBACK={version:8,glyphs:'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,maxzoom:19,attribution:'OpenStreetMap'}},layers:[{id:'osm-bg',type:'raster',source:'osm'}]};
 const RIVER_DATA=[
@@ -908,7 +1987,7 @@ function roadName(r){
   return{name:(dist?dist.postcode_prefix:'SO')+'-'+rr.street_id,seq:true};
 }
 function hwBadge(hw){const h=(hw||'other').toLowerCase();const k=['motorway','trunk','primary','secondary','tertiary','residential','service','track'];return'<span class="hw-b hw-'+(k.includes(h)?h:'other')+'">'+(hw||'road')+'</span>';}
-let allDistricts=[],districtMap={},roadCache={},fuseDistricts=null;
+let allDistricts=[],districtMap={},roadCache={};
 const _osmNames={};let _osmFetchTimer=null;
 let layerVis={markers:true,roads:true,labels:true,places:true,rivers:true,mountains:true,oil:false,minerals:false,buildings:false,distpolygons:true,coverage:true,somaliabound:true,cities:true};
 let searchResults=[],searchTimer=null,acFocusIdx=-1;
@@ -929,7 +2008,7 @@ const LAYER_GROUPS={
 };
 const map=new maplibregl.Map({
   container:'map',style:STYLE_MAP,center:HOME,zoom:HOME_Z,
-  minZoom:4,maxZoom:22,antialias:true,attributionControl:false,maxBounds:[[36,-5],[65,13]]
+  minZoom:2,maxZoom:22,antialias:true,attributionControl:false
 });
 // Helpers
 function fbOn(){document.getElementById('fetch-bar').classList.add('on');}
@@ -957,7 +2036,27 @@ function buildRoadsGJ(){return{type:'FeatureCollection',features:Object.values(r
   // sort_weight: 0=named SNAS, 1=named OSM, 2=unnamed — used by symbol-sort-key
   const sort_weight=raw_so||raw_en?0:raw_osm?1:2;
   f.properties.display_name=display_name;f.properties.name_so=raw_so;f.properties.name_en=raw_en||tr.en;f.properties.name_ar=tr.ar;f.properties.has_name=hasName;f.properties.sort_weight=sort_weight;return f;})}}
-function buildRoadLabelsGJ(){return{type:'FeatureCollection',features:Object.values(roadCache).filter(r=>r.center&&r.center.lng!=null&&r.props).map(r=>{const p=r.props;const ns=p.name_so&&p.name_so!=='Unnamed'?p.name_so.trim():'';const tr=ns?translateSomaliName(ns):{en:'',ar:''};const ne=p.name_en&&p.name_en!=='Unnamed'?p.name_en.trim():'';const no=p.osm_name&&p.osm_name!=='Unnamed'?p.osm_name.trim():'';const dn=tr.en||ne||no||'';const has_name=!!(ns||no);return{type:'Feature',geometry:{type:'Point',coordinates:[r.center.lng,r.center.lat]},properties:{display_name:dn,has_name,highway_class:p.highway_class||''}};})}}
+function buildRoadLabelsGJ(){
+  // One label per unique display_name — longest segment wins to anchor label on biggest road
+  const byName=new Map();
+  Object.values(roadCache).forEach(r=>{
+    if(!r.center||r.center.lng==null||!r.props)return;
+    const p=r.props;
+    const ns=p.name_so&&p.name_so!=='Unnamed'?p.name_so.trim():'';
+    const tr=ns?translateSomaliName(ns):{en:'',ar:''};
+    const ne=p.name_en&&p.name_en!=='Unnamed'?p.name_en.trim():'';
+    const no=p.osm_name&&p.osm_name!=='Unnamed'?p.osm_name.trim():'';
+    const dn=tr.en||ne||no||'';
+    if(!dn)return;
+    const key=dn.toLowerCase();
+    const coordLen=r.geom&&r.geom.geometry&&r.geom.geometry.coordinates?r.geom.geometry.coordinates.length:0;
+    const existing=byName.get(key);
+    if(!existing||coordLen>existing.coordLen){
+      byName.set(key,{coordLen,feat:{type:'Feature',geometry:{type:'Point',coordinates:[r.center.lng,r.center.lat]},properties:{display_name:dn,has_name:!!(ns||no),highway_class:p.highway_class||''}}});
+    }
+  });
+  return{type:'FeatureCollection',features:Array.from(byName.values()).map(v=>v.feat)};
+}
 function setSD(id,data){const s=map.getSource(id);if(s)s.setData(data);}
 function addSrc(id,spec){if(!map.getSource(id))map.addSource(id,spec);}
 
@@ -1020,13 +2119,13 @@ function addAllLayers(){
     layout:{
       'symbol-placement':'line',
       'text-field':['get','display_name'],
-      'text-font':['Noto Sans Bold','Noto Sans Regular'],
+      'text-font':['Noto Sans Bold'],
       'text-size':['interpolate',['linear'],['zoom'],10,7,13,10,16,12,19,13],
-      'symbol-spacing':60,
+      'symbol-spacing':250,
       'text-max-angle':40,
       'text-padding':0,
       'text-keep-upright':true,
-      'symbol-sort-key':['get','sort_weight'],
+      'symbol-sort-key':['coalesce',['get','sort_weight'],2],
       'text-allow-overlap':false,'text-ignore-placement':false,'visibility':V('labels')
     },
     paint:{
@@ -1040,7 +2139,7 @@ function addAllLayers(){
   if(!map.getLayer('district-postcodes'))map.addLayer({id:'district-postcodes',type:'symbol',source:'districts',minzoom:12,layout:{'text-field':['concat',['get','postcode_prefix'],' \u00b7 ',['get','name_en']],'text-font':['Noto Sans Bold'],'text-size':10,'text-offset':[0,1.5],'text-anchor':'top','visibility':V('markers')},paint:{'text-color':'#e37400','text-halo-color':'rgba(255,255,255,0.95)','text-halo-width':2}});
   if(!map.getLayer('region-labels'))map.addLayer({id:'region-labels',type:'symbol',source:'regions-src',minzoom:5,maxzoom:9,layout:{'text-field':['get','name'],'text-font':['Noto Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],5,10,8,14],'text-transform':'uppercase','text-letter-spacing':0.15,'text-allow-overlap':false,'visibility':V('places')},paint:{'text-color':'#3c4043','text-halo-color':'rgba(255,255,255,0.85)','text-halo-width':2}});
   if(!map.getLayer('rivers-layer'))map.addLayer({id:'rivers-layer',type:'line',source:'rivers-src',layout:{'line-cap':'round','line-join':'round','visibility':V('rivers')},paint:{'line-color':'#5bb8f5','line-width':['interpolate',['linear'],['zoom'],4,['get','weight'],8,['*',['get','weight'],2],12,['*',['get','weight'],3]],'line-opacity':0.85}});
-  if(!map.getLayer('rivers-labels'))map.addLayer({id:'rivers-labels',type:'symbol',source:'rivers-src',minzoom:5,layout:{'symbol-placement':'line','text-field':['get','name'],'text-font':['Noto Sans Italic','Noto Sans Regular'],'text-size':10,'text-offset':[0,-1.0],'symbol-spacing':300,'visibility':V('rivers')},paint:{'text-color':'#1a73e8','text-halo-color':'rgba(255,255,255,0.9)','text-halo-width':1.5}});
+  if(!map.getLayer('rivers-labels'))map.addLayer({id:'rivers-labels',type:'symbol',source:'rivers-src',minzoom:5,layout:{'symbol-placement':'line','text-field':['get','name'],'text-font':['Noto Sans Italic'],'text-size':10,'text-offset':[0,-1.0],'symbol-spacing':300,'visibility':V('rivers')},paint:{'text-color':'#1a73e8','text-halo-color':'rgba(255,255,255,0.9)','text-halo-width':1.5}});
   if(!map.getLayer('mountains-layer'))map.addLayer({id:'mountains-layer',type:'circle',source:'mtn-src',paint:{'circle-radius':5,'circle-color':'#8b7355','circle-stroke-color':'#fff','circle-stroke-width':1},layout:{'visibility':V('mountains')}});
   if(!map.getLayer('mountains-text'))map.addLayer({id:'mountains-text',type:'symbol',source:'mtn-src',layout:{'text-field':['get','name'],'text-font':['Noto Sans Regular'],'text-size':10,'text-offset':[0,-1.4],'text-anchor':'bottom','visibility':V('mountains')},paint:{'text-color':'#5d4037','text-halo-color':'rgba(255,255,255,0.85)','text-halo-width':1.5}});
   if(!map.getLayer('oil-layer'))map.addLayer({id:'oil-layer',type:'circle',source:'oil-src',paint:{'circle-radius':11,'circle-color':'#2d2d2d','circle-stroke-color':'#555','circle-stroke-width':2,'circle-opacity':0.85},layout:{'visibility':V('oil')}});
@@ -1066,7 +2165,7 @@ function addAllLayers(){
   // ── Supabase POI layer ──
   if(!map.getSource('poi-src'))map.addSource('poi-src',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
   if(!map.getLayer('snas-poi-icons'))map.addLayer({id:'snas-poi-icons',type:'symbol',source:'poi-src',minzoom:11,layout:{'text-field':['get','icon'],'text-font':['Noto Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],11,14,14,18,18,22],'text-allow-overlap':true,'icon-allow-overlap':true,'visibility':'visible'},paint:{'text-color':'rgba(0,0,0,0.9)','text-halo-color':'rgba(255,255,255,0.95)','text-halo-width':1.5}});
-  if(!map.getLayer('snas-poi-labels'))map.addLayer({id:'snas-poi-labels',type:'symbol',source:'poi-src',minzoom:13,layout:{'text-field':['coalesce',['get','name_so'],['get','name_en']],'text-font':['Noto Sans Bold','Noto Sans Regular'],'text-size':10,'text-offset':[0,1.6],'text-anchor':'top','text-allow-overlap':false,'text-ignore-placement':false,'visibility':'visible'},paint:{'text-color':'#202124','text-halo-color':'rgba(255,255,255,0.97)','text-halo-width':2}});
+  if(!map.getLayer('snas-poi-labels'))map.addLayer({id:'snas-poi-labels',type:'symbol',source:'poi-src',minzoom:13,layout:{'text-field':['coalesce',['get','name_so'],['get','name_en']],'text-font':['Noto Sans Bold'],'text-size':10,'text-offset':[0,1.6],'text-anchor':'top','text-allow-overlap':false,'text-ignore-placement':false,'visibility':'visible'},paint:{'text-color':'#202124','text-halo-color':'rgba(255,255,255,0.97)','text-halo-width':2}});
   map.on('click','snas-poi-icons',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;const lng=parseFloat(p.lon),lat=parseFloat(p.lat);map.flyTo({center:[lng,lat],zoom:17,duration:800,essential:true});const full=_snasPoiCache.find(x=>x.poi_id==p.poi_id)||p;map.once('moveend',()=>spawnPulse({lng,lat}));showSNASPoiCard(full);});
   map.on('mouseenter','snas-poi-icons',()=>{map.getCanvas().style.cursor='pointer';});
   map.on('mouseleave','snas-poi-icons',()=>{map.getCanvas().style.cursor='';});
@@ -1104,6 +2203,7 @@ async function loadSNASPOIs(){
     const rows=await dbGet('snas_pois',{select:'poi_id,name_so,name_en,category,lat,lon,phone,website,opening_hours',limit:3000}).catch(()=>[]);
     if(!rows||!rows.length)return;
     _snasPoiCache=rows.map(p=>Object.assign({},p,{icon:POI_ICONS[p.category]||'📍'}));
+    rebuildFusePOIs();
     const fc={type:'FeatureCollection',features:_snasPoiCache.map(p=>({type:'Feature',geometry:{type:'Point',coordinates:[parseFloat(p.lon),parseFloat(p.lat)]},properties:{poi_id:p.poi_id,name_so:p.name_so||'',name_en:p.name_en||'',category:p.category||'other',icon:POI_ICONS[p.category]||'📍',lon:parseFloat(p.lon),lat:parseFloat(p.lat)}}))};
     if(styleReady&&map.getSource('poi-src'))map.getSource('poi-src').setData(fc);
     // Update chip count badges
@@ -1162,10 +2262,18 @@ function updateLabelContrast(mode){
       map.setPaintProperty(id,'text-halo-color',sat?'rgba(0,0,0,0.8)':'rgba(255,255,255,0.95)');
       map.setPaintProperty(id,'text-color',sat?'#ffffff':'#202124');
     });
-    // Re-float SNAS labels to top so imagery doesn't bury them
-    if(sat){
-      const toFloat=['road-labels','settlement-labels','district-labels-sm','district-postcodes','road-selected-glow','road-selected','snas-poi-labels'];
-      toFloat.forEach(id=>{try{if(map.getLayer(id))map.moveLayer(id);}catch(e){}});
+    // Re-float ALL SNAS layers to top so satellite imagery never buries them
+    const toFloat=['road-casing','road-fill','road-coverage','road-labels','road-labels-src',
+      'settlement-labels','settlement-dots','district-labels-sm','district-postcodes',
+      'snas-poi-icons','snas-poi-labels','road-selected-glow','road-selected',
+      'route-glow-outer','route-glow-inner','route-shadow',
+      'route-global-line','route-global-core',
+      'route-so-glow','route-so-line','route-so-core'];
+    toFloat.forEach(id=>{try{if(map.getLayer(id))map.moveLayer(id);}catch(e){}});
+    // POI contrast on satellite
+    if(map.getLayer('snas-poi-labels')){
+      map.setPaintProperty('snas-poi-labels','text-halo-color',sat?'rgba(0,0,0,0.9)':'rgba(255,255,255,0.97)');
+      map.setPaintProperty('snas-poi-labels','text-color',sat?'#ffffff':'#202124');
     }
   }catch(e){console.warn('labelContrast:',e);}
 }
@@ -1229,10 +2337,14 @@ function handleWorkerMsg(e){
   const{type,payload}=e.data;
   if(type==='PROCESSED'){
     if(payload.added)payload.added.forEach(r=>{if(!roadCache[r.street_id])roadCache[r.street_id]={props:r.props,center:r.center,geom:{type:'Feature',geometry:{type:'LineString',coordinates:[]},properties:r.props}};});
-    if(payload.gj&&styleReady&&map.getSource('roads')){map.getSource('roads').setData(buildRoadsGJ());setSD('road-labels-src',buildRoadLabelsGJ());const t=Object.keys(roadCache).length;if(t>0)setMsg(t.toLocaleString()+' roads loaded');if(openDistrictId)refreshDistrictRoadList(openDistrictId);scheduleOSMNames();}
+    if(payload.gj&&payload.gj.features)payload.gj.features.forEach(f=>{const sid=f.properties&&f.properties.street_id;if(sid!=null&&roadCache[sid])roadCache[sid].geom=f;});
+    if(payload.gj&&styleReady&&map.getSource('roads')){map.getSource('roads').setData(buildRoadsGJ());setSD('road-labels-src',buildRoadLabelsGJ());const t=Object.keys(roadCache).length;if(t>0)setMsg(t.toLocaleString()+' roads loaded');if(openDistrictId)refreshDistrictRoadList(openDistrictId);scheduleOSMNames();rebuildFuseRoads();}
     isFetching=false;fbOff();updateStats();setTimeout(()=>setMsg(''),3000);
     const cbs=_workerCallbacks.splice(0);cbs.forEach(cb=>{try{cb();}catch(e){}});
-  }else if(type==='GJ'&&styleReady&&map.getSource('roads')){map.getSource('roads').setData(buildRoadsGJ());setSD('road-labels-src',buildRoadLabelsGJ());scheduleOSMNames();}
+  }else if(type==='GJ'){
+    if(payload&&payload.features)payload.features.forEach(f=>{const sid=f.properties&&f.properties.street_id;if(sid!=null&&roadCache[sid])roadCache[sid].geom=f;});
+    if(styleReady&&map.getSource('roads')){map.getSource('roads').setData(buildRoadsGJ());setSD('road-labels-src',buildRoadLabelsGJ());scheduleOSMNames();}
+  }
 }
 // Direct geo+json fetch for a district — returns GeoJSON FeatureCollection with real geometry
 // Uses Accept:application/geo+json so Supabase converts PostGIS geom → LineString automatically
@@ -1605,12 +2717,20 @@ async function loadDistricts(){
   fuseDistricts=new Fuse(allDistricts,{keys:['name_en','name_so','region_name','postcode_prefix'],threshold:0.42,minMatchCharLength:2,includeScore:true});
   if(styleReady){setSD('districts',buildDistrictsGJ());setSD('regions-src',buildRegionsGJ());}
 }
-// Road detail -- postcode format LLNN LL
+// Road detail -- postcode format: {prefix}-{3-digit segment}  e.g. BN-427
 function buildSNASAddr(r,dist){
   const pfx=dist?dist.postcode_prefix:'SO';
-  const zone=String(Math.floor(r.street_id/10000)%99+1).padStart(2,'0');
-  const sec=String(r.street_id).slice(-2).replace(/\d/g,d=>String.fromCharCode(65+parseInt(d)));
-  return pfx+zone+' '+sec;
+  const seg=String(((r.street_id||0)%999)+1).padStart(3,'0');
+  return pfx+'-'+seg;
+}
+// Fuse.js indexes for instant in-memory search
+let fuseDistricts=null,fuseRoads=null,fusePOIs=null;
+function rebuildFuseRoads(){
+  const items=Object.values(roadCache).filter(r=>r.props).map(r=>({street_id:r.props.street_id,district_id:r.props.district_id,name_so:r.props.name_so||'',name_en:r.props.name_en||'',osm_name:r.props.osm_name||'',display_name:r.props.display_name||'',highway_class:r.props.highway_class||'',center:r.center}));
+  fuseRoads=new Fuse(items,{keys:['name_so','name_en','osm_name','display_name'],threshold:0.38,minMatchCharLength:2,includeScore:true});
+}
+function rebuildFusePOIs(){
+  fusePOIs=new Fuse(_snasPoiCache,{keys:['name_so','name_en'],threshold:0.35,minMatchCharLength:2,includeScore:true});
 }
 function showDetail(r,dist,doFly){
   if(doFly===undefined)doFly=true;
@@ -1745,7 +2865,7 @@ function clearChipPOIs(){['chip-poi-labels','chip-poi-circles'].forEach(id=>{if(
 function _degDist(lat1,lon1,lat2,lon2){return Math.hypot(lat2-lat1,(lon2-lon1)*Math.cos((lat1+lat2)*Math.PI/360));}
 function _kmStr(deg){const km=deg*111.32;return km<1?Math.round(km*1000)+' m':km.toFixed(1)+' km';}
 // ── Chip search: nearest POI from live cache ─────────────────────────────
-function chipSearch(category){
+async function chipSearch(category){
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
   const btn=event&&event.currentTarget;if(btn)btn.classList.add('active');
   clearChipPOIs();closeNearestPanel();
@@ -1761,7 +2881,7 @@ function chipSearch(category){
       showNearestPanel(top,category,_d);
       const res=top.slice(0,6).map(p=>({type:'poi',ico:p.icon,nm:p.name_so||p.name_en||category,ds:_kmStr(_d(p))+' away',data:p}));
       searchResults=res;renderAC(res,category);
-      map.flyTo({center:[lng,lat],zoom:17,duration:1200,essential:true});
+      map.flyTo({center:[lng,lat],zoom:17,duration:1500,essential:true});
       map.once('moveend',()=>{spawnPulse({lng,lat});showSNASPoiCard(nearest);});
       showToast((nearest.icon||'📍')+' '+(nearest.name_so||nearest.name_en||category)+' · '+_kmStr(_d(nearest)),3500);
       return;
@@ -1780,7 +2900,7 @@ function chipSearch(category){
     const res=top.slice(0,6).map(p=>({type:'poi',ico:p.icon||'📍',nm:p.name_so||p.name_en||category,ds:_kmStr(_d(p))+' away',data:p}));
     searchResults=res;renderAC(res,category);
     // Fly to nearest and open its card
-    map.flyTo({center:[lng,lat],zoom:17,duration:1200,essential:true});
+    map.flyTo({center:[lng,lat],zoom:17,duration:1500,essential:true});
     map.once('moveend',()=>{spawnPulse({lng,lat});showSNASPoiCard(nearest);});
     showToast((nearest.icon||'📍')+' '+(nearest.name_so||nearest.name_en||category)+' · '+_kmStr(_d(nearest)),3500);
     return;
@@ -1836,8 +2956,12 @@ function showInstantResults(q){
   if(pcFull){allDistricts.filter(d=>d.postcode_prefix===pcFull[1]).slice(0,3).forEach(d=>res.push({type:'p',ico:'\ud83d\udcee',nm:d.postcode_prefix+pcFull[2]+' '+pcFull[3]+' - '+d.name_en,ds:d.region_name+' Region',data:d}));}
   else if(pcShort){allDistricts.filter(d=>d.postcode_prefix===pcShort[1]).slice(0,3).forEach(d=>res.push({type:'p',ico:'\ud83d\udcee',nm:d.postcode_prefix+' - '+d.name_en,ds:d.region_name+' Region \u00b7 Zone '+pcShort[2],data:d}));}
   const pcSet=new Set(res.map(r=>r.data&&r.data.district_id));
-  fuseDistricts.search(q,{limit:5}).forEach(({item:d})=>{if(pcSet.has(d.district_id))return;res.push({type:'d',ico:'\ud83c\udfd7',nm:d.name_en,ds:d.region_name+' \u00b7 '+(d.road_count>0?d.road_count.toLocaleString()+' roads':''),data:d});pcSet.add(d.district_id);});
+  fuseDistricts.search(q,{limit:4}).forEach(({item:d})=>{if(pcSet.has(d.district_id))return;res.push({type:'d',ico:'\ud83c\udfd7',nm:d.name_en,ds:d.region_name+' \u00b7 '+(d.road_count>0?d.road_count.toLocaleString()+' roads':''),data:d});pcSet.add(d.district_id);});
   const ql=q.toLowerCase();Object.entries(RN).filter(([,v])=>v.toLowerCase().includes(ql)).slice(0,2).forEach(([k,v])=>res.push({type:'r',ico:'\ud83d\uddfa',nm:v,ds:'Region of Somalia',data:{region_id:k,region_name:v}}));
+  // Fuse road search \u2014 instant from in-memory cache
+  if(fuseRoads){const rHits=fuseRoads.search(q,{limit:4});const seen=new Set();rHits.forEach(({item:r})=>{if(seen.has(r.street_id))return;seen.add(r.street_id);const dist=districtMap[r.district_id];const dn=r.name_so||r.name_en||r.display_name||'';if(!dn)return;res.push({type:'s',ico:'\ud83d\udee3',nm:dn,ds:dist?dist.name_en+' District':'Somalia',data:r});});}
+  // Fuse POI search \u2014 instant from in-memory cache
+  if(fusePOIs){fusePOIs.search(q,{limit:3}).forEach(({item:p})=>{res.push({type:'poi',ico:p.icon||'\ud83d\udccd',nm:p.name_so||p.name_en||'',ds:(p.category||'place'),data:p});});}
   if(res.length){searchResults=res;renderAC(res,q);}
 }
 async function doSearch(q){
@@ -1952,7 +3076,35 @@ function arAddr(nameSo,nameEn,distEn,regName){
   out+='\nالصومال';
   return out;
 }
-// ── Routing / OSRM ────────────────────────────────────────────────────
+// ── Routing / OSRM + Nominatim global geocoder ───────────────────────
+async function geocodePlace(q){
+  // First: check in-memory caches (fast, no network)
+  const ql=q.toLowerCase().trim();
+  const distMatch=allDistricts.find(d=>(d.name_en||'').toLowerCase()===ql||(d.name_so||'').toLowerCase()===ql);
+  if(distMatch&&distMatch.lat&&distMatch.lon)return{lngLat:[distMatch.lon,distMatch.lat],label:distMatch.name_en};
+  const roadMatch=fuseRoads&&fuseRoads.search(q,{limit:1})[0];
+  if(roadMatch&&roadMatch.item.center){const r=roadMatch.item;return{lngLat:[r.center.lng,r.center.lat],label:r.name_so||r.name_en||r.display_name||q};}
+  const poiMatch=fusePOIs&&fusePOIs.search(q,{limit:1})[0];
+  if(poiMatch){const p=poiMatch.item;return{lngLat:[parseFloat(p.lon),parseFloat(p.lat)],label:p.name_so||p.name_en||q};}
+  // Fallback: Nominatim global geocoder (works for Nairobi, Cape Town, any city on Earth)
+  try{
+    const url='https://nominatim.openstreetmap.org/search?q='+encodeURIComponent(q)+'&format=json&limit=1&addressdetails=0';
+    const r=await fetch(url,{headers:{'Accept-Language':'en','User-Agent':'SNAS-Map/1.0'}});
+    const data=await r.json();
+    if(data&&data.length){const d=data[0];return{lngLat:[parseFloat(d.lon),parseFloat(d.lat)],label:d.display_name.split(',').slice(0,2).join(',').trim()};}
+  }catch(e){console.warn('Nominatim:',e);}
+  return null;
+}
+async function resolveAndSetPoint(type){
+  const inputId=type==='from'?'dir-from':'dir-to';
+  const q=(document.getElementById(inputId).value||'').trim();
+  if(!q)return;
+  showToast('Finding "'+q+'"...',2000);
+  const result=await geocodePlace(q);
+  if(!result){showToast('Could not find "'+q+'" — try a more specific name',3000);return;}
+  setRoutePoint(type,result.lngLat,result.label);
+  showToast('✔ '+result.label,2000);
+}
 function updateDirInputs(){
   document.getElementById('dir-from').value=routeFrom?routeFrom.label:'';
   document.getElementById('dir-to').value=routeTo?routeTo.label:'';
@@ -1975,12 +3127,37 @@ function clearRoutePoint(type){
   updateDirInputs();
   clearRoute();
 }
+// ── Route GeoJSON helpers ──────────────────────────────────────────────
+function splitRouteByRegion(coords){
+  // Split coordinates into Somalia (green) and global (blue) segments
+  const SO=SOMALIA_BOUNDS;
+  const globalCoords=[],soCoords=[];
+  let curGlobal=[],curSomalia=[];
+  coords.forEach(c=>{
+    const inSo=c[1]>=SO.minLat&&c[1]<=SO.maxLat&&c[0]>=SO.minLng&&c[0]<=SO.maxLng;
+    if(inSo){
+      if(curGlobal.length>1){globalCoords.push(curGlobal);}
+      curGlobal=[];curSomalia.push(c);
+    } else {
+      if(curSomalia.length>1){soCoords.push(curSomalia);}
+      curSomalia=[];curGlobal.push(c);
+    }
+  });
+  if(curGlobal.length>1)globalCoords.push(curGlobal);
+  if(curSomalia.length>1)soCoords.push(curSomalia);
+  return{globalCoords,soCoords};
+}
+function makeMultiLine(segs){
+  if(!segs.length)return{type:'Feature',geometry:{type:'MultiLineString',coordinates:[]}};
+  return{type:'Feature',geometry:{type:'MultiLineString',coordinates:segs}};
+}
+let _lastRouteBounds=null;
 async function drawRoute(){
   if(!routeFrom||!routeTo)return;
   const fr=routeFrom.lngLat,to=routeTo.lngLat;
   const url='https://router.project-osrm.org/route/v1/'+_routeMode+'/'+fr[0]+','+fr[1]+';'+to[0]+','+to[1]+'?overview=full&geometries=geojson&steps=true';
   try{
-    showToast('Calculating route...',2500);
+    showToast('🌍 Calculating route...',2500);
     const res=await fetch(url);const data=await res.json();
     if(data.code!=='Ok'||!data.routes||!data.routes.length){showToast('Route not found — check start/end points',2500);return;}
     const route=data.routes[0];
@@ -1992,7 +3169,7 @@ async function drawRoute(){
     const MODE_LABELS={driving:'🚗 Driving',bicycle:'🚲 Cycling',foot:'🚶 Walking'};
     document.getElementById('rc-time').textContent=timeStr+' · '+(MODE_LABELS[_routeMode]||'Driving');
     document.getElementById('rc-via').textContent=(routeFrom.label||'Start')+' → '+(routeTo.label||'Destination');
-    // Render turn-by-turn steps
+    // Turn-by-turn steps
     const TURN_ICONS={turn:'↪','new name':'→',depart:'📍',arrive:'🏁',roundabout:'🔄',rotary:'🔄',fork:'⑂',merge:'⇒','on ramp':'↗','off ramp':'↘','use lane':'⇒',continue:'→','end of road':'↩'};
     const allSteps=(route.legs||[]).flatMap(l=>l.steps||[]);
     let stepsHtml='';
@@ -2006,32 +3183,74 @@ async function drawRoute(){
       stepsHtml+='<div class="rs-step"><div class="rs-ico">'+ico+'</div><div><div>'+nm+(mod&&mtype==='turn'?'<span style="font-size:10px;color:#9aa0a6"> ('+mod+')</span>':'')+'</div>'+(dm?'<div class="rs-dist">'+dm+'</div>':'')+'</div></div>';
     });
     document.getElementById('route-steps').innerHTML=stepsHtml||'<div style="padding:10px 16px;font-size:11px;color:#9aa0a6">No step data available</div>';
-    const gj=route.geometry;
+    // ── Dual-colour route rendering ───────────────────────────────────────
+    const gj=route.geometry; // full LineString
+    const coords=gj.type==='LineString'?gj.coordinates:(gj.coordinates||[]).flat();
+    const {globalCoords,soCoords}=splitRouteByRegion(coords);
+    const isGlobalRoute=globalCoords.length>0;
+    const globalGJ=makeMultiLine(globalCoords);
+    const soGJ=makeMultiLine(soCoords);
+    // Show route legend only for cross-continent routes
+    document.getElementById('route-legend').style.display=isGlobalRoute?'flex':'none';
+    document.getElementById('global-view-btn').classList.toggle('has-route',isGlobalRoute);
+    // Full route (used for shadow/glow behind everything)
     if(map.getSource('route-src')){map.getSource('route-src').setData(gj);}
     else{
       map.addSource('route-src',{type:'geojson',data:gj});
-      // Layer 1: wide outer atmospheric glow
-      map.addLayer({id:'route-glow-outer',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#FFE500','line-width':22,'line-opacity':0.12,'line-blur':18}},'road-fill');
-      // Layer 2: dark shadow for depth
-      map.addLayer({id:'route-shadow',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'rgba(0,0,0,0.55)','line-width':10,'line-opacity':0.65,'line-blur':3}},'road-fill');
-      // Layer 3: neon yellow core
-      map.addLayer({id:'route-line',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#FFE500','line-width':5,'line-opacity':1}},'road-fill');
-      // Layer 4: white inner spine for contrast
-      map.addLayer({id:'route-core',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'rgba(255,255,255,0.55)','line-width':1.5,'line-opacity':0.8}},'road-fill');
+      // Outermost atmospheric halo
+      map.addLayer({id:'route-glow-outer',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#00D4FF','line-width':32,'line-opacity':0.08,'line-blur':28}},'road-fill');
+      // Inner glow ring
+      map.addLayer({id:'route-glow-inner',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#00D4FF','line-width':16,'line-opacity':0.18,'line-blur':12}},'road-fill');
+      // Dark shadow underneath for contrast
+      map.addLayer({id:'route-shadow',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'rgba(0,0,0,0.75)','line-width':12,'line-opacity':0.8,'line-blur':2}},'road-fill');
+    }
+    // Global segment — blue neon
+    if(map.getSource('route-global-src')){map.getSource('route-global-src').setData(globalGJ);}
+    else{
+      map.addSource('route-global-src',{type:'geojson',data:globalGJ});
+      // Blue neon — global segment
+      map.addLayer({id:'route-global-line',type:'line',source:'route-global-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#00D4FF','line-width':5,'line-opacity':1}},'road-fill');
+      map.addLayer({id:'route-global-core',type:'line',source:'route-global-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'rgba(220,248,255,0.7)','line-width':1.8,'line-opacity':0.9}},'road-fill');
+    }
+    // Somalia segment — green neon
+    if(map.getSource('route-so-src')){map.getSource('route-so-src').setData(soGJ);}
+    else{
+      map.addSource('route-so-src',{type:'geojson',data:soGJ});
+      map.addLayer({id:'route-so-glow',type:'line',source:'route-so-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#39FF14','line-width':18,'line-opacity':0.18,'line-blur':14}},'road-fill');
+      map.addLayer({id:'route-so-line',type:'line',source:'route-so-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#39FF14','line-width':5,'line-opacity':1}},'road-fill');
+      map.addLayer({id:'route-so-core',type:'line',source:'route-so-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'rgba(200,255,200,0.65)','line-width':1.5,'line-opacity':0.9}},'road-fill');
+    }
+    // Fit bounds to full route
+    if(coords&&coords.length){
+      const lngs=coords.map(c=>c[0]),lats=coords.map(c=>c[1]);
+      _lastRouteBounds=[[Math.min(...lngs),Math.min(...lats)],[Math.max(...lngs),Math.max(...lats)]];
+      map.fitBounds(_lastRouteBounds,{padding:60,duration:1400,essential:true});
     }
     document.getElementById('route-card').classList.add('show');
-    closeDetail(); // road detail and route card should not be visible simultaneously
-    const coords=gj.coordinates;
-    if(coords&&coords.length){const lngs=coords.map(c=>c[0]),lats=coords.map(c=>c[1]);map.fitBounds([[Math.min(...lngs),Math.min(...lats)],[Math.max(...lngs),Math.max(...lats)]],{padding:80,duration:1200,essential:true});}
+    closeDetail();
+    if(isGlobalRoute)showToast('🌍 Global route: '+distStr+' · '+timeStr,3500);
   }catch(e){console.warn('drawRoute:',e);showToast('Could not reach routing service',2500);}
 }
 function clearRoute(){
   stopNavigation();
-  routeFrom=null;routeTo=null;updateDirInputs();
-  ['route-core','route-line','route-shadow','route-glow-outer'].forEach(id=>{if(map.getLayer(id))map.removeLayer(id);});
-  if(map.getSource('route-src'))map.removeSource('route-src');
+  routeFrom=null;routeTo=null;_lastRouteBounds=null;updateDirInputs();
+  ['route-so-core','route-so-line','route-so-glow',
+   'route-global-core','route-global-line',
+   'route-shadow','route-glow-inner','route-glow-outer'].forEach(id=>{try{if(map.getLayer(id))map.removeLayer(id);}catch(e){}});
+  ['route-so-src','route-global-src','route-src'].forEach(id=>{try{if(map.getSource(id))map.removeSource(id);}catch(e){}});
   document.getElementById('route-card').classList.remove('show');
   document.getElementById('route-steps').innerHTML='';
+  document.getElementById('route-legend').style.display='none';
+  document.getElementById('global-view-btn').classList.remove('has-route');
+}
+// ── Global View button ────────────────────────────────────────────────
+function toggleGlobalView(){
+  if(_lastRouteBounds){
+    map.fitBounds(_lastRouteBounds,{padding:50,duration:1600,essential:true});
+  } else {
+    // No route: show Somalia national view
+    map.flyTo({center:HOME,zoom:HOME_Z,pitch:0,bearing:0,duration:1400,essential:true});
+  }
 }
 function setRouteMode(profile,btn){
   _routeMode=profile;
@@ -2080,6 +3299,8 @@ function updateNavHUD(){
   document.getElementById('nh-maneuver').textContent=step.ico;
   document.getElementById('nh-street').textContent=step.txt;
   document.getElementById('nh-dist').textContent=step.dist;
+  // voice the current instruction
+  speakTurn((step.txt||'')+(step.dist?' '+step.dist:''));
   const remaining=_navSteps.slice(_navStepIdx).map(s=>parseFloat(s.dist)||0).reduce((a,b)=>a+b,0);
   document.getElementById('nh-eta').textContent=remaining>0?'~'+Math.round(remaining/1000*({driving:1,bicycle:3,foot:12}[_routeMode]||1))+' min remaining':'Approaching destination';
 }
@@ -2139,7 +3360,19 @@ function showSNASPoiCard(p){
   const ctr=map.getCenter();
   const distStr=p.lat&&p.lon?'  ·  '+_kmStr(_degDist(ctr.lat,ctr.lng,parseFloat(p.lat),parseFloat(p.lon)))+' away':'';
   document.getElementById('spc-cat').textContent=(p.category||'').replace(/_/g,' ')+distStr;
+  // Generate SNAS address from nearest road segment
+  let snasAddr='';
+  if(p.lat&&p.lon){
+    const plat=parseFloat(p.lat),plon=parseFloat(p.lon);
+    let nearRoad=null,minR=Infinity;
+    Object.values(roadCache).forEach(r=>{const dk=_degDist(plat,plon,r.center.lat,r.center.lng);if(dk<minR){minR=dk;nearRoad=r;}});
+    let nearDist=null,minD=Infinity;
+    allDistricts.forEach(d=>{if(!d.lat||!d.lon)return;const dk=_degDist(plat,plon,d.lat,d.lon);if(dk<minD){minD=dk;nearDist=d;}});
+    if(nearRoad&&minR<0.005){snasAddr=buildSNASAddr(nearRoad.props,nearDist);}
+    else if(nearDist){snasAddr=nearDist.postcode_prefix||'SO';}
+  }
   let rows='';
+  if(snasAddr)rows+='<div class="spc-row"><span class="spc-ico">📮</span><span style="font-family:monospace;font-size:12px;font-weight:700;color:#0047AB;letter-spacing:1px">'+snasAddr+'</span></div>';
   if(p.phone)rows+='<div class="spc-row"><span class="spc-ico">📞</span><a href="tel:'+p.phone.replace(/[^+\d]/g,'')+'">'+p.phone+'</a></div>';
   if(p.website)rows+='<div class="spc-row"><span class="spc-ico">🌐</span><a href="'+p.website+'" target="_blank" rel="noopener noreferrer">'+p.website.replace(/^https?:\/\//,'').replace(/\/$/,'')+'</a></div>';
   if(p.opening_hours)rows+='<div class="spc-row"><span class="spc-ico">🕐</span><span>'+p.opening_hours+'</span></div>';
@@ -2402,6 +3635,350 @@ function loadFromHash(){
     map.once('moveend',()=>{spawnPulse({lng,lat});if(addr)showToast('SNAS Address: '+addr,4000);});
   }catch(e){console.warn('Hash parse:',e);}
 }
+// ══════════════════════════════════════════════════════════
+// WEATHER WIDGET — Open-Meteo (no key required)
+// ══════════════════════════════════════════════════════════
+const WX_CODE={0:'☀️ Clear',1:'🌤 Mostly Clear',2:'⛅ Partly Cloudy',3:'☁️ Overcast',45:'🌫 Foggy',48:'🌫 Icy Fog',51:'🌦 Light Drizzle',53:'🌦 Drizzle',55:'🌧 Heavy Drizzle',61:'🌧 Light Rain',63:'🌧 Rain',65:'🌧 Heavy Rain',71:'🌨 Light Snow',73:'🌨 Snow',75:'❄️ Heavy Snow',80:'🌦 Showers',81:'🌧 Rain Showers',82:'⛈ Violent Showers',95:'⛈ Thunderstorm',96:'⛈ Thunder+Hail',99:'⛈ Thunder+Hail'};
+const WX_ICON={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'❄️',80:'🌦',81:'🌧',82:'⛈',95:'⛈',96:'⛈',99:'⛈'};
+let _wxTimer=null;
+async function fetchWeather(lat,lng){
+  try{
+    const url=`https://api.open-meteo.com/v1/forecast?latitude=${lat.toFixed(3)}&longitude=${lng.toFixed(3)}&current=temperature_2m,weathercode&timezone=Africa%2FNairobi`;
+    const r=await fetch(url);if(!r.ok)return;
+    const d=await r.json();
+    const c=d.current||{};
+    const code=c.weathercode??-1;
+    const temp=c.temperature_2m!=null?Math.round(c.temperature_2m)+'°C':'--°C';
+    const icon=WX_ICON[code]||'🌡';
+    const desc=(WX_CODE[code]||'').replace(/^[^\s]+ /,'');
+    document.getElementById('wx-icon').textContent=icon;
+    document.getElementById('wx-temp').textContent=temp;
+    document.getElementById('wx-desc').textContent=desc||'Weather';
+  }catch(e){console.warn('Weather fetch failed:',e);}
+}
+function refreshWeather(){
+  const c=map.getCenter();
+  fetchWeather(c.lat,c.lng);
+  // update city name from nearest district
+  const d=allDistricts&&allDistricts.length?allDistricts.reduce((a,b)=>{
+    const da=Math.hypot(a.lat-c.lat,a.lon-c.lng),db=Math.hypot(b.lat-c.lat,b.lon-c.lng);return da<db?a:b;
+  }):null;
+  if(d)document.getElementById('wx-city').textContent=(d.name_en||'Somalia').toUpperCase();
+}
+function initWeather(){
+  refreshWeather();
+  if(_wxTimer)clearInterval(_wxTimer);
+  _wxTimer=setInterval(refreshWeather,10*60*1000);
+  map.on('moveend',()=>{if(!_wxTimer)return;refreshWeather();});
+}
+
+// ══════════════════════════════════════════════════════════
+// SOCIAL REPORTING — localStorage + map markers
+// ══════════════════════════════════════════════════════════
+const REPORT_TTL=2*60*60*1000; // 2 hours
+const REPORT_EMOJI={police:'🚔',accident:'💥',hazard:'⚠️',roadwork:'🚧'};
+let _reportMarkers=[];
+function loadReports(){
+  try{return JSON.parse(localStorage.getItem('snas_reports')||'[]');}catch(e){return[];}
+}
+function saveReports(arr){try{localStorage.setItem('snas_reports',JSON.stringify(arr));}catch(e){}}
+function pruneReports(){
+  const now=Date.now();
+  const fresh=loadReports().filter(r=>now-r.ts<REPORT_TTL);
+  saveReports(fresh);return fresh;
+}
+function renderReportMarkers(){
+  _reportMarkers.forEach(m=>m.remove());_reportMarkers=[];
+  const reps=pruneReports();
+  reps.forEach(r=>{
+    const el=document.createElement('div');
+    el.className='report-marker '+r.type;
+    el.textContent=REPORT_EMOJI[r.type]||'🚨';
+    el.title=r.type.charAt(0).toUpperCase()+r.type.slice(1)+' reported '+ Math.round((Date.now()-r.ts)/60000)+'m ago';
+    const m=new maplibregl.Marker({element:el}).setLngLat([r.lng,r.lat]).addTo(map);
+    _reportMarkers.push(m);
+  });
+  updateReportCounts(reps);
+}
+function updateReportCounts(reps){
+  ['police','accident','hazard','roadwork'].forEach(t=>{
+    const el=document.getElementById('rc-'+t);
+    if(el)el.textContent=reps.filter(r=>r.type===t).length||'0';
+  });
+}
+function submitReport(type){
+  const c=map.getCenter();
+  const reports=loadReports();
+  reports.push({type,lat:c.lat,lng:c.lng,ts:Date.now()});
+  saveReports(reports);
+  renderReportMarkers();
+  toggleReportPanel();
+  showToast(REPORT_EMOJI[type]+' '+type.charAt(0).toUpperCase()+type.slice(1)+' reported — thanks!',2800);
+}
+function toggleReportPanel(){
+  document.getElementById('report-panel').classList.toggle('open');
+}
+document.addEventListener('click',e=>{
+  const panel=document.getElementById('report-panel');
+  const fab=document.getElementById('report-fab');
+  if(panel&&fab&&!panel.contains(e.target)&&!fab.contains(e.target))panel.classList.remove('open');
+});
+
+// ══════════════════════════════════════════════════════════
+// TRAFFIC OVERLAY — color roads by report density
+// ══════════════════════════════════════════════════════════
+let _trafficActive=false;
+function toggleTrafficOverlay(){
+  _trafficActive=!_trafficActive;
+  const btn=document.getElementById('traffic-toggle');
+  if(btn)btn.classList.toggle('active',_trafficActive);
+  if(_trafficActive){
+    showToast('🔴 Traffic reports overlay ON',1800);
+    renderReportMarkers();
+  } else {
+    _reportMarkers.forEach(m=>m.remove());_reportMarkers=[];
+    showToast('Traffic overlay OFF',1600);
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// VOICE NAVIGATION — Web Speech API with Somali phrases
+// ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+// SOMALI VOICE NAVIGATION v2 — Female, energetic, rate 1.1
+// ══════════════════════════════════════════════════════════
+let _voiceEnabled=false;
+let _voiceObj=null; // cached best voice
+
+// Complete Somali navigation phrases (corrected)
+const SOMALI_TURNS={
+  'turn sharp left':'Bidix si xoog ah u leexo',
+  'turn sharp right':'Midig si xoog ah u leexo',
+  'turn slight left':'Yara bidix u leexo',
+  'turn slight right':'Yara midig u leexo',
+  'turn left':'Bidix u leexo',
+  'turn right':'Midig u leexo',
+  'keep left':'Bidix u soco',
+  'keep right':'Midig u soco',
+  'continue straight':'Toos u soco',
+  'go straight':'Toos u soco',
+  'make a u-turn':'Dib ugu jeeso',
+  'u-turn':'Dib ugu jeeso',
+  'merge':'Iskudar',
+  'roundabout':'Wareegga',
+  'on ramp':'Jiidaha kor ah gal',
+  'off ramp':'Jiidaha hoose ka bax',
+  'depart':'Bilow',
+  'arrive at destination':'Meesha aad rabtay waad gaartay',
+  'arrive':'Waad gaartay',
+  'head north':'Woqooyi u socdo',
+  'head south':'Koonfur u socdo',
+  'head east':'Bari u socdo',
+  'head west':'Galbeed u socdo',
+  'in':'Kadib',
+  ' meters ':' mitir ',
+  ' km ':' kiilomitir ',
+  ' kilometer':' kiilomitir',
+};
+
+function somalifyInstruction(text){
+  let out=(text||'').toLowerCase();
+  Object.entries(SOMALI_TURNS).forEach(([en,so])=>{
+    out=out.replace(new RegExp(en.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi'),so);
+  });
+  // Capitalize first letter
+  return out.charAt(0).toUpperCase()+out.slice(1);
+}
+
+function _pickVoice(){
+  if(_voiceObj)return _voiceObj;
+  const voices=window.speechSynthesis.getVoices();
+  if(!voices.length)return null;
+  // Priority: Somali female → Somali any → Arabic female → English female → any female
+  const preferFemale=v=>v.name.toLowerCase().includes('female')||
+    ['samantha','victoria','karen','moira','tessa','veena','fiona','alice','amelie','lekha','yuna','anna','sara','zira'].some(n=>v.name.toLowerCase().includes(n));
+  const so=voices.find(v=>v.lang.startsWith('so'));
+  if(so){_voiceObj=so;return so;}
+  const arF=voices.find(v=>v.lang.startsWith('ar')&&preferFemale(v));
+  if(arF){_voiceObj=arF;return arF;}
+  const enF=voices.find(v=>v.lang.startsWith('en')&&preferFemale(v));
+  if(enF){_voiceObj=enF;return enF;}
+  const anyF=voices.find(preferFemale);
+  if(anyF){_voiceObj=anyF;return anyF;}
+  _voiceObj=voices[0];return voices[0];
+}
+
+function speakTurn(text){
+  if(!_voiceEnabled||!window.speechSynthesis)return;
+  window.speechSynthesis.cancel();
+  const utt=new SpeechSynthesisUtterance(somalifyInstruction(text));
+  const v=_pickVoice();
+  if(v)utt.voice=v;
+  utt.rate=1.1;    // energetic
+  utt.pitch=1.1;   // slightly higher = female character
+  utt.volume=1.0;
+  utt.onstart=()=>{const b=document.getElementById('voice-btn');if(b)b.classList.add('speaking');};
+  utt.onend=()=>{const b=document.getElementById('voice-btn');if(b)b.classList.remove('speaking');};
+  window.speechSynthesis.speak(utt);
+}
+
+function toggleVoice(){
+  _voiceEnabled=!_voiceEnabled;
+  _voiceObj=null; // re-pick voice each toggle so new voices are found
+  const btn=document.getElementById('voice-btn');
+  if(btn){
+    btn.textContent=_voiceEnabled?'🔊':'🔇';
+    btn.style.opacity=_voiceEnabled?'1':'0.5';
+  }
+  if(_voiceEnabled){
+    // Trigger voice list load on user gesture (required by browsers)
+    window.speechSynthesis.getVoices();
+    setTimeout(()=>{speakTurn('Hagaha codka waa furan yahay. Toos u soco.');},300);
+    showToast('🔊 Somali voice ON — Hagaha codka',2200);
+  } else {
+    window.speechSynthesis.cancel();
+    showToast('🔇 Voice OFF',1600);
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// GPS AUTO-CENTER — Fly to user's location if in Somalia
+// ══════════════════════════════════════════════════════════
+const SOMALIA_BOUNDS={minLat:0.9,maxLat:11.98,minLng:40.98,maxLng:51.41};
+function isInSomalia(lat,lng){
+  return lat>=SOMALIA_BOUNDS.minLat&&lat<=SOMALIA_BOUNDS.maxLat&&lng>=SOMALIA_BOUNDS.minLng&&lng<=SOMALIA_BOUNDS.maxLng;
+}
+function gpsCenterOnLoad(){
+  if(!navigator.geolocation)return;
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const{latitude:lat,longitude:lng}=pos.coords;
+    const inSomalia=isInSomalia(lat,lng);
+    const zoom=inSomalia?14:12;
+    map.flyTo({center:[lng,lat],zoom,duration:2200,essential:true});
+    if(inSomalia){showToast('📍 GPS lock — Mogadishu area detected',2800);}
+    else{
+      // Pre-fill "From" with current location for the Great Trek
+      if(!routeFrom){
+        routeFrom={lngLat:[lng,lat],label:'My Location'};
+        updateDirInputs();
+        showToast('📍 GPS: '+lat.toFixed(4)+'°, '+lng.toFixed(4)+'° — set as start',2800);
+      }
+    }
+  },{enableHighAccuracy:true,timeout:8000,maximumAge:30000});
+}
+
+// ══════════════════════════════════════════════════════════
+// BOTTOM SHEET — Google Maps style
+// ══════════════════════════════════════════════════════════
+let _bsState='peek'; // peek | half | full
+const BS_STATES=['peek','half','full'];
+function setBS(state){
+  _bsState=state;
+  const el=document.getElementById('bs');
+  el.classList.remove('peek','half','full');
+  el.classList.add(state);
+}
+function toggleBS(){
+  const idx=BS_STATES.indexOf(_bsState);
+  setBS(BS_STATES[(idx+1)%BS_STATES.length]);
+}
+// Touch/swipe on bottom sheet
+(function(){
+  let startY=0,startState='peek';
+  document.getElementById('bs').addEventListener('touchstart',e=>{
+    startY=e.touches[0].clientY;startState=_bsState;
+  },{passive:true});
+  document.getElementById('bs').addEventListener('touchend',e=>{
+    const dy=startY-e.changedTouches[0].clientY;
+    if(dy>40)setBS(_bsState==='peek'?'half':_bsState==='half'?'full':'full');
+    else if(dy<-40)setBS(_bsState==='full'?'half':_bsState==='half'?'peek':'peek');
+  },{passive:true});
+})();
+
+function bsShow(title,badge,htmlContent){
+  document.getElementById('bs-title-text').textContent=title;
+  document.getElementById('bs-badge').textContent=badge||'';
+  document.getElementById('bs-body').innerHTML=htmlContent;
+  setBS('half');
+}
+function bsHide(){setBS('peek');}
+
+// ── Bottom Nav tabs ────────────────────────────────────────
+function bnTab(tab){
+  document.querySelectorAll('.bn-btn').forEach(b=>b.classList.remove('active'));
+  const btn=document.getElementById('bn-'+tab);if(btn)btn.classList.add('active');
+  switch(tab){
+    case 'explore':
+      bsHide();
+      document.getElementById('si').focus();
+      break;
+    case 'navigate':
+      openDirections();bsHide();break;
+    case 'districts':
+      openBSDistricts();break;
+    case 'report':
+      toggleReportPanel();bsHide();break;
+    case 'layers':
+      document.getElementById('lp').classList.toggle('open');bsHide();break;
+  }
+}
+
+function openBSDistricts(){
+  if(!allDistricts||!allDistricts.length){bsShow('Districts','0','<div style="padding:20px;color:var(--pm-sub);text-align:center">Loading...</div>');return;}
+  const rows=allDistricts.map(d=>`
+    <div class="bs-item" onclick="bsSelectDistrict(${d.district_id})">
+      <span class="bs-px">${d.postcode_prefix||'??'}</span>
+      <div class="bs-t">
+        <div class="bs-nm">${d.name_en||d.name_so||'District '+d.district_id}</div>
+        <div class="bs-sb">${d.region_name||''} · ${d.road_count||0} roads</div>
+      </div>
+      <span class="bs-cn">${d.road_count||''}</span>
+    </div>`).join('');
+  bsShow('Districts',allDistricts.length+' total',rows);
+}
+
+function bsSelectDistrict(id){
+  const d=allDistricts.find(x=>x.district_id===id);
+  if(!d)return;
+  // Fly to district
+  map.flyTo({center:[d.lon,d.lat],zoom:13,duration:1500,essential:true});
+  // Fade all other district labels — pulse the selected one
+  fadeOtherDistricts(id);
+  bsHide();
+  showToast('📍 '+d.name_en+' · '+d.postcode_prefix,2500);
+}
+
+// ── District fade/spotlight ────────────────────────────────
+let _activeFadeId=null;
+function fadeOtherDistricts(districtId){
+  _activeFadeId=districtId;
+  if(!map.getLayer('markers'))return;
+  // Filter expression: highlight selected, dim others
+  try{
+    map.setFilter('markers',['all']);
+    map.setPaintProperty('markers','circle-opacity',
+      ['case',['==',['get','district_id'],districtId],1,0.15]);
+    map.setPaintProperty('markers','circle-color',
+      ['case',['==',['get','district_id'],districtId],'#00D4FF','#444466']);
+    setTimeout(()=>{
+      if(_activeFadeId===districtId){
+        map.setPaintProperty('markers','circle-opacity',1);
+        map.setPaintProperty('markers','circle-color','#c8601a');
+      }
+    },8000);
+  }catch(e){}
+  // Fade road labels from other districts
+  try{
+    if(map.getLayer('district-labels-sm')){
+      map.setPaintProperty('district-labels-sm','text-opacity',
+        ['case',['==',['get','district_id'],districtId],1,0.12]);
+      setTimeout(()=>{
+        if(_activeFadeId===districtId)map.setPaintProperty('district-labels-sm','text-opacity',1);
+      },8000);
+    }
+  }catch(e){}
+}
+
 window.addEventListener('DOMContentLoaded',async()=>{
   applyDark();renderBook();updateCompass();updateScaleBar();
   prog(10,'Initialising...');
@@ -2434,6 +4011,12 @@ window.addEventListener('DOMContentLoaded',async()=>{
   }catch(e){console.error('Init error:',e);document.getElementById('rpbd').innerHTML='<div class="err-box">&#9888; '+e.message+'</div>';openRight();}
   hideLoading();
   loadFromHash();
+  // GPS auto-center: fly to user if they're in Somalia
+  gpsCenterOnLoad();
+  // Weather widget: start fetching
+  initWeather();
+  // Render any saved reports
+  renderReportMarkers();
 });
 </script>
 </body>
