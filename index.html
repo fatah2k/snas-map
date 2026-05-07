@@ -1199,11 +1199,12 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
   box-shadow:0 0 16px rgba(0,212,255,0.3)!important;
 }
 
-/* ── FABs — top-left, minimal set ───────────────────────── */
+/* ── FABs — top-left, above search overlay ───────────────── */
 #fabs{
   top:calc(var(--pm-safe-top) + 14px)!important;
   left:14px!important;
   gap:10px!important;
+  z-index:930!important;
 }
 .fab{
   width:48px!important;height:48px!important;
@@ -1334,10 +1335,7 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
 /* ── Push map content up above bottom nav ────────────────── */
 #map{bottom:64px!important}
 
-/* ── Right panel becomes bottom sheet content ───────────── */
-#rp{
-  display:none!important;
-}
+/* ── Right panel: use the always-right-side override below ── */
 
 /* ── Route card — keep centered, shift bottom above nav ─── */
 #route-card{
@@ -1402,22 +1400,28 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
 .rm-btn{background:rgba(255,255,255,0.04)!important;border:1px solid var(--pm-border)!important;color:var(--pm-sub)!important;border-radius:12px!important;font-size:12px!important;padding:8px 14px!important;min-height:40px!important}
 .rm-btn.active{background:var(--pm-accent)!important;color:#060A1C!important;border-color:transparent!important;font-weight:700!important}
 
-/* ── POI card — keep centered transform, just reposition ─── */
+/* ── POI card — bottom sheet style ─────────────────────── */
 #snas-poi-card{
   bottom:calc(76px + var(--pm-safe-bot))!important;
   left:50%!important;right:auto!important;
-  width:min(360px,calc(100vw - 28px))!important;
+  width:min(420px,calc(100vw - 24px))!important;
   background:var(--pm-surf2)!important;
   border:1px solid var(--pm-border-hi)!important;
-  border-radius:var(--pm-radius)!important;
-  box-shadow:var(--pm-sh)!important;
+  border-radius:22px 22px 14px 14px!important;
+  box-shadow:0 -4px 40px rgba(0,0,0,0.55),var(--pm-sh)!important;
+  transform:translateX(-50%) translateY(12px)!important;
+  opacity:0!important;pointer-events:none!important;
 }
-#snas-poi-card.show{transform:translateX(-50%) translateY(0)!important;opacity:1!important}
-.spc-name{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important;font-size:16px!important;font-weight:700!important}
-.spc-cat{color:var(--pm-accent)!important;font-size:11px!important}
-.spc-row{border-bottom:1px solid var(--pm-border)!important;padding:10px 14px!important}
-.spc-btn{background:rgba(0,212,255,0.06)!important;border:1px solid var(--pm-border)!important;color:var(--pm-text)!important;border-radius:12px!important;min-height:40px!important}
-.spc-btn.primary{background:var(--pm-accent)!important;color:#060A1C!important;font-weight:700!important;border-color:transparent!important}
+#snas-poi-card.show{transform:translateX(-50%) translateY(0)!important;opacity:1!important;pointer-events:auto!important}
+.spc-hd{border-bottom:1px solid var(--pm-border)!important;padding:16px 18px 12px!important}
+.spc-name{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important;font-size:17px!important;font-weight:700!important}
+.spc-cat{color:var(--pm-accent)!important;font-size:11px!important;text-transform:uppercase!important;letter-spacing:1px!important}
+.spc-xx{background:rgba(255,255,255,0.08)!important;color:var(--pm-sub)!important;width:30px!important;height:30px!important}
+.spc-row{border-top:1px solid var(--pm-border)!important;padding:11px 18px!important;color:var(--pm-text)!important;font-size:13px!important}
+.spc-row a{color:var(--pm-accent)!important}
+.spc-actions{border-top:1px solid var(--pm-border)!important;padding:12px 18px 16px!important;gap:10px!important}
+.spc-btn{background:rgba(51,221,255,0.07)!important;border:1px solid var(--pm-border)!important;color:var(--pm-text)!important;border-radius:14px!important;min-height:42px!important;font-size:13px!important}
+.spc-btn.primary{background:var(--pm-accent)!important;color:#0a1220!important;font-weight:700!important;border-color:transparent!important;font-size:13px!important}
 
 /* ── Nearest panel — FIXED: proper translateY transitions ─── */
 #nearest-panel{
@@ -1448,18 +1452,30 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
 .np-nm{color:var(--pm-text)!important;font-size:13px!important;font-weight:500!important}
 .np-dist{color:var(--pm-sub)!important;font-size:10px!important;font-family:'Space Mono',monospace!important}
 
-/* ── Left panel (layers) ─────────────────────────────────── */
+/* ── Left panel (explore/layers drawer) ─────────────────── */
 #lp{
+  width:min(300px,88vw)!important;
   background:var(--pm-surf2)!important;
   border-right:1px solid var(--pm-border-hi)!important;
-  box-shadow:8px 0 40px rgba(0,0,0,0.6)!important;
+  box-shadow:8px 0 40px rgba(0,0,0,0.5)!important;
   backdrop-filter:var(--pm-glass)!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  scrollbar-width:thin!important;
+  scrollbar-color:var(--pm-accent) transparent!important;
 }
-.lp-ht{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important}
-.lp-tm{color:var(--pm-text)!important}.lp-ts{color:var(--pm-sub)!important}
+#lp::-webkit-scrollbar{width:3px}
+#lp::-webkit-scrollbar-thumb{background:var(--pm-accent);border-radius:2px}
+.lp-body{padding:12px!important}
+.lp-hd{background:var(--pm-surf)!important;border-bottom:1px solid var(--pm-border-hi)!important;position:sticky!important;top:0!important;z-index:2!important}
+.lp-ht{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important;font-size:17px!important}
+.lp-tm{color:var(--pm-text)!important;font-size:13px!important}.lp-ts{color:var(--pm-sub)!important;font-size:11px!important}
 .tog.on{background:var(--pm-accent)!important}
-.lp-row:hover{background:rgba(0,212,255,0.06)!important}
-.lp-gl{color:var(--pm-sub)!important}
+.lp-row{border-radius:10px!important;padding:10px 8px!important;transition:background .15s!important}
+.lp-row:hover{background:rgba(51,221,255,0.07)!important}
+.lp-gl{color:var(--pm-sub)!important;font-size:10px!important;letter-spacing:1.2px!important;text-transform:uppercase!important;padding:8px 4px 4px!important}
+.lp-grp{margin-bottom:12px!important}
+.lp-x{background:rgba(255,255,255,0.08)!important;color:var(--pm-sub)!important;border:none!important;border-radius:50%!important;width:30px!important;height:30px!important;font-size:18px!important;cursor:pointer!important}
 
 /* ── Toast ───────────────────────────────────────────────── */
 #toast{
@@ -1656,6 +1672,60 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
   #report-fab{width:52px!important;height:52px!important;font-size:22px!important}
   #voice-btn{width:48px!important;height:48px!important}
 }
+
+/* ── District / Right Panel: always right-side, never bottom-sheet ── */
+#rp{
+  display:flex!important;
+  flex-direction:column!important;
+  top:0!important;right:0!important;bottom:0!important;left:auto!important;
+  width:min(330px,88vw)!important;height:100%!important;
+  transform:translateX(110%)!important;
+  border-radius:0!important;
+  background:var(--pm-surf2)!important;
+  border-left:1px solid var(--pm-border-hi)!important;
+  box-shadow:-8px 0 40px rgba(0,0,0,0.55)!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  scrollbar-width:thin!important;
+  scrollbar-color:var(--pm-accent) transparent!important;
+}
+#rp.open{transform:translateX(0)!important}
+#rp::before{content:none!important}
+#rp::-webkit-scrollbar{width:4px}
+#rp::-webkit-scrollbar-thumb{background:var(--pm-accent);border-radius:2px}
+.rp-hd{background:var(--pm-surf)!important;border-bottom:1px solid var(--pm-border-hi)!important;padding:20px 16px 12px!important;position:sticky!important;top:0!important;z-index:2!important}
+.rp-tt{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important;font-size:16px!important}
+.rp-xx{background:rgba(255,255,255,0.08)!important;color:var(--pm-sub)!important;border:none!important}
+.rp-xx:hover{background:rgba(51,221,255,0.15)!important;color:var(--pm-accent)!important}
+.rp-fi{background:rgba(255,255,255,0.06)!important;border-color:var(--pm-border)!important;color:var(--pm-text)!important;font-family:'Inter',sans-serif!important}
+.rp-fi:focus{border-color:var(--pm-accent)!important;outline:none!important}
+#rpbk{background:rgba(51,221,255,0.1)!important;color:var(--pm-accent)!important;border:none!important;border-radius:10px!important}
+
+/* ── Weather card inside left panel ─────────────────────── */
+#weather-widget{
+  position:static!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:12px!important;
+  margin:0 0 4px!important;
+  padding:12px 14px!important;
+  background:rgba(51,221,255,0.06)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  border-radius:14px!important;
+  cursor:pointer!important;
+  transition:background .2s!important;
+  width:100%!important;box-sizing:border-box!important;
+}
+#weather-widget:hover{background:rgba(51,221,255,0.12)!important}
+#wx-icon{font-size:26px!important;flex-shrink:0!important}
+#wx-temp{font-size:20px!important;font-weight:700!important;color:var(--pm-accent)!important;line-height:1!important}
+#wx-desc{font-size:11px!important;color:var(--pm-sub)!important;margin-top:2px!important}
+#wx-city{font-size:10px!important;color:rgba(51,221,255,0.5)!important;font-family:'Space Mono',monospace!important}
+
+/* ── Stats widget: hide clutter ─────────────────────────── */
+#stats-widget{display:none!important}
+#sb{display:none!important}
+#scale-bar{display:none!important}
 </style>
 </head>
 <body>
@@ -1695,6 +1765,15 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
 <div id="lp">
   <div class="lp-hd"><span class="lp-ht">&#9776; Explore</span><button class="lp-x" onclick="closeLayers()">&#215;</button></div>
   <div class="lp-body">
+    <!-- ── Weather card ──────────────────────── -->
+    <div id="weather-widget" onclick="refreshWeather()" title="Click to refresh weather">
+      <div id="wx-icon">🌤</div>
+      <div id="wx-body">
+        <div id="wx-temp">--°C</div>
+        <div id="wx-desc">Loading...</div>
+        <div id="wx-city">Somalia</div>
+      </div>
+    </div>
     <!-- ── Find Nearby chips ─────────────────── -->
     <div class="lp-grp">
       <div class="lp-gl">Find Nearby</div>
@@ -1944,15 +2023,6 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
   </div>
   <div id="dir-results"></div>
 </div>
-<!-- Weather Widget -->
-<div id="weather-widget" onclick="refreshWeather()" title="Current weather · click to refresh">
-  <div id="wx-icon">🌤</div>
-  <div id="wx-body">
-    <div id="wx-temp">--°C</div>
-    <div id="wx-desc">Loading...</div>
-    <div id="wx-city">Somalia</div>
-  </div>
-</div>
 <!-- Social Report FAB -->
 <button id="report-fab" onclick="toggleReportPanel()" title="Report incident">🚨</button>
 <div id="report-panel">
@@ -2006,7 +2076,7 @@ const RN={AW:'Awdal',BK:'Bakool',BN:'Banaadir',BR:'Bari',BY:'Bay',CY:'Caynabo',G
 // Postcode format: LLNN LL (e.g. AB04 KR) -- updated from old LLNN NN
 const PC_REGEX=/^([A-Z]{2})(\d{2})\s*([A-Z]{2})$/i;
 const PC_SHORT=/^([A-Z]{2})(\d{1,2})$/i;
-const STYLE_MAP='https://tiles.openfreemap.org/styles/dark';
+const STYLE_MAP='https://tiles.openfreemap.org/styles/liberty';
 const ESRI_SAT_TILES=['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'];
 const STYLE_OSM_FALLBACK={version:8,glyphs:'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,maxzoom:19,attribution:'OpenStreetMap'}},layers:[{id:'osm-bg',type:'raster',source:'osm'}]};
 const RIVER_DATA=[
@@ -2275,7 +2345,7 @@ function addAllLayers(){
   addSrc('artgold-src',{type:'geojson',data:{type:'FeatureCollection',features:ARTISANAL_GOLD.map(m=>({type:'Feature',geometry:{type:'Point',coordinates:m.c},properties:{name:m.n}}))}});
   const V=id=>layerVis[id]?'visible':'none';
   if(!map.getLayer('road-casing'))map.addLayer({id:'road-casing',type:'line',source:'roads',minzoom:8,layout:{'line-cap':'round','line-join':'round','visibility':V('roads')},paint:{'line-color':['match',['get','highway_class'],['motorway','trunk'],'#d4a020','primary','#c88040','secondary','#aabbc8','tertiary','#c8ccd0','residential','#d8dadc','#dcdee0'],'line-width':['interpolate',['exponential',1.5],['zoom'],8,['match',['get','highway_class'],['motorway','trunk'],3,'primary',2.5,'secondary',1.5,'tertiary',1,0.8],12,['match',['get','highway_class'],['motorway','trunk'],7,'primary',6,'secondary',4,'tertiary',2.5,'residential',2,1.5],16,['match',['get','highway_class'],['motorway','trunk'],18,'primary',15,'secondary',12,'tertiary',8,'residential',6,3]],'line-opacity':['interpolate',['linear'],['zoom'],8,0.4,10,0.9]}});
-  if(!map.getLayer('road-fill'))map.addLayer({id:'road-fill',type:'line',source:'roads',minzoom:8,layout:{'line-cap':'round','line-join':'round','visibility':V('roads')},paint:{'line-color':['match',['get','highway_class'],['motorway','trunk'],'#f8d06b','primary','#ffd9a0','secondary','#ffffff','tertiary','#ffffff','residential','#fafafa','service','#f5f5f0','track','#ede8e0','#f0f0ec'],'line-width':['interpolate',['exponential',1.5],['zoom'],8,['match',['get','highway_class'],['motorway','trunk'],2,'primary',1.8,'secondary',1,'tertiary',0.7,0.5],12,['match',['get','highway_class'],['motorway','trunk'],5,'primary',4,'secondary',2.5,'tertiary',1.5,'residential',1.2,0.8],16,['match',['get','highway_class'],['motorway','trunk'],14,'primary',11,'secondary',9,'tertiary',6,'residential',4.5,2]],'line-opacity':['interpolate',['linear'],['zoom'],8,0.3,10,1]}});
+  if(!map.getLayer('road-fill'))map.addLayer({id:'road-fill',type:'line',source:'roads',minzoom:8,layout:{'line-cap':'round','line-join':'round','visibility':V('roads')},paint:{'line-color':['match',['get','highway_class'],['motorway','trunk'],'#FFA726','primary','#FFD54F','secondary','#E0E0E0','tertiary','#EEEEEE','residential','#F5F5F5','service','#ECEFF1','track','#D7CCC8','#E8EAF0'],'line-width':['interpolate',['exponential',1.5],['zoom'],8,['match',['get','highway_class'],['motorway','trunk'],2,'primary',1.8,'secondary',1,'tertiary',0.7,0.5],12,['match',['get','highway_class'],['motorway','trunk'],5,'primary',4,'secondary',2.5,'tertiary',1.5,'residential',1.2,0.8],16,['match',['get','highway_class'],['motorway','trunk'],14,'primary',11,'secondary',9,'tertiary',6,'residential',4.5,2]],'line-opacity':['interpolate',['linear'],['zoom'],8,0.3,10,1]}});
   if(!map.getLayer('road-selected-glow'))map.addLayer({id:'road-selected-glow',type:'line',source:'roads',minzoom:6,filter:['==','street_id',-1],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#FFE500','line-width':['interpolate',['linear'],['zoom'],8,16,14,26,18,36],'line-opacity':0.45,'line-blur':6}});
   if(!map.getLayer('road-selected'))map.addLayer({id:'road-selected',type:'line',source:'roads',minzoom:6,filter:['==','street_id',-1],layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#FFE500','line-width':['interpolate',['linear'],['zoom'],8,6,14,10,18,14],'line-opacity':1}});
   // Road labels: show from zoom 11 so residential roads are always labelled
