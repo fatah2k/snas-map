@@ -225,6 +225,24 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
 .spc-row{display:flex;align-items:center;gap:10px;padding:9px 16px;border-top:1px solid rgba(0,0,0,.04);font-size:12px;color:#3c4043}
 .spc-row a{color:#1a73e8;text-decoration:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .spc-ico{font-size:14px;flex-shrink:0;width:18px;text-align:center}
+.spc-actions{display:flex;gap:8px;padding:10px 16px 14px;border-top:1px solid rgba(0,0,0,.06)}
+.spc-btn{flex:1;padding:9px 6px;border:1px solid #e8eaed;border-radius:10px;background:#f8f9fa;font-size:12px;font-weight:500;cursor:pointer;font-family:"Roboto",sans-serif;transition:all .15s;text-align:center;color:#3c4043}
+.spc-btn.primary{background:#1a73e8;color:#fff;border-color:#1a73e8}
+.spc-btn.primary:hover{background:#1557b0}
+.spc-btn:hover{background:#e8f0fe;border-color:#1a73e8;color:#1a73e8}
+.chip-badge{background:#c8601a;color:#fff;border-radius:8px;font-size:9px;padding:1px 5px;font-weight:700;margin-left:2px;line-height:1.4}
+#nearest-panel{position:fixed;top:80px;right:14px;width:260px;max-height:calc(100vh - 120px);z-index:815;background:rgba(255,255,255,.97);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border-radius:18px;box-shadow:0 6px 32px rgba(0,0,0,.22);overflow:hidden;display:flex;flex-direction:column;transform:translateX(290px);transition:transform .3s cubic-bezier(.4,0,.2,1);pointer-events:none}
+#nearest-panel.open{transform:translateX(0);pointer-events:auto}
+.np-hd{display:flex;align-items:center;justify-content:space-between;padding:12px 14px 8px;border-bottom:1px solid rgba(0,0,0,.06);flex-shrink:0}
+.np-title{font-size:13px;font-weight:600;color:#202124;font-family:"Google Sans",sans-serif}
+.np-x{background:none;border:none;font-size:18px;color:#bbb;cursor:pointer;line-height:1}
+.np-list{flex:1;overflow-y:auto}
+.np-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(0,0,0,.04);cursor:pointer;transition:background .1s}
+.np-item:hover{background:#f8f9fa}
+.np-icon{font-size:20px;flex-shrink:0;width:26px;text-align:center}
+.np-info{flex:1;min-width:0}
+.np-nm{font-size:12px;font-weight:500;color:#202124;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.np-dist{font-size:10px;color:#9aa0a6;margin-top:1px}
 .dir-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .dir-back{background:none;border:none;font-size:22px;color:#5f6368;cursor:pointer;line-height:1;padding:2px}
 .dir-title{font-size:15px;font-weight:500;color:#202124;font-family:"Google Sans",sans-serif}
@@ -495,11 +513,14 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
   </div>
   <div id="ac" role="listbox"></div>
   <div id="chips">
-    <button class="chip" onclick="chipSearch('hospital')">&#127973; Hospitals</button>
-    <button class="chip" onclick="chipSearch('mosque')">&#128332; Mosques</button>
-    <button class="chip" onclick="chipSearch('market')">&#127978; Markets</button>
-    <button class="chip" onclick="chipSearch('school')">&#127979; Schools</button>
-    <button class="chip" onclick="chipSearch('government')">&#127963; Gov</button>
+    <button class="chip" id="chip-hospital" onclick="chipSearch('hospital')">&#127973; Hospitals</button>
+    <button class="chip" id="chip-mosque" onclick="chipSearch('mosque')">&#128332; Mosques</button>
+    <button class="chip" id="chip-market" onclick="chipSearch('market')">&#127978; Markets</button>
+    <button class="chip" id="chip-restaurant" onclick="chipSearch('restaurant')">🍴 Food</button>
+    <button class="chip" id="chip-bank" onclick="chipSearch('bank')">&#127970; Banks</button>
+    <button class="chip" id="chip-school" onclick="chipSearch('school')">&#127979; Schools</button>
+    <button class="chip" id="chip-fuel" onclick="chipSearch('fuel')">&#9981; Fuel</button>
+    <button class="chip" id="chip-government" onclick="chipSearch('government')">&#127963; Gov</button>
   </div>
 </div>
 <div id="fabs">
@@ -630,7 +651,8 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
   </div>
 </div>
 <div id="toast"></div>
-<div id="snas-poi-card"><div class="spc-hd"><div class="spc-icon" id="spc-icon">📍</div><div style="flex:1;min-width:0"><div class="spc-name" id="spc-name"></div><div class="spc-cat" id="spc-cat"></div></div><button class="spc-xx" onclick="closeSNASPoiCard()">✕</button></div><div id="spc-rows"></div></div>
+<div id="snas-poi-card"><div class="spc-hd"><div class="spc-icon" id="spc-icon">📍</div><div style="flex:1;min-width:0"><div class="spc-name" id="spc-name"></div><div class="spc-cat" id="spc-cat"></div></div><button class="spc-xx" onclick="closeSNASPoiCard()">✕</button></div><div id="spc-rows"></div><div class="spc-actions"><button class="spc-btn primary" onclick="dirFromCard()">🧭 Directions</button><button class="spc-btn" onclick="sharePoiCard()">📤 Share</button></div></div>
+<div id="nearest-panel"><div class="np-hd"><span class="np-title" id="np-title">Nearby</span><button class="np-x" onclick="closeNearestPanel()">✕</button></div><div class="np-list" id="np-list"></div></div>
 <div id="road-banner"><span id="road-banner-icon">🛣</span><div id="road-banner-body"><div id="road-banner-so"></div><div id="road-banner-en"></div></div><button id="road-banner-x" onclick="closeRoadBanner()">✕</button></div>
 <div id="demo-counter"><span id="demo-counter-txt"></span><button id="demo-counter-x" onclick="stopDemo()" title="Stop Demo">&#x2715;</button></div>
 <div id="demo-popup">
@@ -994,7 +1016,7 @@ function addAllLayers(){
   if(!map.getSource('poi-src'))map.addSource('poi-src',{type:'geojson',data:{type:'FeatureCollection',features:[]}});
   if(!map.getLayer('snas-poi-icons'))map.addLayer({id:'snas-poi-icons',type:'symbol',source:'poi-src',minzoom:11,layout:{'text-field':['get','icon'],'text-font':['Noto Sans Regular'],'text-size':['interpolate',['linear'],['zoom'],11,14,14,18,18,22],'text-allow-overlap':true,'icon-allow-overlap':true,'visibility':'visible'},paint:{'text-color':'rgba(0,0,0,0.9)','text-halo-color':'rgba(255,255,255,0.95)','text-halo-width':1.5}});
   if(!map.getLayer('snas-poi-labels'))map.addLayer({id:'snas-poi-labels',type:'symbol',source:'poi-src',minzoom:13,layout:{'text-field':['coalesce',['get','name_so'],['get','name_en']],'text-font':['Noto Sans Bold','Noto Sans Regular'],'text-size':10,'text-offset':[0,1.6],'text-anchor':'top','text-allow-overlap':false,'text-ignore-placement':false,'visibility':'visible'},paint:{'text-color':'#202124','text-halo-color':'rgba(255,255,255,0.97)','text-halo-width':2}});
-  map.on('click','snas-poi-icons',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;map.flyTo({center:[p.lon,p.lat],zoom:17,duration:800,essential:true});const full=_snasPoiCache.find(x=>x.poi_id===p.poi_id)||p;showSNASPoiCard(full);});
+  map.on('click','snas-poi-icons',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;const lng=parseFloat(p.lon),lat=parseFloat(p.lat);map.flyTo({center:[lng,lat],zoom:17,duration:800,essential:true});const full=_snasPoiCache.find(x=>x.poi_id==p.poi_id)||p;map.once('moveend',()=>spawnPulse({lng,lat}));showSNASPoiCard(full);});
   map.on('mouseenter','snas-poi-icons',()=>{map.getCanvas().style.cursor='pointer';});
   map.on('mouseleave','snas-poi-icons',()=>{map.getCanvas().style.cursor='';});
   // Click handlers
@@ -1003,8 +1025,10 @@ function addAllLayers(){
   map.on('mouseenter','district-circles',()=>{map.getCanvas().style.cursor='pointer';});
   map.on('mouseleave','district-circles',()=>{map.getCanvas().style.cursor='';});
   map.on('click','road-fill',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;selectRoadOnMap(p.street_id);const _so=p.name_so&&p.name_so!=='Unnamed'?p.name_so:'';const _en=p.display_name||p.name_en||'';if(_so||_en)showRoadBanner(_so,_en);showDetail(p,districtMap[p.district_id],true);});
-  map.on('click','district-circles',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;const d=districtMap[p.district_id];if(!d)return;map.flyTo({center:[d.lon,d.lat],zoom:d.region_id==='BN'?15:14,duration:1000,essential:true});afterFly();openRight();renderDistrictInfo(d);});
-  map.on('click',e=>{if(e.defaultPrevented)return;closeDetail();closeWhatsHere();closeRoadBanner();});
+  map.on('click','district-circles',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;const d=districtMap[p.district_id];if(!d)return;const z=d.region_id==='BN'?14:10;map.flyTo({center:[d.lon,d.lat],zoom:z,duration:1200,essential:true});afterFly(()=>{spawnPulse({lng:d.lon,lat:d.lat});loadNearestPOIsForDistrict(d);});openRight();renderDistrictInfo(d);});
+  map.on('click',e=>{if(e.defaultPrevented)return;closeDetail();closeWhatsHere();closeRoadBanner();closeSNASPoiCard();});
+  // Settlement labels (towns/villages)
+  addSettlementLabels();
   // Force road-labels to top of render stack so nothing covers it
   try{map.moveLayer('road-labels');}catch(e){}
   try{map.moveLayer('road-selected-glow');}catch(e){}
@@ -1019,19 +1043,49 @@ map.on('style.load',()=>{styleReady=true;addAllLayers();if(currentMode==='satell
 map.on('error',e=>{console.warn('MapLibre:',e.error&&e.error.message||e);if(!usingFallback&&!styleReady&&currentMode==='map'){usingFallback=true;map.setStyle(STYLE_OSM_FALLBACK);}});
 setTimeout(()=>{if(!styleReady&&!usingFallback){usingFallback=true;map.setStyle(STYLE_OSM_FALLBACK);}},8000);
 // Satellite
-const SNAS_SOURCES=new Set(['roads','road-labels-src','districts','regions-src','rivers-src','mtn-src','oil-src','min-src','mgq-districts','somalia-src','cities-src','poi-src']);
+const SNAS_SOURCES=new Set(['roads','road-labels-src','districts','regions-src','rivers-src','mtn-src','oil-src','min-src','mgq-districts','somalia-src','cities-src','poi-src','settlements-src']);
 let _satSaved=[];
 // ── POI layer ──
 const POI_ICONS={hospital:'🏥',mosque:'🕌',school:'🏫',market:'🛒',bank:'🏦',restaurant:'🍴',hotel:'🏨',government:'🏛',pharmacy:'💊',police:'🚔',fuel:'⛽',leisure:'🏟',tourism:'🏛',other:'📍'};
 let _snasPoiCache=[];
 async function loadSNASPOIs(){
   try{
-    const rows=await dbGet('snas_pois',{select:'poi_id,name_so,name_en,category,lat,lon,phone,website,opening_hours',limit:2000}).catch(()=>[]);
+    const rows=await dbGet('snas_pois',{select:'poi_id,name_so,name_en,category,lat,lon,phone,website,opening_hours',limit:3000}).catch(()=>[]);
     if(!rows||!rows.length)return;
     _snasPoiCache=rows.map(p=>Object.assign({},p,{icon:POI_ICONS[p.category]||'📍'}));
     const fc={type:'FeatureCollection',features:_snasPoiCache.map(p=>({type:'Feature',geometry:{type:'Point',coordinates:[parseFloat(p.lon),parseFloat(p.lat)]},properties:{poi_id:p.poi_id,name_so:p.name_so||'',name_en:p.name_en||'',category:p.category||'other',icon:POI_ICONS[p.category]||'📍',lon:parseFloat(p.lon),lat:parseFloat(p.lat)}}))};
     if(styleReady&&map.getSource('poi-src'))map.getSource('poi-src').setData(fc);
+    // Update chip count badges
+    const catCounts={};_snasPoiCache.forEach(p=>{catCounts[p.category]=(catCounts[p.category]||0)+1;});
+    ['hospital','mosque','market','restaurant','bank','school','fuel','government'].forEach(cat=>{const btn=document.getElementById('chip-'+cat);if(!btn||!catCounts[cat])return;let badge=btn.querySelector('.chip-badge');if(!badge){badge=document.createElement('span');badge.className='chip-badge';btn.appendChild(badge);}badge.textContent=catCounts[cat]>99?'99+':catCounts[cat];});
   }catch(e){console.warn('loadSNASPOIs:',e);}
+}
+// ── Settlement labels (towns/villages) — zoom 8-13 ──────────────────────
+const SETTLEMENTS_DATA=[
+  {n:'Kismayo',s:'Kismaayo',c:[42.545,0.358]},{n:'Baidoa',s:'Baydhaba',c:[43.649,3.118]},
+  {n:'Garowe',s:'Garoowe',c:[48.481,8.411]},{n:'Bosaso',s:'Boosaaso',c:[49.186,11.285]},
+  {n:'Berbera',s:'Berbera',c:[45.022,10.433]},{n:'Kismayo Port',s:'Dekadda Kismaayo',c:[42.543,0.362]},
+  {n:'Afgoye',s:'Afgooye',c:[45.122,2.139]},{n:'Merca',s:'Marka',c:[44.770,1.712]},
+  {n:'Brava',s:'Baraawe',c:[44.032,1.099]},{n:'Jamaame',s:'Jamaame',c:[42.745,0.070]},
+  {n:'Bu\'aale',s:'Bu\'aale',c:[42.579,1.088]},{n:'Luuq',s:'Luuq',c:[42.545,3.803]},
+  {n:'Dolo',s:'Doolow',c:[42.073,4.179]},{n:'Beledweyne',s:'Beledweyne',c:[45.204,4.736]},
+  {n:'Galkayo',s:'Gaalkacyo',c:[47.433,6.770]},{n:'Jowhar',s:'Jawhar',c:[45.501,2.781]},
+  {n:'Wanlaweyn',s:'Wanlaweyn',c:[44.889,2.619]},{n:'Qardho',s:'Qardho',c:[49.083,9.500]},
+  {n:'Erigavo',s:'Ceerigaavo',c:[47.371,10.617]},{n:'Burao',s:'Burco',c:[45.536,9.520]},
+  {n:'Borama',s:'Boorama',c:[43.183,9.938]},{n:'Lasanod',s:'Laascaanood',c:[47.355,8.476]},
+  {n:'Garbahaarey',s:'Garbahaarey',c:[42.223,3.326]},{n:'Hudur',s:'Xudur',c:[43.890,4.121]},
+  {n:'Dhusamareb',s:'Dhuusamarreeb',c:[46.388,5.534]},{n:'Ceelbuur',s:'Ceelbuur',c:[46.618,4.660]},
+  {n:'Burtinle',s:'Burtinle',c:[49.593,8.263]},{n:'Hobyo',s:'Hobyo',c:[48.527,5.349]},
+  {n:'Xarardheere',s:'Xarardheere',c:[48.760,4.756]},{n:'Afgooye',s:'Afgooye',c:[45.122,2.139]},
+  {n:'Balad',s:'Balad',c:[45.380,2.994]},{n:'Ceelasha',s:'Ceelasha Biyaha',c:[45.291,2.028]},
+  {n:'Jilib',s:'Jilib',c:[42.788,0.494]},{n:'Saakow',s:'Saakow',c:[42.682,1.705]},
+  {n:'El Wak',s:'Ceel Waaq',c:[40.934,2.801]},{n:'Mandera',s:'Mandera',c:[41.853,3.942]}
+];
+function addSettlementLabels(){
+  if(map.getSource('settlements-src'))return;
+  map.addSource('settlements-src',{type:'geojson',data:{type:'FeatureCollection',features:SETTLEMENTS_DATA.map(s=>({type:'Feature',geometry:{type:'Point',coordinates:s.c},properties:{name:s.n,name_so:s.s}}))}});
+  map.addLayer({id:'settlement-dots',type:'circle',source:'settlements-src',minzoom:7,maxzoom:12,paint:{'circle-radius':4,'circle-color':'#5f6368','circle-stroke-color':'#fff','circle-stroke-width':1.5,'circle-opacity':0.8}});
+  map.addLayer({id:'settlement-labels',type:'symbol',source:'settlements-src',minzoom:7,maxzoom:13,layout:{'text-field':['coalesce',['get','name_so'],['get','name']],'text-font':['Noto Sans Bold'],'text-size':['interpolate',['linear'],['zoom'],7,9,10,12,12,14],'text-offset':[0,1.1],'text-anchor':'top','text-allow-overlap':false,'text-ignore-placement':false},paint:{'text-color':'#202124','text-halo-color':'rgba(255,255,255,0.95)','text-halo-width':2.5}});
 }
 function addSatelliteLayer(){if(map.getSource('esri-sat'))return;map.addSource('esri-sat',{type:'raster',tiles:ESRI_SAT_TILES,tileSize:256,maxzoom:19,attribution:'Esri'});const firstId=map.getStyle().layers[0]&&map.getStyle().layers[0].id;map.addLayer({id:'esri-sat-layer',type:'raster',source:'esri-sat',maxzoom:24,paint:{'raster-opacity':1}},firstId);_satSaved=[];map.getStyle().layers.forEach(l=>{if(l.id==='esri-sat-layer'||SNAS_SOURCES.has(l.source))return;if(/building/i.test(l.id))return;let prop=null;if(l.type==='background')prop='background-opacity';else if(l.type==='fill')prop='fill-opacity';else if(l.type==='raster')prop='raster-opacity';if(!prop)return;const orig=map.getPaintProperty(l.id,prop)!=null?map.getPaintProperty(l.id,prop):1;_satSaved.push({id:l.id,prop,orig});try{map.setPaintProperty(l.id,prop,0);}catch(e){}});}
 function removeSatelliteLayer(){_satSaved.forEach(({id,prop,orig})=>{if(!map.getLayer(id))return;try{map.setPaintProperty(id,prop,orig);}catch(e){}});_satSaved=[];if(map.getLayer('esri-sat-layer'))map.removeLayer('esri-sat-layer');if(map.getSource('esri-sat'))map.removeSource('esri-sat');}
@@ -1603,56 +1657,78 @@ function togLyr(name){const isOn=layerVis[name];(LAYER_GROUPS[name]||[]).forEach
 // Search with Fuse.js + postcode LLNN LL
 const CHIP_TERMS={hospital:['cisbitaal','hospital','caafimaad','health','xanuun'],mosque:['masjid','masaajid','mosque','jamac','jaamac','musalla'],market:['suuq','suuqa','market','bakaara','xarunta','dukaan'],school:['dugsi','iskool','school','tacliinta','maktabad'],government:['xukuumad','madaxtooyada','xafiis','government','villa']};
 function clearChipPOIs(){['chip-poi-labels','chip-poi-circles'].forEach(id=>{if(map.getLayer(id))map.removeLayer(id);});if(map.getSource('chip-pois'))map.removeSource('chip-pois');}
+// ── Distance helpers ────────────────────────────────────────────────────
+function _degDist(lat1,lon1,lat2,lon2){return Math.hypot(lat2-lat1,(lon2-lon1)*Math.cos((lat1+lat2)*Math.PI/360));}
+function _kmStr(deg){const km=deg*111.32;return km<1?Math.round(km*1000)+' m':km.toFixed(1)+' km';}
+// ── Chip search: nearest POI from live cache ─────────────────────────────
 function chipSearch(category){
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
   const btn=event&&event.currentTarget;if(btn)btn.classList.add('active');
-  clearChipPOIs();
-  const terms=CHIP_TERMS[category]||[category];
-  const si=document.getElementById('si');si.value=terms[0];
-  document.getElementById('sclr').classList.add('show');
-  showToast('Searching for '+category+'...',1800);
-  // Try each term in sequence until results found
-  (async()=>{
-    for(const t of terms){
-      const esc=t.replace(/[%_]/g,'\\$&');
-      const[bySo,byEn]=await Promise.all([
-        dbGet('snas_streets',{select:'street_id,district_id,name_so,name_en,osm_name,highway_class',name_so:'ilike.*'+esc+'*',limit:5}).catch(()=>[]),
-        dbGet('snas_streets',{select:'street_id,district_id,name_so,name_en,osm_name,highway_class',name_en:'ilike.*'+esc+'*',limit:5}).catch(()=>[])
-      ]);
-      const roads=[...(bySo||[]),...(byEn||[])].filter(s=>s.name_so||s.name_en);
-      if(roads.length){
-        const res=roads.map(s=>{const dist=districtMap[s.district_id];return{type:'s',ico:'📍',nm:s.name_so||s.name_en,ds:dist?dist.name_en+' District':'Somalia',data:s};});
-        searchResults=res;renderAC(res,t);
-        const first=roads[0];const dist=districtMap[first.district_id];
-        if(dist&&dist.lat&&dist.lon){map.flyTo({center:[dist.lon,dist.lat],zoom:dist.region_id==='BN'?15:14,duration:1200,essential:true});afterFly();openRight();renderDistrictInfo(dist);}
-        return;
-      }
+  clearChipPOIs();closeNearestPanel();
+  const ctr=map.getCenter();
+  const _d=p=>_degDist(ctr.lat,ctr.lng,parseFloat(p.lat),parseFloat(p.lon));
+  // Use live snas_pois cache first
+  const poisOfCat=_snasPoiCache.filter(p=>p.category===category);
+  if(poisOfCat.length){
+    poisOfCat.sort((a,b)=>_d(a)-_d(b));
+    const top=poisOfCat.slice(0,12);
+    const nearest=top[0];
+    const lng=parseFloat(nearest.lon),lat=parseFloat(nearest.lat);
+    // Show results panel
+    showNearestPanel(top,category,_d);
+    // Build AC results
+    const res=top.slice(0,6).map(p=>({type:'poi',ico:p.icon||'📍',nm:p.name_so||p.name_en||category,ds:_kmStr(_d(p))+' away',data:p}));
+    searchResults=res;renderAC(res,category);
+    // Fly to nearest and open its card
+    map.flyTo({center:[lng,lat],zoom:17,duration:1200,essential:true});
+    map.once('moveend',()=>{spawnPulse({lng,lat});showSNASPoiCard(nearest);});
+    showToast((nearest.icon||'📍')+' '+(nearest.name_so||nearest.name_en||category)+' · '+_kmStr(_d(nearest)),3500);
+    return;
+  }
+  // Fallback: curated Mogadishu dataset
+  const pois=CHIP_POIS[category]||[];
+  if(pois.length){
+    const poiGJ={type:'FeatureCollection',features:pois.map((p,i)=>({type:'Feature',id:i,geometry:{type:'Point',coordinates:p.c},properties:{name:p.n,district:p.d}}))};
+    if(map.getSource('chip-pois'))map.getSource('chip-pois').setData(poiGJ);
+    else{
+      map.addSource('chip-pois',{type:'geojson',data:poiGJ});
+      map.addLayer({id:'chip-poi-circles',type:'circle',source:'chip-pois',paint:{'circle-radius':10,'circle-color':'#c8601a','circle-stroke-color':'#fff','circle-stroke-width':2,'circle-opacity':0.9}});
+      map.addLayer({id:'chip-poi-labels',type:'symbol',source:'chip-pois',layout:{'text-field':['get','name'],'text-font':['Noto Sans Bold'],'text-size':11,'text-offset':[0,1.5],'text-anchor':'top','text-allow-overlap':false},paint:{'text-color':'#202124','text-halo-color':'rgba(255,255,255,.95)','text-halo-width':2}});
+      map.on('click','chip-poi-circles',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;showToast('📍 '+p.name+' · '+p.district+' District',3500);});
+      map.on('mouseenter','chip-poi-circles',()=>{map.getCanvas().style.cursor='pointer';});
+      map.on('mouseleave','chip-poi-circles',()=>{map.getCanvas().style.cursor='';});
     }
-    // Fallback: curated Mogadishu POI dataset
-    const pois=CHIP_POIS[category]||[];
-    if(pois.length){
-      // Add POI markers to map
-      const poiGJ={type:'FeatureCollection',features:pois.map((p,i)=>({type:'Feature',id:i,geometry:{type:'Point',coordinates:p.c},properties:{name:p.n,district:p.d}}))};
-      if(map.getSource('chip-pois'))map.getSource('chip-pois').setData(poiGJ);
-      else{
-        map.addSource('chip-pois',{type:'geojson',data:poiGJ});
-        map.addLayer({id:'chip-poi-circles',type:'circle',source:'chip-pois',paint:{'circle-radius':10,'circle-color':'#c8601a','circle-stroke-color':'#fff','circle-stroke-width':2,'circle-opacity':0.9}});
-        map.addLayer({id:'chip-poi-labels',type:'symbol',source:'chip-pois',layout:{'text-field':['get','name'],'text-font':['Noto Sans Bold'],'text-size':11,'text-offset':[0,1.5],'text-anchor':'top','text-allow-overlap':false},paint:{'text-color':'#202124','text-halo-color':'rgba(255,255,255,.95)','text-halo-width':2}});
-        map.on('click','chip-poi-circles',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;showToast('📍 '+p.name+' · '+p.district+' District',3500);});
-        map.on('mouseenter','chip-poi-circles',()=>{map.getCanvas().style.cursor='pointer';});
-        map.on('mouseleave','chip-poi-circles',()=>{map.getCanvas().style.cursor='';});
-      }
-      const res=pois.map(p=>({type:'poi',ico:'📍',nm:p.n,ds:p.d+' District · Mogadishu',data:{name_en:p.n,name_so:p.s,coords:p.c}}));
-      searchResults=res;renderAC(res,category);
-      // Fly to show all results
-      const lngs=pois.map(p=>p.c[0]),lats=pois.map(p=>p.c[1]);
-      map.fitBounds([[Math.min(...lngs),Math.min(...lats)],[Math.max(...lngs),Math.max(...lats)]],{padding:80,duration:1400,essential:true});
-      showToast(pois.length+' '+category+'s found in Mogadishu',2500);
-      return;
-    }
-    const res=[];searchResults=res;renderAC(res,terms[0]);showToast('No '+category+' found in current data',2500);
-  })();
+    const res=pois.map(p=>({type:'poi',ico:'📍',nm:p.n,ds:p.d+' District · Mogadishu',data:{name_en:p.n,name_so:p.s,coords:p.c}}));
+    searchResults=res;renderAC(res,category);
+    const lngs=pois.map(p=>p.c[0]),lats=pois.map(p=>p.c[1]);
+    map.fitBounds([[Math.min(...lngs),Math.min(...lats)],[Math.max(...lngs),Math.max(...lats)]],{padding:80,duration:1400,essential:true});
+    showToast(pois.length+' '+category+'s found',2500);
+    return;
+  }
+  showToast('No '+category+' found — import more POIs',2500);
 }
+// ── Nearest POI side-panel ───────────────────────────────────────────────
+function showNearestPanel(pois,category,_d){
+  const icon=POI_ICONS[category]||'📍';
+  document.getElementById('np-title').textContent=icon+' Nearby '+category.charAt(0).toUpperCase()+category.slice(1)+'s ('+pois.length+')';
+  document.getElementById('np-list').innerHTML=pois.map((p,i)=>'<div class="np-item" onclick="pickNearestPOI('+i+')"><div class="np-icon">'+(p.icon||'📍')+'</div><div class="np-info"><div class="np-nm">'+(p.name_so||p.name_en||p.category)+'</div><div class="np-dist">'+_kmStr(_d(p))+(p.opening_hours?' · '+p.opening_hours.split(';')[0]:'')+'</div></div></div>').join('');
+  document.getElementById('nearest-panel').classList.add('open');
+  window._nearestPOIs=pois;
+}
+function pickNearestPOI(i){const p=window._nearestPOIs[i];if(!p)return;const lng=parseFloat(p.lon),lat=parseFloat(p.lat);map.flyTo({center:[lng,lat],zoom:17,duration:1000,essential:true});map.once('moveend',()=>{spawnPulse({lng,lat});showSNASPoiCard(p);});}
+function closeNearestPanel(){document.getElementById('nearest-panel').classList.remove('open');window._nearestPOIs=null;}
+// ── Load district POIs for drill-down reveal ─────────────────────────────
+function loadNearestPOIsForDistrict(d){
+  if(!_snasPoiCache.length||!d.lat||!d.lon)return;
+  const _d=p=>_degDist(d.lat,d.lon,parseFloat(p.lat),parseFloat(p.lon));
+  // Rough bbox: ~0.5 deg radius
+  const nearby=_snasPoiCache.filter(p=>{const dlat=Math.abs(parseFloat(p.lat)-d.lat),dlon=Math.abs(parseFloat(p.lon)-d.lon);return dlat<0.5&&dlon<0.5;}).sort((a,b)=>_d(a)-_d(b)).slice(0,10);
+  if(nearby.length){showNearestPanel(nearby,'place',_d);document.getElementById('np-title').textContent='📍 Places in '+d.name_en+' ('+nearby.length+')';}
+}
+// ── POI card action buttons ──────────────────────────────────────────────
+let _currentCardPOI=null;
+function dirFromCard(){if(!_currentCardPOI)return;const lng=parseFloat(_currentCardPOI.lon),lat=parseFloat(_currentCardPOI.lat);setRoutePoint('to',[lng,lat],_currentCardPOI.name_so||_currentCardPOI.name_en||'Destination');closeSNASPoiCard();openDirections();showToast('Destination set — now add a start point',2500);}
+function sharePoiCard(){if(!_currentCardPOI)return;const nm=_currentCardPOI.name_so||_currentCardPOI.name_en||'Place';const url='https://www.google.com/maps?q='+parseFloat(_currentCardPOI.lat)+','+parseFloat(_currentCardPOI.lon);if(navigator.share){navigator.share({title:nm,text:'Check out '+nm+' on SNAS Map',url});}else{navigator.clipboard&&navigator.clipboard.writeText(url).then(()=>showToast('Link copied to clipboard',2500));}}
 function onSearchInput(q){clearTimeout(searchTimer);document.getElementById('sclr').classList.toggle('show',q.length>0);document.getElementById('sc').classList.toggle('ac-open',q.length>=2);if(q.length<2){closeAC();return;}showInstantResults(q);searchTimer=setTimeout(()=>doSearch(q),250);}
 function showInstantResults(q){
   if(!fuseDistricts)return;const res=[];const qu=q.toUpperCase().trim();
@@ -1688,7 +1764,7 @@ function pickResult(idx){
   const r=searchResults[idx];if(!r)return;closeAC();document.getElementById('si').value=r.nm;saveRecentSearch(r.nm);
   if(r.type==='d'||r.type==='p'){const d=r.data;if(!d.lat||!d.lon)return;openRight();renderDistrictInfo(d);document.querySelectorAll('.dl-it').forEach(el=>el.classList.remove('active'));const row=document.getElementById('dlr-'+d.district_id);if(row)row.classList.add('active');map.flyTo({center:[d.lon,d.lat],zoom:d.region_id==='BN'?15:14,duration:1000,essential:true});afterFly(()=>spawnPulse({lng:d.lon,lat:d.lat}));}
   else if(r.type==='r'){const rd=allDistricts.filter(d=>d.region_id===r.data.region_id);openRight();renderDistrictList(rd);document.getElementById('rp-tt').textContent=r.data.region_name;const lats=rd.filter(d=>d.lat).map(d=>d.lat),lons=rd.filter(d=>d.lon).map(d=>d.lon);if(lats.length){map.flyTo({center:[lons.reduce((a,b)=>a+b)/lons.length,lats.reduce((a,b)=>a+b)/lats.length],zoom:8,duration:1200,essential:true});afterFly();}}
-  else if(r.type==='poi'){const[lng,lat]=r.data.coords;map.flyTo({center:[lng,lat],zoom:18,duration:1000,essential:true});map.once('moveend',()=>spawnPulse({lng,lat}));showToast('📍 '+r.nm,3000);}
+  else if(r.type==='poi'){const d=r.data;const coords=d.coords||[parseFloat(d.lon),parseFloat(d.lat)];const[lng,lat]=coords;map.flyTo({center:[lng,lat],zoom:18,duration:1000,essential:true});map.once('moveend',()=>{spawnPulse({lng,lat});const full=d.poi_id?(_snasPoiCache.find(x=>x.poi_id==d.poi_id)||d):d;if(d.poi_id||d.category)showSNASPoiCard(full);else showToast('📍 '+r.nm,3000);});}
   else if(r.type==='s'){const dist=districtMap[r.data.district_id];const cached=roadCache[r.data.street_id];const _so=r.data.name_so&&r.data.name_so!=='Unnamed'?r.data.name_so:'';const _en=r.data.name_en&&r.data.name_en!=='Unnamed'?r.data.name_en:'';if(_so||_en)showRoadBanner(_so,_en);if(cached){selectRoadOnMap(r.data.street_id);openRight();if(dist)renderDistrictInfo(dist);map.flyTo({center:[cached.center.lng,cached.center.lat],zoom:19,duration:800,essential:true});afterFly(()=>spawnPulse({lng:cached.center.lng,lat:cached.center.lat}));showDetail(r.data,dist,false);}else if(dist&&dist.lat&&dist.lon){showToast('Locating '+r.nm+'...',3000);openRight();renderDistrictInfo(dist);map.flyTo({center:[dist.lon,dist.lat],zoom:12,duration:1000,essential:true});map.once('moveend',async()=>{resetStream();await streamRoads();const c2=roadCache[r.data.street_id];if(c2){selectRoadOnMap(r.data.street_id);map.flyTo({center:[c2.center.lng,c2.center.lat],zoom:19,duration:600,essential:true});afterFly(()=>spawnPulse({lng:c2.center.lng,lat:c2.center.lat}));showDetail(r.data,dist,false);}else{showDetail(r.data,dist,false);showToast('Zoom in to this district to see the road',2800);}});}else showDetail(r.data,dist,false);}
 }
 function closeAC(){document.getElementById('ac').classList.remove('open');document.getElementById('sc').classList.remove('ac-open');acFocusIdx=-1;}
@@ -1834,8 +1910,8 @@ async function drawRoute(){
     if(map.getSource('route-src')){map.getSource('route-src').setData(gj);}
     else{
       map.addSource('route-src',{type:'geojson',data:gj});
-      map.addLayer({id:'route-shadow',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#fff','line-width':9,'line-opacity':0.5}},'road-fill');
-      map.addLayer({id:'route-line',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#1a73e8','line-width':5,'line-opacity':0.95}},'road-fill');
+      map.addLayer({id:'route-shadow',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'rgba(0,0,0,0.45)','line-width':11,'line-opacity':0.55,'line-blur':4}},'road-fill');
+      map.addLayer({id:'route-line',type:'line',source:'route-src',layout:{'line-cap':'round','line-join':'round'},paint:{'line-color':'#FFE500','line-width':5,'line-opacity':1}},'road-fill');
     }
     document.getElementById('route-card').classList.add('show');
     closeDetail(); // road detail and route card should not be visible simultaneously
@@ -1897,14 +1973,17 @@ function toggleEmergency(){
 }
 // ── POI Detail Card ────────────────────────────────────────────────────
 function showSNASPoiCard(p){
+  _currentCardPOI=p;
   document.getElementById('spc-icon').textContent=p.icon||POI_ICONS[p.category]||'📍';
   document.getElementById('spc-name').textContent=p.name_so||p.name_en||p.category||'Place';
-  document.getElementById('spc-cat').textContent=(p.category||'').replace(/_/g,' ');
+  const ctr=map.getCenter();
+  const distStr=p.lat&&p.lon?'  ·  '+_kmStr(_degDist(ctr.lat,ctr.lng,parseFloat(p.lat),parseFloat(p.lon)))+' away':'';
+  document.getElementById('spc-cat').textContent=(p.category||'').replace(/_/g,' ')+distStr;
   let rows='';
-  if(p.phone)rows+='<div class="spc-row"><span class="spc-ico">📞</span><a href="tel:'+encodeURIComponent(p.phone)+'">'+p.phone+'</a></div>';
-  if(p.website)rows+='<div class="spc-row"><span class="spc-ico">🌐</span><a href="'+p.website+'" target="_blank" rel="noopener">'+p.website.replace(/^https?:\/\//,'').replace(/\/$/,'')+'</a></div>';
+  if(p.phone)rows+='<div class="spc-row"><span class="spc-ico">📞</span><a href="tel:'+p.phone.replace(/[^+\d]/g,'')+'">'+p.phone+'</a></div>';
+  if(p.website)rows+='<div class="spc-row"><span class="spc-ico">🌐</span><a href="'+p.website+'" target="_blank" rel="noopener noreferrer">'+p.website.replace(/^https?:\/\//,'').replace(/\/$/,'')+'</a></div>';
   if(p.opening_hours)rows+='<div class="spc-row"><span class="spc-ico">🕐</span><span>'+p.opening_hours+'</span></div>';
-  if(!rows)rows='<div class="spc-row" style="color:#9aa0a6;font-size:11px">No contact details available</div>';
+  if(!rows)rows='<div class="spc-row" style="color:#9aa0a6;font-size:11px;text-align:center;padding:12px">Contact info not listed</div>';
   document.getElementById('spc-rows').innerHTML=rows;
   document.getElementById('snas-poi-card').classList.add('show');
 }
@@ -2071,7 +2150,14 @@ document.addEventListener('keydown',e=>{
   if(document.getElementById('addr-book').classList.contains('open')){closeAddrBook();return;}
   if(document.getElementById('rp').classList.contains('open')){closeRight();return;}
   if(document.getElementById('lp').classList.contains('open')){closeLayers();return;}
+  if(document.getElementById('snas-poi-card').classList.contains('show')){closeSNASPoiCard();return;}
+  if(document.getElementById('nearest-panel').classList.contains('open')){closeNearestPanel();return;}
   if(document.getElementById('ac').classList.contains('open')){closeAC();return;}
+});
+// ── Auto-enable 3D buildings when zoom ≥ 17 ──────────────────────────────
+map.on('zoom',()=>{
+  const z=map.getZoom();
+  if(z>=17&&!layerVis.buildings){layerVis.buildings=true;if(map.getLayer('buildings-3d'))map.setLayoutProperty('buildings-3d','visibility','visible');const t=document.getElementById('tog-buildings');if(t)t.classList.add('on');}
 });
 // ── Geo circle helper (accuracy ring) ────────────────────────────────
 function makeCircleGJ(lng,lat,radiusM,steps){
