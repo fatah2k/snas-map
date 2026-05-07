@@ -1083,7 +1083,7 @@ mark{background:rgba(0,229,255,0.25)!important;color:var(--ne-cyan)!important}
 .rl-somalia{background:#39FF14}
 
 /* ══════════════════════════════════════════════════════════
-   PREMIUM SNAS — Minimalist Google Maps Dark Redesign
+   PREMIUM SNAS v2 — Clean, fixed, Google Maps-level dark UI
    ══════════════════════════════════════════════════════════ */
 :root{
   --pm-bg:#080C18;
@@ -1336,15 +1336,17 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
   display:none!important;
 }
 
-/* ── Route card — floating above bottom nav ─────────────── */
+/* ── Route card — keep centered, shift bottom above nav ─── */
 #route-card{
-  bottom:calc(72px + var(--pm-safe-bot))!important;
-  left:14px!important;right:14px!important;
+  bottom:calc(76px + var(--pm-safe-bot))!important;
+  left:50%!important;right:auto!important;
+  width:min(420px,calc(100vw - 28px))!important;
   border-radius:var(--pm-radius)!important;
   background:var(--pm-surf2)!important;
   border:1px solid var(--pm-border-hi)!important;
   box-shadow:var(--pm-sh),0 0 0 1px rgba(0,212,255,0.08)!important;
 }
+#route-card.show{transform:translateX(-50%) translateY(0)!important;opacity:1!important}
 .rc-dist{color:var(--pm-accent)!important;font-family:'Outfit',sans-serif!important;font-size:28px!important;font-weight:800!important}
 .rc-time{color:var(--pm-sub)!important;font-size:12px!important}
 .rc-via{color:var(--pm-text)!important;font-size:12px!important;padding:4px 16px 6px!important}
@@ -1375,56 +1377,73 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
 .nh-eta{color:var(--pm-accent)!important;font-family:'Space Mono',monospace!important}
 .nh-end{background:rgba(255,50,82,0.2)!important;border:1px solid rgba(255,50,82,0.4)!important;color:#FF3252!important;border-radius:12px!important}
 
-/* ── Direction panel ─────────────────────────────────────── */
+/* ── Direction panel — FIXED: translateY(100%) hides below, not above ── */
 #dir-panel{
   background:var(--pm-surf2)!important;
   border:1px solid var(--pm-border-hi)!important;
-  border-radius:var(--pm-radius) var(--pm-radius) 0 0!important;
-  box-shadow:var(--pm-sh)!important;
-  bottom:0!important;top:auto!important;height:auto!important;
-  padding-bottom:calc(8px + var(--pm-safe-bot))!important;
+  border-radius:24px 24px 0 0!important;
+  box-shadow:0 -8px 40px rgba(0,0,0,0.6)!important;
+  top:auto!important;bottom:0!important;height:auto!important;
+  padding-bottom:calc(12px + var(--pm-safe-bot))!important;
+  /* CRITICAL: hide below screen, not above */
+  transform:translateY(100%)!important;
+  transition:transform .32s cubic-bezier(.4,0,.2,1)!important;
 }
-.dir-title{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important;font-weight:700!important}
+#dir-panel.open{transform:translateY(0)!important}
+.dir-title{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important;font-weight:700!important;font-size:17px!important}
 .dir-back{color:var(--pm-accent)!important}
-.dir-inp{
-  background:rgba(255,255,255,0.04)!important;
-  border:1px solid var(--pm-border)!important;
-  color:var(--pm-text)!important;
-  border-radius:14px!important;
-}
-.dir-inp:focus{border-color:var(--pm-accent)!important;background:rgba(0,212,255,0.06)!important;box-shadow:0 0 12px rgba(0,212,255,0.15)!important}
+.dir-inp{background:rgba(255,255,255,0.05)!important;border:1px solid var(--pm-border)!important;color:var(--pm-text)!important;border-radius:14px!important;font-size:14px!important}
+.dir-inp:focus{border-color:var(--pm-accent)!important;background:rgba(0,212,255,0.07)!important}
 .dir-inp::placeholder{color:var(--pm-sub)!important}
 .dir-go-btn{color:var(--pm-accent)!important}
-.rm-btn{background:rgba(255,255,255,0.04)!important;border:1px solid var(--pm-border)!important;color:var(--pm-sub)!important;border-radius:12px!important}
-.rm-btn.active{background:var(--pm-accent)!important;color:#060A1C!important;border-color:transparent!important}
+.rm-btn{background:rgba(255,255,255,0.04)!important;border:1px solid var(--pm-border)!important;color:var(--pm-sub)!important;border-radius:12px!important;font-size:12px!important;padding:8px 14px!important;min-height:40px!important}
+.rm-btn.active{background:var(--pm-accent)!important;color:#060A1C!important;border-color:transparent!important;font-weight:700!important}
 
-/* ── POI card ────────────────────────────────────────────── */
+/* ── POI card — keep centered transform, just reposition ─── */
 #snas-poi-card{
-  bottom:calc(72px + var(--pm-safe-bot))!important;
-  left:14px!important;right:14px!important;
+  bottom:calc(76px + var(--pm-safe-bot))!important;
+  left:50%!important;right:auto!important;
+  width:min(360px,calc(100vw - 28px))!important;
   background:var(--pm-surf2)!important;
   border:1px solid var(--pm-border-hi)!important;
   border-radius:var(--pm-radius)!important;
   box-shadow:var(--pm-sh)!important;
 }
-.spc-name{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important}
-.spc-cat{color:var(--pm-accent)!important}
-.spc-row{border-bottom:1px solid var(--pm-border)!important}
-.spc-btn{background:rgba(0,212,255,0.06)!important;border:1px solid var(--pm-border)!important;color:var(--pm-text)!important;border-radius:12px!important}
+#snas-poi-card.show{transform:translateX(-50%) translateY(0)!important;opacity:1!important}
+.spc-name{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important;font-size:16px!important;font-weight:700!important}
+.spc-cat{color:var(--pm-accent)!important;font-size:11px!important}
+.spc-row{border-bottom:1px solid var(--pm-border)!important;padding:10px 14px!important}
+.spc-btn{background:rgba(0,212,255,0.06)!important;border:1px solid var(--pm-border)!important;color:var(--pm-text)!important;border-radius:12px!important;min-height:40px!important}
 .spc-btn.primary{background:var(--pm-accent)!important;color:#060A1C!important;font-weight:700!important;border-color:transparent!important}
 
-/* ── Nearest panel ───────────────────────────────────────── */
+/* ── Nearest panel — FIXED: proper translateY transitions ─── */
 #nearest-panel{
-  bottom:calc(72px + var(--pm-safe-bot))!important;
-  left:14px!important;right:14px!important;
+  top:auto!important;
+  bottom:calc(76px + var(--pm-safe-bot))!important;
+  right:14px!important;left:14px!important;
+  width:auto!important;
   background:var(--pm-surf2)!important;
   border:1px solid var(--pm-border-hi)!important;
   border-radius:var(--pm-radius)!important;
   box-shadow:var(--pm-sh)!important;
-  max-height:50vh!important;
+  max-height:45vh!important;
+  /* CRITICAL: hide off-screen below, override translateX(290px) */
+  transform:translateY(calc(100% + 24px))!important;
+  opacity:0!important;
+  pointer-events:none!important;
+  transition:transform .3s cubic-bezier(.4,0,.2,1),opacity .25s!important;
 }
-.np-hd{border-bottom:1px solid var(--pm-border)!important}
-.np-title{color:var(--pm-accent)!important;font-family:'Outfit',sans-serif!important;font-weight:700!important}
+#nearest-panel.open{
+  transform:translateY(0)!important;
+  opacity:1!important;
+  pointer-events:auto!important;
+}
+.np-hd{border-bottom:1px solid var(--pm-border)!important;padding:12px 16px 10px!important}
+.np-title{color:var(--pm-accent)!important;font-family:'Outfit',sans-serif!important;font-weight:700!important;font-size:14px!important}
+.np-item{border-bottom:1px solid rgba(0,212,255,0.06)!important;padding:11px 16px!important}
+.np-item:hover{background:rgba(0,212,255,0.06)!important}
+.np-nm{color:var(--pm-text)!important;font-size:13px!important;font-weight:500!important}
+.np-dist{color:var(--pm-sub)!important;font-size:10px!important;font-family:'Space Mono',monospace!important}
 
 /* ── Left panel (layers) ─────────────────────────────────── */
 #lp{
@@ -1528,11 +1547,97 @@ mark{background:rgba(0,212,255,0.22)!important;color:var(--pm-accent)!important}
 .ld-sub{color:var(--pm-sub)!important;font-family:'Inter',sans-serif!important}
 .ld-fill{background:linear-gradient(90deg,var(--pm-accent),var(--pm-accent2))!important}
 
+/* ── Chips: single scrollable row, no wrapping ───────────── */
+#chips{
+  display:flex!important;
+  flex-wrap:nowrap!important;
+  overflow-x:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  scrollbar-width:none!important;
+  padding:0 4px 4px!important;
+  margin-top:8px!important;
+  gap:7px!important;
+}
+#chips::-webkit-scrollbar{display:none!important}
+
+/* ── Hide SNAS text label inside search bar — cleaner ────── */
+#slogo{display:none!important}
+
+/* ── Search bar: simpler, wider pill ────────────────────── */
+#sc{border-radius:26px!important}
+#si{font-size:14px!important;padding:15px 14px!important}
+#sico{padding:0 16px 0 6px!important}
+
+/* ── Direction panel: ensure fully hidden when closed ────── */
+#dir-panel{
+  min-height:160px!important; /* ensure translateY(100%) is meaningful */
+}
+
+/* ── Road banner: above bottom nav ──────────────────────── */
+#road-banner{
+  top:auto!important;
+  bottom:calc(80px + var(--pm-safe-bot))!important;
+  left:50%!important;
+  transform:translateX(-50%) translateY(-8px)!important;
+}
+#road-banner.show{transform:translateX(-50%) translateY(0)!important;opacity:1!important}
+
+/* ── What's Here: above bottom nav ──────────────────────── */
+#whats-here{
+  bottom:calc(80px + var(--pm-safe-bot))!important;
+  left:50%!important;
+  transform:translateX(-50%)!important;
+}
+
+/* ── RDD (road detail): above bottom nav ────────────────── */
+#rdd{
+  bottom:calc(76px + var(--pm-safe-bot))!important;
+  left:14px!important;right:14px!important;
+  width:auto!important;
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  border-radius:var(--pm-radius)!important;
+}
+
+/* ── Demo popup: cleaner position ────────────────────────── */
+#demo-popup{
+  bottom:calc(80px + var(--pm-safe-bot))!important;
+  left:50%!important;
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  border-radius:var(--pm-radius)!important;
+}
+
+/* ── Address book: dark glass ─────────────────────────────── */
+#addr-book{
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  box-shadow:var(--pm-sh)!important;
+}
+
+/* ── Share sheet: dark glass ─────────────────────────────── */
+#share-sheet .ss-card{
+  background:var(--pm-surf2)!important;
+  border:1px solid var(--pm-border-hi)!important;
+  border-radius:var(--pm-radius)!important;
+}
+.ss-title{color:var(--pm-text)!important;font-family:'Outfit',sans-serif!important}
+.ss-pc{color:var(--pm-accent)!important;font-family:'Space Mono',monospace!important}
+.ss-addr{color:var(--pm-sub)!important}
+.ss-btn.wa{background:#128C7E!important;color:#fff!important;border-color:transparent!important}
+.ss-btn.tg{background:#2AABEE!important;color:#fff!important;border-color:transparent!important}
+.ss-cancel{background:transparent!important;border:1px solid var(--pm-border)!important;color:var(--pm-sub)!important;border-radius:12px!important}
+
+/* ── Fetch progress bar: cyan ────────────────────────────── */
+#fetch-bar-fill{background:linear-gradient(90deg,var(--pm-accent),var(--pm-accent2),var(--pm-accent))!important}
+
 /* ── Mobile final fixes ──────────────────────────────────── */
 @media(max-width:430px){
-  #sw{width:calc(100vw - 28px)!important;top:calc(var(--pm-safe-top) + 10px)!important;left:50%!important;transform:translateX(-50%)!important}
-  #fabs{top:calc(var(--pm-safe-top) + 10px)!important}
-  #chips .chip{min-height:44px!important;padding:10px 14px!important}
+  #sw{width:calc(100vw - 24px)!important;top:calc(var(--pm-safe-top) + 10px)!important;left:50%!important;transform:translateX(-50%)!important}
+  #fabs{top:calc(var(--pm-safe-top) + 10px)!important;left:10px!important}
+  .chip{padding:9px 13px!important;font-size:11px!important;min-height:38px!important}
+  #report-fab{width:52px!important;height:52px!important;font-size:22px!important}
+  #voice-btn{width:48px!important;height:48px!important}
 }
 </style>
 </head>
