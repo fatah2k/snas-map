@@ -3916,7 +3916,7 @@ function _pickVoice(){
 function speakTurn(text){
   if(!_voiceEnabled||!window.speechSynthesis)return;
   window.speechSynthesis.cancel();
-  const utt=new SpeechSynthesisUtterance(somalifyInstruction(text));
+  const utt=new SpeechSynthesisUtterance(text||'');
   const v=_pickVoice();
   if(v)utt.voice=v;
   utt.rate=1.1;    // energetic
