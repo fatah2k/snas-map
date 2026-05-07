@@ -20,7 +20,11 @@ CREATE INDEX IF NOT EXISTS idx_snas_pois_name_so   ON snas_pois(name_so);
 CREATE INDEX IF NOT EXISTS idx_snas_pois_name_en   ON snas_pois(name_en);
 
 ALTER TABLE snas_pois ENABLE ROW LEVEL SECURITY;
-CREATE POLICY IF NOT EXISTS "public_read_pois" ON snas_pois FOR SELECT USING (true);
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename='snas_pois' AND policyname='public_read_pois') THEN
+    CREATE POLICY "public_read_pois" ON snas_pois FOR SELECT USING (true);
+  END IF;
+END $$;
 
 -- Allow inserts from service_role key only (anon cannot write)
 -- The import script must use the service_role key, not the anon key.

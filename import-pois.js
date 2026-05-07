@@ -15,6 +15,7 @@ const HDR = {
 };
 
 const OVERPASS = 'https://overpass-api.de/api/interpreter';
+const OVERPASS_MIRROR = 'https://overpass.kumi.systems/api/interpreter';
 
 const QUERY = `
 [out:json][timeout:180];
@@ -49,14 +50,27 @@ function categorize(tags) {
   return ['other', a || h || s || o || t || 'poi'];
 }
 
+async function overpassFetch(url) {
+  const body = 'data=' + encodeURIComponent(QUERY.trim());
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept': 'application/json',
+      'User-Agent': 'SNAS-Map-Importer/1.0',
+    },
+    body,
+  });
+}
+
 async function run() {
   console.log('Fetching POIs from Overpass API...');
-  const res = await fetch(OVERPASS, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: 'data=' + encodeURIComponent(QUERY),
-  });
-  if (!res.ok) throw new Error('Overpass error: ' + res.status);
+  let res = await overpassFetch(OVERPASS);
+  if (!res.ok) {
+    console.warn(`Primary endpoint returned ${res.status}, trying mirror...`);
+    res = await overpassFetch(OVERPASS_MIRROR);
+  }
+  if (!res.ok) throw new Error('Overpass error: ' + res.status + ' — ' + await res.text());
   const data = await res.json();
   const nodes = data.elements || [];
   console.log(`Got ${nodes.length} nodes from Overpass`);
