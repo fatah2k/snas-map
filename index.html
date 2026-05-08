@@ -352,8 +352,8 @@ mark{background:#fff3cd;color:#c8601a;border-radius:2px;padding:0 1px}
   #sat-toggle{bottom:36px;left:50%;transform:translateX(-50%)}
   #rdd{bottom:0;top:auto;left:0;transform:translateY(100%);width:100%;max-height:52vh;border-radius:20px 20px 0 0}
   #rdd.show{transform:translateY(0)}
-  #poi-panel{top:auto;bottom:0;right:0;left:0;width:100%;max-height:60vh;border-radius:20px 20px 0 0;transform:translateY(100%)}
-  #poi-panel.open{transform:translateY(0)}
+  #poi-panel{top:60px;right:8px;left:auto;width:calc(100vw - 16px);max-width:340px;max-height:52vh;border-radius:16px;transform:translateX(110%)}
+  #poi-panel.open{transform:translateX(0)}
   #stats-widget{bottom:auto;top:106px;left:8px}
   .swi{padding:5px 8px}.swi-v{font-size:11px}
   #scale-bar{display:none}
@@ -2125,7 +2125,18 @@ const ARTISANAL_GOLD=[
   {n:'Borama Hinterland Gold',c:[43.18,9.93]},
   {n:'Erigavo Gold — Sanaag',c:[47.36,10.61]},
 ];
-const SEQ_PATTERN=/^(Wadada\s+\d{4,}|Jidka\s+\d{4,}|Dhabbada\s+\d{4,}|Luuqa\s+\d{4,}|Avenyu\s+\d{4,}|\w{2,3}-RD-\d)/i;
+const SEQ_PATTERN=/^(Wadada|Jidka|Jiidka|Dhabbada|Luuqa|Avenyu|Bulvardi|Xaariga)\s+(\d{4,}|\d{1,4}-\d+)/i;
+// Auto-name generator — deterministic from street_id, uses SO word bank
+const _AN_TYPES=['Wadada','Jidka','Dhabbada','Luuqa','Xaariga'];
+const _AN_WORDS=['nabad','xorriyad','cusub','weyn','yar','hore','bari','galbeed','waqooyi','koonfur','badda','dugsi','masjid','suuq','garoon','cisbitaal','dowlad','xaafad'];
+function autoName(sid){
+  const s=Math.abs(sid||0);
+  const t=_AN_TYPES[s%_AN_TYPES.length];
+  const w1=_AN_WORDS[Math.floor(s/_AN_TYPES.length)%_AN_WORDS.length];
+  const w2=_AN_WORDS[Math.floor(s/(_AN_TYPES.length*_AN_WORDS.length))%_AN_WORDS.length];
+  const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);
+  return t+' '+cap(w1)+(w1!==w2?' '+cap(w2):'');
+}
 // ── Mogadishu curated POI fallback for chip search ──
 const CHIP_POIS={
   hospital:[
@@ -2189,7 +2200,7 @@ const MGQ_DISTRICT_POLYGONS={"type":"FeatureCollection","features":[{"type":"Fea
 ;
 // ── Somali road name → English / Arabic translator ─────────────────────
 const SO_NUM_WORDS=[['sagaal iyo toddobaatan',99],['sideed iyo toddobaatan',98],['toddoba iyo toddobaatan',97],['lix iyo toddobaatan',96],['shan iyo toddobaatan',95],['afar iyo toddobaatan',94],['saddex iyo toddobaatan',93],['laba iyo toddobaatan',92],['kow iyo toddobaatan',91],['sagaal iyo sideedan',89],['sideed iyo sideedan',88],['toddoba iyo sideedan',87],['lix iyo sideedan',86],['shan iyo sideedan',85],['afar iyo sideedan',84],['saddex iyo sideedan',83],['laba iyo sideedan',82],['kow iyo sideedan',81],['sagaal iyo lixdan',69],['sideed iyo lixdan',68],['toddoba iyo lixdan',67],['lix iyo lixdan',66],['shan iyo lixdan',65],['afar iyo lixdan',64],['saddex iyo lixdan',63],['laba iyo lixdan',62],['kow iyo lixdan',61],['sagaal iyo konton',59],['sideed iyo konton',58],['toddoba iyo konton',57],['lix iyo konton',56],['shan iyo konton',55],['afar iyo konton',54],['saddex iyo konton',53],['laba iyo konton',52],['kow iyo konton',51],['sagaal iyo afartan',49],['sideed iyo afartan',48],['toddoba iyo afartan',47],['lix iyo afartan',46],['shan iyo afartan',45],['afar iyo afartan',44],['saddex iyo afartan',43],['laba iyo afartan',42],['kow iyo afartan',41],['sagaal iyo soddon',39],['sideed iyo soddon',38],['toddoba iyo soddon',37],['lix iyo soddon',36],['shan iyo soddon',35],['afar iyo soddon',34],['saddex iyo soddon',33],['laba iyo soddon',32],['kow iyo soddon',31],['sagaal iyo labaatan',29],['sideed iyo labaatan',28],['toddoba iyo labaatan',27],['lix iyo labaatan',26],['shan iyo labaatan',25],['afar iyo labaatan',24],['saddex iyo labaatan',23],['laba iyo labaatan',22],['kow iyo labaatan',21],['sagaal iyo toban',19],['sideed iyo toban',18],['toddoba iyo toban',17],['lix iyo toban',16],['shan iyo toban',15],['afar iyo toban',14],['saddex iyo toban',13],['laba iyo toban',12],['kow iyo toban',11],['sagaashan',90],['sideedan',80],['toddobaatan',70],['lixdan',60],['konton',50],['afartan',40],['soddon',30],['labaatan',20],['toban',10],['sagaal',9],['sideed',8],['toddoba',7],['lix',6],['shan',5],['afar',4],['saddex',3],['laba',2],['kow',1],['hal',1]];
-const SO_TYPE_MAP={jidka:{en:'Road',ar:'طريق'},jiidka:{en:'Road',ar:'طريق'},wadada:{en:'Road',ar:'شارع'},waddada:{en:'Road',ar:'شارع'},jid:{en:'Road',ar:'طريق'},dhabbada:{en:'Avenue',ar:'شارع'},avenyu:{en:'Avenue',ar:'شارع'},luuqa:{en:'Lane',ar:'ممر'},xaariga:{en:'Street',ar:'شارع'}};
+const SO_TYPE_MAP={jidka:{en:'Road',ar:'طريق'},jiidka:{en:'Road',ar:'طريق'},wadada:{en:'Road',ar:'شارع'},waddada:{en:'Road',ar:'شارع'},jid:{en:'Road',ar:'طريق'},dhabbada:{en:'Avenue',ar:'شارع'},avenyu:{en:'Avenue',ar:'شارع'},bulvardi:{en:'Boulevard',ar:'بولفار'},buulvard:{en:'Boulevard',ar:'بولفار'},luuqa:{en:'Lane',ar:'ممر'},xaariga:{en:'Street',ar:'شارع'},waddo:{en:'Road',ar:'طريق'}};
 const SO_WORD_MAP={garoonka:{en:'Airport',ar:'المطار'},garoon:{en:'Airport',ar:'المطار'},suuqa:{en:'Market',ar:'السوق'},suuq:{en:'Market',ar:'السوق'},cisbitaalka:{en:'Hospital',ar:'المستشفى'},cisbitaal:{en:'Hospital',ar:'المستشفى'},masjidka:{en:'Mosque',ar:'المسجد'},masjid:{en:'Mosque',ar:'المسجد'},xaafadda:{en:'Neighbourhood',ar:'الحي'},xaafad:{en:'Neighbourhood',ar:'الحي'},koonfurta:{en:'South',ar:'الجنوب'},koonfur:{en:'South',ar:'الجنوب'},waqooyi:{en:'North',ar:'الشمال'},galbeed:{en:'West',ar:'الغرب'},bari:{en:'East',ar:'الشرق'},weynaha:{en:'Main',ar:'الرئيسي'},weyn:{en:'Main',ar:'الرئيسي'},yar:{en:'Small',ar:'الصغير'},cusub:{en:'New',ar:'الجديد'},hore:{en:'Old',ar:'القديم'},dowladda:{en:'Government',ar:'الحكومة'},dowlad:{en:'Government',ar:'الحكومة'},dugsiga:{en:'School',ar:'المدرسة'},dugsi:{en:'School',ar:'المدرسة'},badda:{en:'Sea',ar:'البحر'},nabad:{en:'Peace',ar:'السلام'},xorriyad:{en:'Freedom',ar:'الحرية'}};
 function translateSomaliName(ns){
   if(!ns||ns==='Unnamed'||!ns.trim())return{en:'',ar:''};
@@ -2210,17 +2221,21 @@ function translateSomaliName(ns){
 function soEquivOf(q){const ql=q.toLowerCase().trim();const hits=[];for(const[k,v] of Object.entries(SO_WORD_MAP)){if(v.en.toLowerCase()===ql)hits.push(k);}for(const[k,v] of Object.entries(SO_TYPE_MAP)){if(v.en.toLowerCase()===ql)hits.push(k);}return hits;}
 function roadName(r){
   const rr=r&&r.properties||r;
-  const ns=rr.name_so&&rr.name_so!=='Unnamed'?rr.name_so.trim():'';
-  const ne=rr.name_en&&rr.name_en!=='Unnamed'?rr.name_en.trim():'';
-  const no=rr.osm_name&&rr.osm_name!=='Unnamed'?rr.osm_name.trim():'';
+  const ns=rr.name_so&&rr.name_so!=='Unnamed'&&!SEQ_PATTERN.test(rr.name_so.trim())?rr.name_so.trim():'';
+  const ne=rr.name_en&&rr.name_en!=='Unnamed'&&!SEQ_PATTERN.test(rr.name_en.trim())?rr.name_en.trim():'';
+  const no=rr.osm_name&&rr.osm_name!=='Unnamed'&&!SEQ_PATTERN.test(rr.osm_name.trim())?rr.osm_name.trim():'';
   if(ns){const tr=translateSomaliName(ns);const en=tr.en||ne||no;if(en)return{name:en,seq:false};}
-  if(ne&&!SEQ_PATTERN.test(ne))return{name:ne,seq:false};
-  if(no&&!SEQ_PATTERN.test(no))return{name:no,seq:false};
-  const dist=districtMap[rr.district_id];
-  return{name:(dist?dist.postcode_prefix:'SO')+'-'+rr.street_id,seq:true};
+  if(ne)return{name:ne,seq:false};
+  if(no)return{name:no,seq:false};
+  return{name:autoName(rr.street_id),seq:false};
 }
 function hwBadge(hw){const h=(hw||'other').toLowerCase();const k=['motorway','trunk','primary','secondary','tertiary','residential','service','track'];return'<span class="hw-b hw-'+(k.includes(h)?h:'other')+'">'+(hw||'road')+'</span>';}
 let allDistricts=[],districtMap={},roadCache={};
+let _idb=null;
+const _idbReady=new Promise(res=>{try{const r=indexedDB.open('snas-road-cache',1);r.onupgradeneeded=e=>e.target.result.createObjectStore('roads',{keyPath:'street_id'});r.onsuccess=e=>{_idb=e.target.result;res();};r.onerror=()=>res();}catch(e){res();}});
+function _idbPut(rows){if(!_idb||!rows.length)return;try{const tx=_idb.transaction('roads','readwrite');const s=tx.objectStore('roads');rows.forEach(r=>s.put(r));}catch(e){}}
+async function _idbLoad(){await _idbReady;if(!_idb)return 0;return new Promise(res=>{try{const req=_idb.transaction('roads','readonly').objectStore('roads').getAll();req.onsuccess=()=>{let n=0;(req.result||[]).forEach(r=>{if(!roadCache[r.street_id]){roadCache[r.street_id]={props:r.props,center:r.center,geom:r.geom};n++;}});res(n);};req.onerror=()=>res(0);}catch(e){res(0);}});}
+function _idbClear(){if(!_idb)return;try{_idb.transaction('roads','readwrite').objectStore('roads').clear();}catch(e){}}
 const _osmNames={};let _osmFetchTimer=null;
 let layerVis={markers:true,roads:true,labels:true,places:true,rivers:true,mountains:true,oil:false,minerals:false,artgold:true,buildings:false,distpolygons:true,coverage:true,somaliabound:true,cities:true};
 let searchResults=[],searchTimer=null,acFocusIdx=-1;
@@ -2260,12 +2275,11 @@ function buildDistrictsGJ(){return{type:'FeatureCollection',features:allDistrict
 function buildRegionsGJ(){const byR={};allDistricts.forEach(d=>{if(!d.lat||!d.lon||isNaN(d.lat))return;if(!byR[d.region_id])byR[d.region_id]={lats:[],lons:[],name:d.region_name};byR[d.region_id].lats.push(d.lat);byR[d.region_id].lons.push(d.lon);});return{type:'FeatureCollection',features:Object.entries(byR).map(([,v])=>({type:'Feature',geometry:{type:'Point',coordinates:[v.lons.reduce((a,b)=>a+b)/v.lons.length,v.lats.reduce((a,b)=>a+b)/v.lats.length]},properties:{name:v.name}}))};}
 function buildRoadsGJ(){return{type:'FeatureCollection',features:Object.values(roadCache).map(r=>{const f=JSON.parse(JSON.stringify(r.geom));const p=r.props;const oc=_osmNames[p.street_id];
   // Priority: SNAS Somali > SNAS English > OSM name (overpass enrichment can fill gaps)
-  const raw_so=p.name_so&&p.name_so.trim()&&p.name_so!=='Unnamed'?p.name_so.trim():'';
-  const raw_en=p.name_en&&p.name_en.trim()&&p.name_en!=='Unnamed'?p.name_en.trim():'';
-  const raw_osm=(oc&&oc.name)||(!raw_so&&!raw_en&&p.osm_name&&p.osm_name!=='Unnamed'?p.osm_name.trim():'');
+  const raw_so=p.name_so&&p.name_so.trim()&&p.name_so!=='Unnamed'&&!SEQ_PATTERN.test(p.name_so.trim())?p.name_so.trim():'';
+  const raw_en=p.name_en&&p.name_en.trim()&&p.name_en!=='Unnamed'&&!SEQ_PATTERN.test(p.name_en.trim())?p.name_en.trim():'';
+  const raw_osm=(oc&&oc.name)||(!raw_so&&!raw_en&&p.osm_name&&p.osm_name!=='Unnamed'&&!SEQ_PATTERN.test(p.osm_name.trim())?p.osm_name.trim():'');
   const tr=raw_so?translateSomaliName(raw_so):{en:'',ar:''};
-  // Display name: Somali first (this IS a Somali map), fallback to English/OSM
-  const display_name=raw_so||tr.en||raw_en||raw_osm||'';
+  const display_name=raw_so||tr.en||raw_en||raw_osm||autoName(p.street_id);
   const hasName=!!(raw_so||raw_en||raw_osm);
   // sort_weight: 0=named SNAS, 1=named OSM, 2=unnamed — used by symbol-sort-key
   const sort_weight=raw_so||raw_en?0:raw_osm?1:2;
@@ -2276,11 +2290,11 @@ function buildRoadLabelsGJ(){
   Object.values(roadCache).forEach(r=>{
     if(!r.center||r.center.lng==null||!r.props)return;
     const p=r.props;
-    const ns=p.name_so&&p.name_so!=='Unnamed'?p.name_so.trim():'';
+    const ns=p.name_so&&p.name_so!=='Unnamed'&&!SEQ_PATTERN.test(p.name_so.trim())?p.name_so.trim():'';
     const tr=ns?translateSomaliName(ns):{en:'',ar:''};
-    const ne=p.name_en&&p.name_en!=='Unnamed'?p.name_en.trim():'';
-    const no=p.osm_name&&p.osm_name!=='Unnamed'?p.osm_name.trim():'';
-    const dn=tr.en||ne||no||'';
+    const ne=p.name_en&&p.name_en!=='Unnamed'&&!SEQ_PATTERN.test(p.name_en.trim())?p.name_en.trim():'';
+    const no=p.osm_name&&p.osm_name!=='Unnamed'&&!SEQ_PATTERN.test(p.osm_name.trim())?p.osm_name.trim():'';
+    const dn=tr.en||ne||no||autoName(p.street_id);
     if(!dn)return;
     const key=dn.toLowerCase();
     const coordLen=r.geom&&r.geom.geometry&&r.geom.geometry.coordinates?r.geom.geometry.coordinates.length:0;
@@ -2441,6 +2455,7 @@ map.on('style.load',()=>{
   addAllLayers();
   if(currentMode==='satellite')setTimeout(addSatelliteLayer,50);
   if(Object.keys(roadCache).length){if(roadWorker)roadWorker.postMessage({type:'BUILD_GJ'});else setSD('roads',buildRoadsGJ());}
+  _idbLoad().then(n=>{if(n>0){if(roadWorker)roadWorker.postMessage({type:'BUILD_GJ'});else setSD('roads',buildRoadsGJ());setMsg(n.toLocaleString()+' roads restored');setTimeout(()=>setMsg(''),2500);}});
   if(allDistricts.length){setSD('districts',buildDistrictsGJ());setSD('regions-src',buildRegionsGJ());}
 });
 map.on('error',e=>{console.warn('MapLibre:',e.error&&e.error.message||e);if(!usingFallback&&!styleReady&&currentMode==='map'){usingFallback=true;map.setStyle(STYLE_OSM_FALLBACK);}});
@@ -2546,7 +2561,7 @@ function process(features){
     // Reject coordinates outside Somalia (prevents ocean/nowhere roads)
     if(mid[0]<40.5||mid[0]>51.8||mid[1]<-2.0||mid[1]>12.0)return;
     const BANNED=['jiidaha siigo'];
-    const SEQ=/^(Wadada\s+\d{4,}|Jidka\s+\d{4,}|Dhabbada\s+\d{4,}|Luuqa\s+\d{4,}|Avenyu\s+\d{4,}|\w{2,3}-RD-\d)/i;
+    const SEQ=/^(Wadada|Jidka|Jiidka|Dhabbada|Luuqa|Avenyu|Bulvardi|Xaariga)\s+(\d{4,}|\d{1,4}-\d+)/i;
     const clean=s=>s&&s.trim()&&s!=='Unnamed'&&!BANNED.some(b=>s.toLowerCase().includes(b))?s.trim():'';
     const isReal=s=>!!s&&!SEQ.test(s);
     const ns=clean(p.name_so);
@@ -2589,8 +2604,10 @@ function onNextWorkerProcessed(cb){_workerCallbacks.push(cb);}
 function handleWorkerMsg(e){
   const{type,payload}=e.data;
   if(type==='PROCESSED'){
-    if(payload.added)payload.added.forEach(r=>{if(!roadCache[r.street_id])roadCache[r.street_id]={props:r.props,center:r.center,geom:{type:'Feature',geometry:{type:'LineString',coordinates:[]},properties:r.props}};});
+    const _idbBatch=[];
+    if(payload.added)payload.added.forEach(r=>{if(!roadCache[r.street_id]){roadCache[r.street_id]={props:r.props,center:r.center,geom:{type:'Feature',geometry:{type:'LineString',coordinates:[]},properties:r.props}};_idbBatch.push(r.street_id);}});
     if(payload.gj&&payload.gj.features)payload.gj.features.forEach(f=>{const sid=f.properties&&f.properties.street_id;if(sid!=null&&roadCache[sid])roadCache[sid].geom=f;});
+    if(_idbBatch.length)_idbPut(_idbBatch.map(id=>({street_id:id,props:roadCache[id].props,center:roadCache[id].center,geom:roadCache[id].geom})));
     if(payload.gj&&styleReady&&map.getSource('roads')){map.getSource('roads').setData(buildRoadsGJ());setSD('road-labels-src',buildRoadLabelsGJ());const t=Object.keys(roadCache).length;if(t>0)setMsg(t.toLocaleString()+' roads loaded');if(openDistrictId)refreshDistrictRoadList(openDistrictId);scheduleOSMNames();rebuildFuseRoads();}
     isFetching=false;fbOff();updateStats();setTimeout(()=>setMsg(''),3000);
     const cbs=_workerCallbacks.splice(0);cbs.forEach(cb=>{try{cb();}catch(e){}});
@@ -2617,7 +2634,7 @@ function ingestRoadFeatures(features){
   if(roadWorker){roadWorker.postMessage({type:'PROCESS',payload:newF});return;}
   // RAF fallback
   (async()=>{
-    const CHUNK=400;
+    const CHUNK=400;const _idbBatch=[];
     for(let i=0;i<newF.length;i+=CHUNK){
       await new Promise(r=>requestAnimationFrame(r));
       newF.slice(i,i+CHUNK).forEach(f=>{
@@ -2629,9 +2646,12 @@ function ingestRoadFeatures(features){
         const _SEQ=/^(Wadada\s+\d|Jidka\s+\d|Dhabbada\s+\d|Luuqa\s+\d|Avenyu\s+\d|\w{2,3}-RD-\d)/i;
         const _ns=_cl(p.name_so),_ne=_cl(p.name_en),_no=_cl(p.osm_name);
         const _real=s=>!!s&&!_SEQ.test(s);
-        roadCache[p.street_id]={props:Object.assign({},p,{name_so:_ns,name_en:_ne,osm_name:_no,has_name:_real(_ns)||_real(_ne)||_real(_no)}),center:{lng:mid[0],lat:mid[1]},geom:f};
+        const _pr=Object.assign({},p,{name_so:_ns,name_en:_ne,osm_name:_no,has_name:_real(_ns)||_real(_ne)||_real(_no)});
+        roadCache[p.street_id]={props:_pr,center:{lng:mid[0],lat:mid[1]},geom:f};
+        _idbBatch.push({street_id:p.street_id,props:_pr,center:{lng:mid[0],lat:mid[1]},geom:f});
       });
     }
+    if(_idbBatch.length)_idbPut(_idbBatch);
     if(styleReady&&map.getSource('roads')){map.getSource('roads').setData(buildRoadsGJ());setSD('road-labels-src',buildRoadLabelsGJ());scheduleOSMNames();}
     updateStats();
   })();
@@ -2687,7 +2707,7 @@ async function streamRoads(){
         // nothing new to process
       }else{
         // RAF-chunked fallback (no worker support)
-        const CHUNK=400;let added=0;
+        const CHUNK=400;let added=0;const _idbBatch=[];
         for(let i=0;i<newF.length;i+=CHUNK){
           await new Promise(r=>requestAnimationFrame(r));
           newF.slice(i,i+CHUNK).forEach(f=>{
@@ -2703,9 +2723,11 @@ async function streamRoads(){
             const _real=s=>!!s&&!_SEQ.test(s);
             const _pr=Object.assign({},p,{name_so:_ns,name_en:_ne,osm_name:_no,has_name:_real(_ns)||_real(_ne)||_real(_no)});
             roadCache[p.street_id]={props:_pr,center:{lng:mid[0],lat:mid[1]},geom:f};added++;
+            _idbBatch.push({street_id:p.street_id,props:_pr,center:{lng:mid[0],lat:mid[1]},geom:f});
           });
           if(added>0&&styleReady&&map.getSource('roads')){map.getSource('roads').setData(buildRoadsGJ());setSD('road-labels-src',buildRoadLabelsGJ());scheduleOSMNames();}
         }
+        if(_idbBatch.length)_idbPut(_idbBatch);
         if(added>0){setMsg(Object.keys(roadCache).length.toLocaleString()+' roads loaded');if(openDistrictId)refreshDistrictRoadList(openDistrictId);}
       }
     }
@@ -2716,7 +2738,7 @@ function scheduleFetch(){clearTimeout(moveTimer);moveTimer=setTimeout(streamRoad
 map.on('moveend',scheduleFetch);
 map.on('zoomend',()=>{
   const z=map.getZoom();
-  if(z<8){roadCache={};Object.keys(_osmNames).forEach(k=>delete _osmNames[k]);if(roadWorker)roadWorker.postMessage({type:'CLEAR'});updateStats();}
+  if(z<8){roadCache={};Object.keys(_osmNames).forEach(k=>delete _osmNames[k]);if(roadWorker)roadWorker.postMessage({type:'CLEAR'});_idbClear();updateStats();}
   lastBboxKey='';scheduleFetch();
 });
 // Tighten road label spacing when very zoomed in
