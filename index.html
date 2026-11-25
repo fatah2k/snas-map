@@ -2077,7 +2077,20 @@ const RN={AW:'Awdal',BK:'Bakool',BN:'Banaadir',BR:'Bari',BY:'Bay',CY:'Caynabo',G
 const PC_REGEX=/^([A-Z]{2})(\d{2})\s*([A-Z]{2})$/i;
 const PC_SHORT=/^([A-Z]{2})(\d{1,2})$/i;
 const STYLE_MAP='https://tiles.openfreemap.org/styles/liberty';
-const ESRI_SAT_TILES=['https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'];
+const ESRI_SAT_TILES=['esrisat://{z}/{y}/{x}'];
+/*SAT_FALLBACK*/(function(){if(!window.maplibregl||maplibregl.__esriProto)return;maplibregl.__esriProto=1;
+const U=(z,y,x)=>`https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}`;
+const BLANK=3000; /* Esri 'Map data not yet available' placeholder is ~2.5KB */
+async function get(z,y,x,sig){const r=await fetch(U(z,y,x),{signal:sig});if(!r.ok)return null;const b=await r.blob();return b.size>BLANK?b:null}
+maplibregl.addProtocol('esrisat',async(params,ac)=>{
+ const m=params.url.match(/esrisat:\/\/(\d+)\/(\d+)\/(\d+)/);const z=+m[1],y=+m[2],x=+m[3];const sig=ac&&ac.signal;
+ let b=await get(z,y,x,sig);if(b)return{data:await b.arrayBuffer()};
+ for(let d=1;d<=6&&z-d>=0;d++){const pz=z-d,px=x>>d,py=y>>d;b=await get(pz,py,px,sig);if(!b)continue;
+  const n=1<<d,sx=(x-(px<<d))*256/n,sy=(y-(py<<d))*256/n,s=256/n;const bmp=await createImageBitmap(b);
+  const c=new OffscreenCanvas(256,256),g=c.getContext('2d');g.imageSmoothingQuality='high';g.drawImage(bmp,sx,sy,s,s,0,0,256,256);
+  const out=await c.convertToBlob({type:'image/jpeg',quality:.9});return{data:await out.arrayBuffer()}}
+ const r=await fetch(U(z,y,x),{signal:sig});return{data:await r.arrayBuffer()}});})();
+
 const STYLE_OSM_FALLBACK={version:8,glyphs:'https://tiles.openfreemap.org/fonts/{fontstack}/{range}.pbf',sources:{osm:{type:'raster',tiles:['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],tileSize:256,maxzoom:19,attribution:'OpenStreetMap'}},layers:[{id:'osm-bg',type:'raster',source:'osm'}]};
 const RIVER_DATA=[
   {n:'Jubba River',w:4,c:[[41.08,4.18],[41.15,3.85],[41.30,3.55],[41.55,3.20],[41.82,2.88],[42.08,2.55],[42.22,2.28],[42.28,2.00],[42.40,1.65],[42.55,1.30],[42.65,0.95],[42.62,0.60],[42.55,0.30],[42.52,0.05],[42.53,-0.18],[42.54,-0.36]]},
@@ -2239,6 +2252,7 @@ const LAYER_GROUPS={
   somaliabound:['somalia-fill','somalia-line'],
   cities:['cities-circles','cities-labels-sm','cities-labels-cap']
 };
+try{maplibregl.setRTLTextPlugin('https://unpkg.com/@mapbox/mapbox-gl-rtl-text@0.3.0/dist/mapbox-gl-rtl-text.js',true);}catch(e){}
 const map=new maplibregl.Map({
   container:'map',style:STYLE_MAP,center:HOME,zoom:HOME_Z,
   minZoom:2,maxZoom:22,antialias:true,attributionControl:false
@@ -2265,7 +2279,7 @@ function buildRoadsGJ(){return{type:'FeatureCollection',features:Object.values(r
   const raw_osm=(oc&&oc.name)||(!raw_so&&!raw_en&&p.osm_name&&p.osm_name!=='Unnamed'?p.osm_name.trim():'');
   const tr=raw_so?translateSomaliName(raw_so):{en:'',ar:''};
   // Display name: Somali first (this IS a Somali map), fallback to English/OSM
-  const display_name=raw_so||tr.en||raw_en||raw_osm||'';
+  const display_name=bilingualName(raw_so||tr.en||raw_en||raw_osm||'');
   const hasName=!!(raw_so||raw_en||raw_osm);
   // sort_weight: 0=named SNAS, 1=named OSM, 2=unnamed — used by symbol-sort-key
   const sort_weight=raw_so||raw_en?0:raw_osm?1:2;
@@ -2280,7 +2294,7 @@ function buildRoadLabelsGJ(){
     const tr=ns?translateSomaliName(ns):{en:'',ar:''};
     const ne=p.name_en&&p.name_en!=='Unnamed'?p.name_en.trim():'';
     const no=p.osm_name&&p.osm_name!=='Unnamed'?p.osm_name.trim():'';
-    const dn=tr.en||ne||no||'';
+    const dn=bilingualName(tr.en||ne||no||'');
     if(!dn)return;
     const key=dn.toLowerCase();
     const coordLen=r.geom&&r.geom.geometry&&r.geom.geometry.coordinates?r.geom.geometry.coordinates.length:0;
@@ -2411,7 +2425,7 @@ function addAllLayers(){
   map.on('mouseleave','road-fill',()=>{map.getCanvas().style.cursor='';});
   map.on('mouseenter','district-circles',()=>{map.getCanvas().style.cursor='pointer';});
   map.on('mouseleave','district-circles',()=>{map.getCanvas().style.cursor='';});
-  map.on('click','road-fill',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;selectRoadOnMap(p.street_id);const _so=p.name_so&&p.name_so!=='Unnamed'?p.name_so:'';const _en=p.display_name||p.name_en||'';if(_so||_en)showRoadBanner(_so,_en);showDetail(p,districtMap[p.district_id],true);});
+  map.on('click','road-fill',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;window._roadTap={sid:p.street_id,ll:e.lngLat};selectRoadOnMap(p.street_id);const _so=p.name_so&&p.name_so!=='Unnamed'?p.name_so:'';const _en=p.display_name||p.name_en||'';if(_so||_en)showRoadBanner(_so,_en);showDetail(p,districtMap[p.district_id],true);});
   map.on('click','district-circles',e=>{if(!e.features||!e.features.length)return;e.preventDefault();const p=e.features[0].properties;const d=districtMap[p.district_id];if(!d)return;const z=d.region_id==='BN'?14:10;map.flyTo({center:[d.lon,d.lat],zoom:z,duration:1200,essential:true});afterFly(()=>{spawnPulse({lng:d.lon,lat:d.lat});loadNearestPOIsForDistrict(d);});openRight();renderDistrictInfo(d);});
   map.on('click',e=>{if(e.defaultPrevented)return;closeDetail();closeWhatsHere();closeRoadBanner();closeSNASPoiCard();});
   // Settlement labels (towns/villages)
@@ -2985,16 +2999,30 @@ function rebuildFuseRoads(){
 function rebuildFusePOIs(){
   fusePOIs=new Fuse(_snasPoiCache,{keys:['name_so','name_en'],threshold:0.35,minMatchCharLength:2,includeScore:true});
 }
+/* House number at the tapped point: UK-style, odd numbers on one side, even on the other,
+   counted every 8 m from the end of the street nearer the district centre. Adds a number only. */
+function houseNumberAt(r,dist,ll){
+  const c0=roadCache[r.street_id];if(!c0||!c0.geom||!c0.geom.geometry)return null;let c=c0.geom.geometry.coordinates;
+  if(c0.geom.geometry.type==='MultiLineString')c=c.flat();if(!c||c.length<2)return null;
+  const K=111320*Math.cos((ll.lat||2)*Math.PI/180),KY=110574;
+  if(dist&&dist.lat&&dist.lon){const d0=Math.hypot((c[0][0]-dist.lon)*K,(c[0][1]-dist.lat)*KY),d1=Math.hypot((c[c.length-1][0]-dist.lon)*K,(c[c.length-1][1]-dist.lat)*KY);if(d1<d0)c=c.slice().reverse();}
+  let best=null,acc=0;
+  for(let i=0;i<c.length-1;i++){const ax=(c[i][0]-ll.lng)*K,ay=(c[i][1]-ll.lat)*KY,dx=(c[i+1][0]-c[i][0])*K,dy=(c[i+1][1]-c[i][1])*KY,L2=dx*dx+dy*dy,L=Math.sqrt(L2);
+    let t=L2?-(ax*dx+ay*dy)/L2:0;t=Math.max(0,Math.min(1,t));const ex=ax+t*dx,ey=ay+t*dy,d=ex*ex+ey*ey;
+    if(!best||d<best.d)best={d,s:acc+t*L,cr:dx*(-ay)-dy*(-ax)};acc+=L}
+  if(!best||Math.sqrt(best.d)>60)return null;
+  return 2*Math.floor(best.s/8)+(best.cr>0?1:2);
+}
 function showDetail(r,dist,doFly){
   if(doFly===undefined)doFly=true;
   const{name,seq}=roadName(r);
-  document.getElementById('rdd-nm').textContent=name;
+  document.getElementById('rdd-nm').textContent=bilingualName(name);
   document.getElementById('rdd-bg').innerHTML=hwBadge(r.highway_class)+(seq?' <span style="font-size:10px;color:#9aa0a6;margin-left:4px">Auto-ID</span>':'');
   const rawSo=r.name_so&&r.name_so!=='Unnamed'?r.name_so.trim():'';
   const tr=rawSo?translateSomaliName(rawSo):{en:'',ar:''};
   const enVal=tr.en||(r.name_en&&r.name_en!=='Unnamed'?r.name_en.trim():'');
   const rows=[];
-  if(rawSo)rows.push(['Somali',rawSo]);
+  if(rawSo){if(isForeignName(rawSo)&&somaliForName(rawSo)){rows.push(['Somali',somaliForName(rawSo)]);rows.push([/[\u0600-\u06FF]/.test(rawSo)?'Arabic':'Original',rawSo]);}else rows.push(['Somali',rawSo]);}
   if(enVal)rows.push(['English',enVal]);
   if(tr.ar)rows.push(['Arabic عربي',tr.ar]);
   else if(r.osm_name&&r.osm_name!=='Unnamed')rows.push(['OSM',r.osm_name]);
@@ -3002,15 +3030,17 @@ function showDetail(r,dist,doFly){
   if(r.street_id)rows.push(['SNAS ID','<span style="font-family:\'Roboto Mono\',monospace;font-size:11px">'+r.street_id+'</span>']);
   document.getElementById('rdd-gr').innerHTML=rows.map(([l,v])=>'<span class="rdd-lb">'+l+'</span><span class="rdd-vl">'+v+'</span>').join('');
   const addr=buildSNASAddr(r,dist);
-  const nameSo=rawSo||name;
-  const nameEn=enVal||name;
+  const _tap=window._roadTap&&window._roadTap.sid==r.street_id?window._roadTap:null;window._roadTap=null;
+  const _hn=_tap?houseNumberAt(r,dist,_tap.ll):null;const _np=_hn?_hn+' ':'';
+  const nameSo=_np+(rawSo||name);
+  const nameEn=_np+(enVal||name);
   const distEn=dist?dist.name_en:'';const regName=dist?dist.region_name:'';
   const arLine=arAddr(nameSo,nameEn,distEn,regName);
   document.getElementById('rdd-ad').innerHTML=
     '<div style="margin-bottom:4px"><span style="font-size:9px;font-weight:600;color:#9aa0a6;text-transform:uppercase;letter-spacing:.6px">Somali</span><br><strong style="font-size:13px">'+nameSo+'</strong>'+(distEn?'<span style="color:#5f6368;font-size:11px"> · '+distEn+' Degmo</span>':'')+'</div>'+
     '<div style="margin-bottom:4px"><span style="font-size:9px;font-weight:600;color:#9aa0a6;text-transform:uppercase;letter-spacing:.6px">English</span><br><span style="font-size:12px">'+nameEn+(distEn?', '+distEn+' District':'')+(regName?', '+regName:'')+'</span></div>'+
     '<div style="margin-bottom:6px"><span style="font-size:9px;font-weight:600;color:#9aa0a6;text-transform:uppercase;letter-spacing:.6px">Arabic</span><br><span style="font-size:13px;direction:rtl;display:block;text-align:right;line-height:1.7;font-family:serif;color:#202124">'+arLine.replace(/\n/g,'<br>')+'</span></div>'+
-    '<span style="font-family:\'Roboto Mono\',monospace;font-size:13px;color:#0047AB;font-weight:700;letter-spacing:1px;background:#f0f4ff;padding:3px 10px;border-radius:6px;display:inline-block;margin-top:2px">'+addr+'</span>';
+    '<span style="font-family:\'Roboto Mono\',monospace;font-size:13px;color:#0047AB;font-weight:700;letter-spacing:1px;background:#f0f4ff;padding:3px 10px;border-radius:6px;display:inline-block;margin-top:2px">'+addr+'</span>'+(_hn?'':'<div style="font-size:10.5px;color:#9aa0a6;margin-top:6px">Tap a point on the street to get the building number</div>');
   const cached=roadCache[r.street_id];
   const center=cached?cached.center:null;
   document.getElementById('rdd-copy').onclick=()=>{navigator.clipboard&&navigator.clipboard.writeText(addr+'\n'+nameEn+(distEn?', '+distEn+' District':'')+', Somalia').catch(()=>{});showToast('Copied: '+addr,2800);};
@@ -3083,7 +3113,17 @@ function showRoadBanner(nameSo,nameEn){
   _bannerTimer=setTimeout(closeRoadBanner,8000);
 }
 function closeRoadBanner(){document.getElementById('road-banner').classList.remove('show');clearTimeout(_bannerTimer);}
-function selectRoadOnMap(streetId){const cached=roadCache[streetId];const ns=cached&&cached.props&&cached.props.name_so&&cached.props.name_so!=='Unnamed'?cached.props.name_so.trim():'';const f=ns?['==','name_so',ns]:['==','street_id',streetId];if(map.getLayer('road-selected-glow'))map.setFilter('road-selected-glow',f);if(map.getLayer('road-selected'))map.setFilter('road-selected',f);}
+function selectRoadOnMap(streetId){const cached=roadCache[streetId];const ns=cached&&cached.props&&cached.props.name_so&&cached.props.name_so!=='Unnamed'?cached.props.name_so.trim():'';let f=['==','street_id',streetId];
+  if(ns&&cached.geom){/* follow the road itself: same name, joined end-to-end, carrying on in roughly the same direction (not side streets that share the name) */
+    const ends=r=>{const g=r.geom&&r.geom.geometry;if(!g)return[];const L=g.type==='LineString'?[g.coordinates]:g.type==='MultiLineString'?g.coordinates:[];const o=[];
+      L.forEach(l=>{const n=l.length;if(n<2)return;o.push({p:l[0],d:Math.atan2(l[1][1]-l[0][1],l[1][0]-l[0][0])});o.push({p:l[n-1],d:Math.atan2(l[n-1][1]-l[n-2][1],l[n-1][0]-l[n-2][0])});});return o;};
+    const near=(a,b)=>Math.abs(a[0]-b[0])<0.0004&&Math.abs(a[1]-b[1])<0.0004;
+    const straight=(d1,d2)=>{let x=Math.abs(d1-d2)%Math.PI;x=Math.min(x,Math.PI-x);return x<0.87;};/* within ~50 degrees */
+    const pool=Object.entries(roadCache).filter(([id,r])=>r.props&&(r.props.name_so||'').trim()===ns&&r.geom).map(([id,r])=>({id:+id,e:ends(r)}));
+    const inSet=new Set([+streetId]);let frontier=pool.filter(x=>x.id===+streetId);let guard=0;
+    while(frontier.length&&guard++<500){const next=[];for(const x of pool){if(inSet.has(x.id))continue;if(frontier.some(fr=>fr.e.some(a=>x.e.some(b=>near(a.p,b.p)&&straight(a.d,b.d))))){inSet.add(x.id);next.push(x);}}frontier=next;}
+    f=['in','street_id',...inSet];}
+  if(map.getLayer('road-selected-glow'))map.setFilter('road-selected-glow',f);if(map.getLayer('road-selected'))map.setFilter('road-selected',f);}
 let _lastClickedRoad=null,_lastClickTs=0;
 async function clickRoad(streetId,districtId){
   const now=Date.now();
@@ -4108,7 +4148,7 @@ function gpsCenterOnLoad(){
     const inSomalia=isInSomalia(lat,lng);
     const zoom=inSomalia?14:12;
     map.flyTo({center:[lng,lat],zoom,duration:2200,essential:true});
-    if(inSomalia){showToast('📍 GPS lock — Mogadishu area detected',2800);}
+    if(inSomalia){showToast('📍 GPS lock — showing your area',2800);}
     else{
       // Pre-fill "From" with current location for the Great Trek
       if(!routeFrom){
@@ -4117,7 +4157,7 @@ function gpsCenterOnLoad(){
         showToast('📍 GPS: '+lat.toFixed(4)+'°, '+lng.toFixed(4)+'° — set as start',2800);
       }
     }
-  },{enableHighAccuracy:true,timeout:8000,maximumAge:30000});
+  },()=>{/* location refused or unavailable: keep the default view */},{enableHighAccuracy:true,timeout:8000,maximumAge:30000});
 }
 
 // ══════════════════════════════════════════════════════════
@@ -4271,6 +4311,166 @@ window.addEventListener('DOMContentLoaded',async()=>{
   // Render any saved reports
   renderReportMarkers();
 });
+</script>
+<script>/*SEARCH_V2*/(function(){
+const BBOX='40.9,-1.7,51.5,12.1';
+const OVP=['https://maps.mail.ru/osm/tools/overpass/api/interpreter','https://overpass-api.de/api/interpreter','https://overpass.kumi.systems/api/interpreter','https://overpass.private.coffee/api/interpreter'];
+const CATS=[
+ {k:"airport",w:["airport", "airports", "airstrip", "airstrips", "madaar", "madaarka", "garoon diyaaradeed", "garoonka diyaaradaha"],t:"aeroway=aerodrome",ph:"aeroway:aerodrome",ico:"✈️",en:"airports and airstrips"},
+ {k:"stadium",w:["stadium", "stadiums", "garoon", "garoonka", "garoomada", "garoonka kubadda"],t:"leisure=stadium",ph:"leisure:stadium",ico:"🏟️",en:"stadiums"},
+ {k:"hospital",w:["hospital", "hospitals", "clinic", "clinics", "isbitaal", "cisbitaal", "isbitaalka", "cisbitaalka", "rugta caafimaadka"],t:"amenity~\"^(hospital|clinic)$\"",ph:"amenity:hospital",ico:"🏥",en:"hospitals and clinics"},
+ {k:"pharmacy",w:["pharmacy", "pharmacies", "chemist", "farmashiye", "farmashiyaha", "dawo", "dukaanka dawada"],t:"amenity=pharmacy",ph:"amenity:pharmacy",ico:"💊",en:"pharmacies"},
+ {k:"university",w:["university", "universities", "college", "colleges", "jaamacad", "jaamacadda", "jaamacadaha", "kulliyad"],t:"amenity~\"^(university|college)$\"",ph:"amenity:university",ico:"🎓",en:"universities and colleges"},
+ {k:"school",w:["school", "schools", "dugsi", "dugsiga", "dugsiyada", "iskuul", "iskuulka", "madrasa", "madarasad"],t:"amenity=school",ph:"amenity:school",ico:"🏫",en:"schools"},
+ {k:"mosque",w:["mosque", "mosques", "masjid", "masaajid", "masjidka"],t:"amenity=place_of_worship][religion=muslim",ph:"amenity:place_of_worship",ico:"🕌",en:"mosques"},
+ {k:"market",w:["market", "markets", "marketplace", "suuq", "suuqa", "suuqyada"],t:"amenity=marketplace",ph:"amenity:marketplace",ico:"🛒",en:"markets"},
+ {k:"supermarket",w:["supermarket", "supermarkets", "grocery", "groceries", "minimarket"],t:"shop~\"^(supermarket|convenience|grocery)$\"",ph:"shop:supermarket",ico:"🛍️",en:"supermarkets and grocery shops"},
+ {k:"business",w:["business", "businesses", "shop", "shops", "store", "stores", "dukaan", "dukaamo", "dukaanka", "ganacsi", "ganacsiyada"],t:"shop",ph:"shop",ico:"🏪",en:"shops and businesses"},
+ {k:"office",w:["office", "offices", "company", "companies", "shirkad", "shirkadda", "shirkado", "xafiis", "xafiisyada"],t:"office",ph:"office",ico:"🏢",en:"offices and companies"},
+ {k:"bank",w:["bank", "banks", "baanka", "bangi", "bangiga", "bangiyada"],t:"amenity=bank",ph:"amenity:bank",ico:"🏦",en:"banks"},
+ {k:"hawala",w:["hawala", "xawaalad", "xawaaladda", "money transfer", "remittance", "remittances", "bureau de change", "lacag dirid"],t:"amenity~\"^(money_transfer|bureau_de_change)$\"",ph:"amenity:money_transfer",ico:"💸",en:"money transfer and hawala offices"},
+ {k:"atm",w:["atm", "atms", "cash machine", "cash point"],t:"amenity=atm",ph:"amenity:atm",ico:"🏧",en:"ATMs"},
+ {k:"telecom",w:["telecom", "telecoms", "mobile shop", "phone shop", "mobile phones", "isgaarsiin", "isgaarsiinta", "taleefan"],t:"shop=mobile_phone",ph:"shop:mobile_phone",ico:"📱",en:"phone and telecom shops"},
+ {k:"hotel",w:["hotel", "hotels", "guest house", "guesthouse", "huteel", "hoteel", "hudheel", "hudheelka"],t:"tourism~\"^(hotel|guest_house)$\"",ph:"tourism:hotel",ico:"🏨",en:"hotels and guest houses"},
+ {k:"restaurant",w:["restaurant", "restaurants", "cafe", "cafes", "café", "coffee", "food", "makhaayad", "makhaayadda", "maqaaxi", "maqaayad"],t:"amenity~\"^(restaurant|cafe|fast_food)$\"",ph:"amenity:restaurant",ico:"🍽️",en:"restaurants and cafés"},
+ {k:"bakery",w:["bakery", "bakeries", "foorno", "rootiga", "doolsho"],t:"shop=bakery",ph:"shop:bakery",ico:"🥖",en:"bakeries"},
+ {k:"fuel",w:["fuel", "fuel station", "fuel stations", "petrol", "petrol station", "petrol stations", "gas station", "gas stations", "filling station", "shidaal", "batrool", "kaalinta shidaalka"],t:"amenity=fuel",ph:"amenity:fuel",ico:"⛽",en:"fuel stations"},
+ {k:"police",w:["police", "police station", "police stations", "booliis", "booliska", "saldhig", "saldhigga"],t:"amenity=police",ph:"amenity:police",ico:"🚓",en:"police stations"},
+ {k:"fire",w:["fire station", "fire stations", "fire brigade", "dab demis", "dab-demiska"],t:"amenity=fire_station",ph:"amenity:fire_station",ico:"🚒",en:"fire stations"},
+ {k:"court",w:["court", "courts", "courthouse", "maxkamad", "maxkamadda", "maxkamadaha"],t:"amenity=courthouse",ph:"amenity:courthouse",ico:"⚖️",en:"courts"},
+ {k:"embassy",w:["embassy", "embassies", "consulate", "safaarad", "safaaradda", "safaaradaha"],t:"office=diplomatic",ph:"office:diplomatic",ico:"🏳️",en:"embassies and consulates"},
+ {k:"ngo",w:["ngo", "ngos", "charity", "charities", "aid agency", "hay'ad", "hay'adda", "hayad"],t:"office=ngo",ph:"office:ngo",ico:"🤝",en:"NGOs and charities"},
+ {k:"factory",w:["factory", "factories", "industry", "industrial", "warshad", "warshadda", "warshadaha"],t:"man_made=works",ph:"man_made:works",ico:"🏭",en:"factories"},
+ {k:"warehouse",w:["warehouse", "warehouses", "depot", "storage", "bakhaar", "bakhaarka", "bakhaarada"],t:"building=warehouse",ph:"building:warehouse",ico:"📦",en:"warehouses"},
+ {k:"bus",w:["bus station", "bus stations", "bus stop", "bus park", "baska", "gaadiidka dadweynaha"],t:"amenity=bus_station",ph:"amenity:bus_station",ico:"🚌",en:"bus stations"},
+ {k:"park",w:["park", "parks", "garden", "gardens", "beerta", "jardiin"],t:"leisure=park",ph:"leisure:park",ico:"🌳",en:"parks"},
+ {k:"library",w:["library", "libraries", "maktabad", "maktabadda"],t:"amenity=library",ph:"amenity:library",ico:"📚",en:"libraries"},
+ {k:"government",w:["government", "government office", "government offices", "government building", "government buildings", "public building", "ministry", "ministries", "wasaarad", "wasaaradda", "wasaaradaha", "dowlad", "dowladda", "xafiisyada dowladda", "townhall", "town hall", "city hall", "dhismayaasha dowladda"],t:["office=government", "amenity=townhall", "government", "building~\"^(government|public)$\""],ph:"office:government",ico:"🏛️",en:"government offices and buildings",byName:false},
+ {k:"landmark",w:["landmark", "landmarks", "monument", "monuments", "historic", "historical", "history", "architecture", "architectural", "heritage", "heritage site", "attraction", "attractions", "museum", "museums", "taallo", "taalada", "taariikhi", "matxaf", "matxafka"],t:["historic", "tourism~\"^(attraction|museum|viewpoint)$\""],ph:"historic",ico:"🏛️",en:"landmarks, monuments and museums",byName:false},
+ {k:"mountain",w:["mountain", "mountains", "peak", "peaks", "hill", "hills", "buur", "buuro", "buuraha", "buurta"],t:["natural~\"^(peak|hill|mountain_range|ridge)$\""],ph:"natural:peak",ico:"⛰️",en:"mountains and hills",byName:true},
+ {k:"river",w:["river", "rivers", "webi", "webiga", "wabi", "wabiga", "stream"],t:["waterway=river"],ph:"waterway:river",ico:"🌊",en:"rivers",byName:true},
+ {k:"lake",w:["lake", "lakes", "reservoir", "reservoirs", "dam", "dams", "harro", "harada", "biyo xireen"],t:["natural=water][name", "waterway=dam"],ph:"natural:water",ico:"💧",en:"lakes, reservoirs and dams",byName:true},
+ {k:"valley",w:["valley", "valleys", "dooxo", "dooxada"],t:["natural=valley"],ph:"natural:valley",ico:"🏞️",en:"valleys",byName:true},
+ {k:"island",w:["island", "islands", "islet", "jasiirad", "jasiiradda", "jasiiradaha"],t:["place~\"^(island|islet)$\""],ph:"place:island",ico:"🏝️",en:"islands",byName:true},
+ {k:"protected",w:["national park", "national parks", "reserve", "nature reserve", "protected area", "wildlife", "kayd", "kaydka"],t:["boundary=protected_area", "leisure=nature_reserve"],ph:"boundary:protected_area",ico:"🦒",en:"protected areas and reserves",byName:true},
+ {k:"town",w:["town", "towns", "village", "villages", "city", "cities", "tuulo", "tuulada", "tuulooyin", "magaalo", "magaalada", "magaalooyin"],t:["place~\"^(city|town|village)$\""],ph:"place:town",ico:"🏘️",en:"cities, towns and villages",byName:true},
+ {k:"water",w:["well", "wells", "water point", "water points", "borehole", "boreholes", "ceel", "ceelka", "ceelal", "biyo", "barkad"],t:["man_made~\"^(water_well|water_tap|water_works)$\"", "amenity=drinking_water"],ph:"man_made:water_well",ico:"🚰",en:"water wells and water points",byName:false},
+ {k:"camp",w:["camp", "camps", "idp camp", "idp camps", "refugee camp", "refugee camps", "displacement camp", "xero", "xerada", "xeryaha"],t:["amenity=refugee_site", "refugee=yes"],ph:"amenity:refugee_site",ico:"⛺",en:"displacement and refugee camps",byName:false},
+ {k:"lighthouse",w:["lighthouse", "lighthouses", "nalka badda"],t:["man_made=lighthouse"],ph:"man_made:lighthouse",ico:"🗼",en:"lighthouses",byName:false},
+ {k:"cemetery",w:["cemetery", "cemeteries", "graveyard", "qabuuraha", "xabaalaha", "xabaal"],t:["landuse=cemetery", "amenity=grave_yard"],ph:"landuse:cemetery",ico:"🪦",en:"cemeteries",byName:false},
+ {k:"beach",w:["beach", "beaches", "xeeb", "xeebta", "xeebaha"],t:"natural=beach",ph:"natural:beach",ico:"🏖️",en:"beaches"},
+ {k:"port",w:["port", "ports", "harbour", "harbor", "seaport", "dekad", "dekadda", "dekedda", "dekedaha"],t:"landuse=port",ph:"landuse:port",ico:"⚓",en:"ports and harbours"}
+];
+const CHIPKEYS=['hospital','mosque','market','restaurant','bank','school','fuel','government','hotel','other'];
+function catOf(q){const s=' '+q.toLowerCase().trim().replace(/\s+/g,' ')+' ';let best=null,bl=0;for(const c of CATS)for(const w of c.w){if(s.includes(' '+w+' ')&&w.length>bl){best=c;bl=w.length}}return best}
+const mem={};
+const norm=(list,c)=>{if(c&&c.byName){const m=new Map();list.forEach(x=>{if(!x.name)return;if(!m.has(x.name))m.set(x.name,x)});list=[...m.values()]}list.sort((a,b)=>(b.name?1:0)-(a.name?1:0));return list};
+async function photonCat(c){const r=await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(c.k)}&osm_tag=${c.ph}&bbox=${BBOX}&limit=50`);const j=await r.json();return norm(j.features.filter(f=>f.properties.countrycode==='SO').map(f=>({name:f.properties.name||'',name_en:f.properties.name||'',lat:f.geometry.coordinates[1],lon:f.geometry.coordinates[0],city:f.properties.city||f.properties.county||f.properties.state||''})),c)}
+function overpassCat(c){const q=`[out:json][timeout:20];area["ISO3166-1"="SO"][admin_level=2]->.a;(${(Array.isArray(c.t)?c.t:[c.t]).map(t=>`nwr[${t}](area.a);`).join('')});out center tags 1500;`;
+ return Promise.any(OVP.map(async u=>{const ac=new AbortController();const to=setTimeout(()=>ac.abort(),28000);try{const r=await fetch(u,{method:'POST',body:'data='+encodeURIComponent(q),signal:ac.signal});if(!r.ok)throw new Error(r.status);const j=await r.json();
+  return norm((j.elements||[]).map(e=>{const la=e.lat||(e.center&&e.center.lat),lo=e.lon||(e.center&&e.center.lon);const t=e.tags||{};return{name:t['name:so']||t.name||t['name:en']||'',name_en:t['name:en']||t.name||'',lat:la,lon:lo,city:t['addr:city']||''}}).filter(x=>x.lat&&x.lon),c)}finally{clearTimeout(to)}}))}
+async function fetchCat(c,onUpgrade){
+ if(mem[c.k])return mem[c.k];
+ try{const j=JSON.parse(localStorage.getItem('snas_cat_v2_'+c.k)||'null');if(j&&Date.now()-j.t<7*864e5&&j.items.length){mem[c.k]=j.items;return j.items}}catch(e){}
+ const ov=overpassCat(c).then(list=>{if(!list.length)return null;mem[c.k]=list;try{localStorage.setItem('snas_cat_v2_'+c.k,JSON.stringify({t:Date.now(),items:list}))}catch(e){}return list}).catch(()=>null);
+ let fast=[];try{fast=await photonCat(c)}catch(e){}
+ if(fast.length){ov.then(list=>{if(list&&list.length>fast.length&&onUpgrade)onUpgrade(list)});return fast}
+ return (await ov)||[];
+}
+let photonAC=null;
+async function photon(q){
+ if(photonAC)photonAC.abort();photonAC=new AbortController();
+ const r=await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&bbox=${BBOX}&limit=12`,{signal:photonAC.signal});const j=await r.json();
+ const seen=new Set();return j.features.filter(f=>f.properties.countrycode==='SO'&&f.properties.osm_key!=='highway').map(f=>{const p=f.properties;return{name:p.name||'',lat:f.geometry.coordinates[1],lon:f.geometry.coordinates[0],kind:(p.osm_value||'place').replace(/_/g,' '),city:p.city||p.county||p.state||''}}).filter(x=>{if(!x.name)return false;const k=x.name+'|'+x.lat.toFixed(3);if(seen.has(k))return false;seen.add(k);return true}).slice(0,6);
+}
+let extra={q:'',items:[],pending:false},lastBase={q:'',res:[]};
+const curQ=()=>{const el=document.getElementById('si');return el?el.value.trim():''};
+const H=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+async function runExtra(q){
+ const my=q;extra={q,items:[],pending:true};const c=catOf(q);let catItems=[],placeItems=[];
+ const done=()=>{if(extra.q!==my)return;const seen=new Set(),out=[];[...catItems,...placeItems].forEach(it=>{const d=it.data||{};const k=d._all?'_all':String(it.nm).toLowerCase().replace(/\s+/g,' ').trim();if(seen.has(k))return;seen.add(k);out.push(it)});extra.items=out;if(curQ()!==my&&lastBase.q!==my)return;renderAC(lastBase.q===my?lastBase.res:[],my)};
+ const buildCat=list=>{const named=list.filter(x=>x.name);catItems=[{type:'poi',ico:c.ico,nm:'Show all '+list.length+' '+c.en+' in Somalia',ds:'Tap to see them all on the map',data:{_all:c.k,_list:list,_c:c},_x:1}];named.slice(0,10).forEach(x=>catItems.push({type:'poi',ico:c.ico,nm:x.name,ds:(x.city?x.city:'Somalia'),data:{name_en:x.name_en,name_so:x.name,coords:[x.lon,x.lat]},_x:1}));done()};
+ const jobs=[];
+ if(c)jobs.push(fetchCat(c,list=>buildCat(list)).then(list=>{if(list.length)buildCat(list)}));
+ jobs.push(photon(q).then(list=>{placeItems=list.map(x=>({type:'poi',ico:'📍',nm:x.name,ds:x.kind+(x.city?' · '+x.city:''),data:{name_en:x.name,name_so:x.name,coords:[x.lon,x.lat]},_x:1}));done()}).catch(()=>{}));
+ await Promise.allSettled(jobs);if(extra.q===my){extra.pending=false;done()}
+}
+let exTimer=null;
+const _onInput=window.onSearchInput;
+window.onSearchInput=function(q){_onInput(q);clearTimeout(exTimer);if(q.trim().length<2){extra={q:'',items:[],pending:false};return}const qq=q.trim();extra={q:qq,items:extra.q===qq?extra.items:[],pending:true};exTimer=setTimeout(()=>runExtra(qq),180)};
+window.renderAC=function(res,q){
+ const el=document.getElementById('ac');acFocusIdx=-1;const qt=String(q||'').trim();
+ const cq=curQ();if(cq.length>=2&&qt.toLowerCase()!==cq.toLowerCase()&&!CHIPKEYS.includes(qt))return; // stale result
+ const base=(res||[]).filter(r=>!r._x);lastBase={q:qt,res:base};
+ const ex=extra.q===qt?extra.items:[];const isCat=!!catOf(qt);
+ const exNames=new Set(ex.map(e=>e.nm.toLowerCase()));
+ const bp=base.filter(r=>!(r.type==='poi'&&exNames.has(String(r.nm).toLowerCase())));const all=isCat?[...bp.filter(r=>r.type!=='poi'),...ex,...bp.filter(r=>r.type==='poi')]:[...bp,...ex];
+ searchResults=all;
+ if(!all.length){el.innerHTML='<div class="ac-empty">'+(extra.q===qt&&extra.pending?'Searching…':'No results for "'+H(qt)+'"')+'</div>';el.classList.add('open');return}
+ let SECS=[{k:'p',l:'Postcodes'},{k:'d',l:'Districts'},{k:'r',l:'Regions'},{k:'s',l:'Streets'},{k:'poi',l:'Places'}];
+ if(isCat)SECS=[SECS[4],...SECS.slice(0,4)];
+ let html='';SECS.forEach(s=>{const items=all.filter(r=>r.type===s.k);if(!items.length)return;html+='<div class="ac-hd">'+s.l+'</div>';items.forEach(item=>{const idx=all.indexOf(item);const tc=s.k==='d'?'tag-d':s.k==='p'?'tag-p':s.k==='r'?'tag-r':s.k==='poi'?'tag-poi':'tag-s';const isAll=item.data&&item.data._all;html+='<div class="ac-row" role="option" data-idx="'+idx+'" onclick="pickResult('+idx+')"'+(isAll?' style="background:rgba(65,137,221,.16)"':'')+'><div class="ac-ico">'+item.ico+'</div><div style="flex:1;min-width:0"><div class="ac-nm">'+(isAll?'<b>'+H(item.nm)+'</b>':hl(H(item.nm),qt))+'</div><div class="ac-ds">'+H(item.ds)+'</div></div><div class="ac-tag '+tc+'">'+(isAll?'All':s.l.slice(0,-1))+'</div></div>'})});
+ if(extra.q===qt&&extra.pending)html+='<div class="ac-empty" style="padding:8px 14px;font-size:12px;opacity:.7">Searching places…</div>';
+ el.innerHTML=html;el.classList.add('open');
+};
+function showAll(d){
+ const list=d._list,c=d._c;clearChipPOIs();
+ const gj={type:'FeatureCollection',features:list.map((p,i)=>({type:'Feature',id:i,geometry:{type:'Point',coordinates:[p.lon,p.lat]},properties:{name:p.name||''}}))};
+ map.addSource('chip-pois',{type:'geojson',data:gj});
+ map.addLayer({id:'chip-poi-circles',type:'circle',source:'chip-pois',paint:{'circle-radius':['interpolate',['linear'],['zoom'],5,5,12,9],'circle-color':'#c8601a','circle-stroke-color':'#fff','circle-stroke-width':2,'circle-opacity':0.92}});
+ map.addLayer({id:'chip-poi-labels',type:'symbol',source:'chip-pois',minzoom:7,layout:{'text-field':['get','name'],'text-font':['Noto Sans Bold'],'text-size':12,'text-offset':[0,1.3],'text-anchor':'top','text-allow-overlap':false},paint:{'text-color':'#202124','text-halo-color':'rgba(255,255,255,0.95)','text-halo-width':2}});
+ if(list.length){let w=180,s=90,e=-180,n=-90;list.forEach(p=>{w=Math.min(w,p.lon);e=Math.max(e,p.lon);s=Math.min(s,p.lat);n=Math.max(n,p.lat)});if(list.length===1)map.flyTo({center:[w,s],zoom:15});else map.fitBounds([[w,s],[e,n]],{padding:80,maxZoom:15,duration:1400})}
+ if(typeof showToast==='function')showToast(c.ico+' '+list.length+' '+c.en+' in Somalia · tap a dot for details',4500);
+}
+const _pick=window.pickResult;
+window.pickResult=function(idx){const r=searchResults[idx];if(r&&r.data&&r.data._all){closeAC();document.getElementById('si').value=r.nm;showAll(r.data);return}return _pick(idx)};
+// tap a dot from "show all" → fly in and show its name
+function hookDots(){if(!window.map||!map.on){return setTimeout(hookDots,500)}map.on('click','chip-poi-circles',e=>{const f=e.features&&e.features[0];if(!f)return;const c=f.geometry.coordinates;map.flyTo({center:c,zoom:Math.max(map.getZoom(),16),duration:900});if(typeof showToast==='function')showToast('📍 '+(f.properties.name||'Unnamed place'),3000)});map.on('mouseenter','chip-poi-circles',()=>map.getCanvas().style.cursor='pointer');map.on('mouseleave','chip-poi-circles',()=>map.getCanvas().style.cursor='')}
+hookDots();
+// warm the cache for the most-used categories in the background (one at a time, after load)
+const WARM=['stadium','hospital','university','school','bank','fuel','government','airport','mountain','river','hotel','market'];
+function warm(i){if(i>=WARM.length)return;const c=CATS.find(x=>x.k===WARM[i]);let cached=false;try{const j=JSON.parse(localStorage.getItem('snas_cat_v2_'+c.k)||'null');cached=j&&Date.now()-j.t<7*864e5}catch(e){}
+ if(cached||mem[c.k])return warm(i+1);overpassCat(c).then(list=>{if(list&&list.length){mem[c.k]=list;try{localStorage.setItem('snas_cat_v2_'+c.k,JSON.stringify({t:Date.now(),items:list}))}catch(e){}}}).catch(()=>{}).finally(()=>setTimeout(()=>warm(i+1),4000))}
+setTimeout(()=>{(window.requestIdleCallback||setTimeout)(()=>warm(0))},8000);
+})();
+</script>
+<script>/*BILINGUAL_LABELS*/
+/* Foreign-script / foreign-language street names are shown with their Somali form first, then the original:
+   "Wadada Buurta Siinay   شارع جبل سيناء". Display only - stored names are never changed. */
+const _AR=/[؀-ۿ]/;
+const _GAP='  ';
+const _AR_TYPES=[[/^(شارع)\s+/,'Wadada'],[/^(طريق)\s+/,'Jidka'],[/^(ميدان|ساحة)\s+/,'Fagaaraha'],[/^(دوار)\s+/,'Wareegga'],[/^(حي)\s+/,'Xaafadda']];
+const _IT_TYPES=[[/^(Via|Viale|Vía|Corso)\s+/i,'Wadada'],[/^(Piazza|Piazzale|Largo)\s+/i,'Fagaaraha']];
+const _EN_TYPES=[[/\s+(Street|St\.?)$/i,'Wadada'],[/\s+(Road|Rd\.?)$/i,'Jidka'],[/\s+(Avenue|Ave\.?)$/i,'Laanta'],[/\s+Boulevard$/i,'Laanta Weyn'],[/\s+Square$/i,'Fagaaraha'],[/\s+Roundabout$/i,'Wareegga'],[/\s+Drive$/i,'Jidka Guryaha'],[/\s+Lane$/i,'Jid Yar'],[/\s+Highway$/i,'Wadada Weyn']];
+const _AR_WORDS={'جبل':'Buurta','سيناء':'Siinay','القوات':'Ciidamada','المسلحة':'Qalabka Sida','البلد':'Balcad','الأول':'1da','الاول':'1da','من':'','يوليو':'Luulyo','يونيو':'Juun','نوفمبر':'Noofambar','أكتوبر':'Oktoobar','اكتوبر':'Oktoobar','الشاطئ':'Liido','مكة':'Makka','المكرمة':'','الجمهورية':'Jamhuuriga','مقديشو':'Muqdisho','صنعاء':'Sanca','المطار':'Garoonka Diyaaradaha','الميناء':'Dekadda','الصومال':'Soomaaliya','القاهرة':'Qaahira','دمشق':'Dimishiq','جيبوتي':'Jabuuti','جيبوتى':'Jabuuti','روما':'Rooma','موسكو':'Moosko','بكين':'Beyjing','لندن':'London','واشنطن':'Washington','تنزانيا':'Tansaaniya','أوغندا':'Ugaandha','اوغندا':'Ugaandha','المغرب':'Morooko','مصر':'Masar','ليبيريا':'Laybeeriya','الكونغو':'Koongo','كولومبيا':'Kolombiya','الفلبين':'Filibiin','نيجيريا':'Nayjeeriya','مالي':'Maali','توغو':'Toogo','الشيخ':'Sheekh','شيخ':'Sheekh','محمود':'Maxamuud','محمد':'Maxamed','أحمد':'Axmed','احمد':'Axmed','علي':'Cali','عثمان':'Cusmaan','عمر':'Cumar','حسن':'Xasan','حسين':'Xuseen','يوسف':'Yuusuf','عبد':'Cabdi','العزيز':'Casiis','الرحمن':'Raxmaan','الله':'llaahi','القادر':'Qaadir','الجيلاني':'Jiilaani','صلاح':'Salaax','الدين':'Diin','كمال':'Kamaal','جمال':'Jamaal','الناصر':'Naasir','الحربي':'Xarbi','حربي':'Xarbi','الجنرال':'Jeneraal','داود':"Daa'uud",'كيلومتر':'Kiiloomitir','الكيلومتر':'Kiiloomitir','العمل':'Shaqada','الورق':'Warqadaha','الأمم':'Qaramada','المتحدة':'Midoobay','التقني':'Farsamada','التطبيقية':'Farsamada','جوبا':'Jubba','العليا':'Sare','برافا':'Baraawe','بندر':'Bandar','قاسم':'Qaasim','عفار':'Afar','إردود':'Irdood','أف':'Af','مادو':'Madow','مدج':'Mudug','دكفر':'Digfeer','وابري':'Waaberi','وابيري':'Waaberi','لينين':'Lenin','حول':'Howl','وداك':'Wadaag','سودونكا':'Sodonka','أكارا':'Akara','متفرع':'Laanta','وددنا':'Wadnaha','كاران':'Kaaraan','هودان':'Hodan','السلام':'Nabadda','الحرية':'Xorriyadda','الوحدة':'Midnimada','الاستقلال':'Xorriyadda','المستشفى':'Isbitaalka','مستشفى':'Isbitaalka','السوق':'Suuqa','سوق':'Suuqa','المسجد':'Masjidka','مسجد':'Masjidka','الجامعة':'Jaamacadda','المدرسة':'Dugsiga','الكبير':'Weyn','الجديد':'Cusub','عبر':'','٢٦':'26-ka','٢١':'21-ka','١':'1da','26':'26-ka','21':'21-ka','1':'1da','28':'28-ka','4':'4','تموز':'Luulyo'};
+const _IT_WORDS={'Mogadiscio':'Muqdisho','Repubblica':'Jamhuuriga','della':'','delle':'','de':'','la':'','di':'','Roma':'Rooma','Giuba':'Jubba','Juba':'Jubba','Alto':'Sare','Brava':'Baraawe','Chisimaio':'Kismaayo','Afgoi':'Afgooye','Galcaio':'Gaalkacyo','Galkayo':'Gaalkacyo','Johwar':'Jowhar','Obbio':'Hobyo','Uebi':'Webi','Scebeli':'Shabeelle','Nogal':'Nugaal','Benadir':'Banaadir','General':'Jeneraal','Generale':'Jeneraal','Mosca':'Moosko','Moscow':'Moosko','Pechino':'Beyjing','Londra':'London','Egitto':'Masar','Filippine':'Filibiin','Nazioni':'Qaramada','Unite':'Midoobay','Damasco':'Dimishiq','Cairo':'Qaahira','Shek':'Sheekh','shek':'Sheekh','shekh':'Sheekh','Scek':'Sheekh','Sh.':'Sheekh','Lido':'Liido','Dolo':'Doolow','Hafun':'Xaafuun','Taleh':'Taleex','Juli':'Luulyo','Somalia':'Soomaaliya','Mahmud':'Maxamuud','Harbi':'Xarbi','Daoud':"Daa'uud",'Kamal':'Kamaal','Gesire':'Jasiira','Djibouti':'Jabuuti','Morocco':'Morooko','Tanzania':'Tansaaniya','Uganda':'Ugaandha','Nigeria':'Nayjeeriya','Liberia':'Laybeeriya','Congo':'Koongo','Colombia':'Kolombiya','Guinea':'Gini','Madagascar':'Madagaskar','Mali':'Maali','Togo':'Toogo','Revolution':'Kacaanka','Armed':'Ciidamada','Forces':'Qalabka Sida','Port':'Dekadda','Papers':'Warqadaha','Airport':'Garoonka Diyaaradaha','October':'Oktoobar','November':'Noofambar','June':'Juun','July':'Luulyo','Labour':'Shaqada','Mount':'Buurta','Sinai':'Siinay','Beijing':'Beyjing','Rome':'Rooma','Mogadishu':'Muqdisho','Balad':'Balcad','Technical':'Farsamada','Republic':'Jamhuuriga','Independence':'Xorriyadda','Doctor':'Dr.','President':'Madaxweyne','Sheikh':'Sheekh','Saoawadin':'Salaaxuddiin','Alawi':'Calawi','Osman':'Cusmaan','Gueruene':'Geryeene','Abdurahman':'Cabdiraxmaan','Abdul':'Cabdul','Aziz':'Casiis','Malim':'Macallin','Omar':'Cumar','Kilometre':'Kiiloomitir','Triumphal':'Guusha','Arch':'Qaansada','Sayd':'Sayid','Al':'Al','Faruk':'Faaruuq'};
+const _TL={'ا':'aa','أ':'a','إ':'i','آ':'aa','ب':'b','ت':'t','ث':'s','ج':'j','ح':'x','خ':'kh','د':'d','ذ':'dh','ر':'r','ز':'s','س':'s','ش':'sh','ص':'s','ض':'dh','ط':'t','ظ':'dh','ع':'c','غ':'g','ف':'f','ق':'q','ك':'k','ل':'l','م':'m','ن':'n','ه':'h','ة':'o','و':'w','ي':'y','ى':'a','ء':"'",'ئ':"'",'ؤ':"'"};
+function _translit(w){if(w.startsWith('ال'))w=w.slice(2);let o='';for(let i=0;i<w.length;i++){const ch=w[i],t=_TL[ch];if(t===undefined)continue;
+  if(ch==='و'||ch==='ي'){if(i===0){o+=ch==='و'?'w':'y';continue}o+=ch==='و'?'uu':'ii';continue}
+  if(ch==='ا'&&i===0){o+='a';continue}
+  o+=t;const nx=w[i+1];if(nx&&!'اويىة'.includes(nx)&&ch!=='ا'&&!/[aeiou']$/.test(t))o+='a'}
+  return o?o.charAt(0).toUpperCase()+o.slice(1):''}
+function _cap(s){return s.replace(/\s+/g,' ').trim()}
+function _mapWords(rest,dict){return rest.replace(/\(.*?\)/g,'').split(/\s+/).filter(Boolean).map(w=>dict[w]!==undefined?dict[w]:w).join(' ')}
+function somaliForName(n){
+  if(!n)return '';let s=n.trim();
+  const lat=s.replace(/[؀-ۿ٠-٩].*$/,'').replace(/[\/\-·]+\s*$/,'').trim();
+  if(lat&&_AR.test(s)&&!isForeignLatin(lat))return lat;               // "Jidka Sodonka طريق سودونكا" -> keep its own Somali part
+  if(lat&&_AR.test(s))s=lat;                                           // "Via Roma شارع روما" -> translate the Latin part
+  if(_AR.test(s)){s=s.split(/\s*\/\s*/)[0].replace(/[\u0660-\u0669]/g,d=>String(d.charCodeAt(0)-0x0660));let ty='Wadada';for(const[re,t] of _AR_TYPES){if(re.test(s)){ty=t;s=s.replace(re,'');break}}
+    const words=s.split(/\s+/).filter(Boolean).map(w=>{const b=w.replace(/^ال/,'');return _AR_WORDS[w]!==undefined?_AR_WORDS[w]:_AR_WORDS[b]!==undefined?_AR_WORDS[b]:_translit(w)});
+    return _cap(ty+' '+words.join(' '))}
+  for(const[re,t] of _IT_TYPES){if(re.test(s))return _cap(t+' '+_mapWords(s.replace(re,''),_IT_WORDS))}
+  for(const[re,t] of _EN_TYPES){if(re.test(s))return _cap(t+' '+_mapWords(s.replace(re,''),_IT_WORDS))}
+  return '';
+}
+function isForeignLatin(s){return _IT_TYPES.some(([re])=>re.test(s))||_EN_TYPES.some(([re])=>re.test(s))}
+function isForeignName(n){if(!n)return false;const s=n.trim();return _AR.test(s)||isForeignLatin(s)}
+function bilingualName(n){if(!isForeignName(n))return n;const so=somaliForName(n);if(!so)return n;
+  const orig=n.trim();if(so.toLowerCase()===orig.toLowerCase())return n;
+  // Somali first, then the original as written (Arabic / Italian / English), with a clear gap
+  const shown=_AR.test(orig)&&orig.toLowerCase().startsWith(so.toLowerCase())?orig.slice(so.length).replace(/^[\s\/\-·]+/,''):orig;
+  return so+_GAP+shown}
 </script>
 </body>
 </html>
